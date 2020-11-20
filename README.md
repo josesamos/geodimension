@@ -9,11 +9,15 @@
 status](https://travis-ci.com/josesamos/geodimension.svg?branch=master)](https://travis-ci.com/josesamos/geodimension)
 <!-- badges: end -->
 
-The goal of geodimension is to …
+The goal of `geodimension` is to support the definition of *geographic
+dimensions* that can be used in multidimensional systems. In particular,
+through the
+[`geomultistar`](https://cran.r-project.org/package=geomultistar)
+package.
 
 ## Installation
 
-You can install the released version of geodimension from
+You can install the released version of `geodimension` from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
