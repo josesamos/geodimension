@@ -36,6 +36,10 @@ Other geodimension functions:
 \code{\link{complete_relation_by_geography}()},
 \code{\link{geodimension}()},
 \code{\link{geolevel}()},
+\code{\link{get_level_data}()},
+\code{\link{get_level_geometries}()},
+\code{\link{get_level_names}()},
+\code{\link{get_level}()},
 \code{\link{get_unrelated_instances}()},
 \code{\link{relate_levels}()}
 }
