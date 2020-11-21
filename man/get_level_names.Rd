@@ -39,6 +39,7 @@ Other geodimension functions:
 \code{\link{get_level_geometries}()},
 \code{\link{get_level_layer}()},
 \code{\link{get_unrelated_instances}()},
-\code{\link{relate_levels}()}
+\code{\link{relate_levels}()},
+\code{\link{select_levels}()}
 }
 \concept{geodimension functions}
