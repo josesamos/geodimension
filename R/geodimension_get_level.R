@@ -103,24 +103,27 @@ get_level_data.geodimension <- function(gd,
   stopifnot(level_name %in% names(gd$geolevel))
   data <- gd$geolevel[[level_name]]$data
   if (inherited) {
+    gd <- calculate_inherited_relationships(gd, level_name = level_name)
     key <- names(data)[1]
     for (rel in names(gd$relation[[level_name]])[-1]) {
+      relation <- gd$relation[[level_name]][, c(level_name, rel)]
+      names(relation)[2] <- paste(toupper(names(relation)[2]), names(relation)[2], sep = "_")
       data <- data %>%
-        dplyr::left_join(gd$relation[[level_name]][, c(level_name, rel)], by = stats::setNames(level_name, key))
-      fk <- names(data)[length(names(data))]
+        dplyr::left_join(relation, by = stats::setNames(level_name, key))
       rel_data <- gd$geolevel[[rel]]$data
       names(rel_data) <- paste(toupper(rel), names(rel_data), sep = "_")
-      key <- names(rel_data)[1]
+      key_rel <- names(rel_data)[1]
+      names(data)[length(names(data))] <- key_rel
+      fk <- names(data)[length(names(data))]
       data <- data %>%
-        dplyr::left_join(rel_data, by = stats::setNames(key, fk), keep = TRUE) %>%
-        dplyr::select(!fk)
+        dplyr::left_join(rel_data, by = stats::setNames(key_rel, fk))
     }
   }
   data
 }
 
 
-# get level ---------------------------------------------------------------
+# get level layer ---------------------------------------------------------------
 
 
 #' Add a level to a dimension
@@ -129,7 +132,10 @@ get_level_data.geodimension <- function(gd,
 #' the dimension.
 #'
 #' @param gd A `geodimension` object.
-#' @param level A `geolevel`, level to add to the dimension.
+#' @param level_name A string.
+#' @param attributes A boolean.
+#' @param inherited A boolean.
+#' @param geometry A string.
 #'
 #' @return A `geodimension`.
 #'
@@ -141,21 +147,36 @@ get_level_data.geodimension <- function(gd,
 #'
 #'
 #' @export
-get_level <- function(gd,
-                       level = NULL) {
-  UseMethod("get_level")
+get_level_layer <- function(gd,
+                            level_name = NULL,
+                            attributes = FALSE,
+                            inherited = FALSE,
+                            geometry = NULL) {
+  UseMethod("get_level_layer")
 }
 
 
-#' @rdname get_level
+#' @rdname get_level_layer
 #' @export
-get_level.geodimension <- function(gd,
-                                    level = NULL) {
-  stopifnot(!(attr(level, "name") %in% names(gd$geolevel)))
-  gd$geolevel[[attr(level, "name")]] <- level
-
-  data <- level$data[1]
-  names(data) <- attr(level, "name")
-  gd$relation[[attr(level, "name")]] <- data
-  gd
+get_level_layer.geodimension <- function(gd,
+                                         level_name = NULL,
+                                         attributes = FALSE,
+                                         inherited = FALSE,
+                                         geometry = NULL) {
+browser()
+  stopifnot(level_name %in% names(gd$geolevel))
+  if (is.null(geometry)) {
+    geometry <- names(gd$geolevel[[level_name]]$geometry)[1]
+  } else {
+    stopifnot(geometry %in% names(gd$geolevel[[level_name]]$geometry))
+  }
+  layer <- gd$geolevel[[level_name]]$geometry[[geometry]]
+  if (attributes) {
+    data <- gd %>%
+      get_level_data(level_name = level_name, inherited = inherited)
+    layer <- data %>%
+      dplyr::left_join(layer, by = names(data)[1]) %>%
+      sf::st_as_sf()
+  }
+  layer
 }

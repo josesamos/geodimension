@@ -37,7 +37,7 @@ Other geodimension functions:
 \code{\link{get_empty_geometry_instances}()},
 \code{\link{get_level_data}()},
 \code{\link{get_level_geometries}()},
-\code{\link{get_level}()},
+\code{\link{get_level_layer}()},
 \code{\link{get_unrelated_instances}()},
 \code{\link{relate_levels}()}
 }
