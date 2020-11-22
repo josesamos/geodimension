@@ -105,7 +105,7 @@ new_geolevel <-
 #'
 #' @return A `geolevel` object.
 #'
-#' @family geodimension functions
+#' @family level definition functions
 #' @seealso
 #'
 #' @examples

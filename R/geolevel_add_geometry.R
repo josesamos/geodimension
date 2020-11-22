@@ -11,7 +11,7 @@
 #'
 #' @return A `geolevel`.
 #'
-#' @family geodimension functions
+#' @family level definition functions
 #' @seealso
 #'
 #' @examples
@@ -85,7 +85,7 @@ add_geometry.geolevel <- function(gl,
 #'
 #' @return A `tibble`.
 #'
-#' @family geodimension functions
+#' @family level definition functions
 #' @seealso
 #'
 #' @examples
@@ -122,7 +122,7 @@ get_empty_geometry_instances.geolevel <- function(gl,
 #'
 #' @return A `geolevel` object.
 #'
-#' @family geodimension functions
+#' @family level definition functions
 #' @seealso
 #'
 #' @examples

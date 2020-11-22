@@ -9,7 +9,7 @@
 #'
 #' @return A `geodimension`.
 #'
-#' @family geodimension functions
+#' @family level association functions
 #' @seealso
 #'
 #' @examples

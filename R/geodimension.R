@@ -39,7 +39,7 @@ new_geodimension <-
 #'
 #' @return A `geodimension` object.
 #'
-#' @family geodimension functions
+#' @family level association functions
 #' @seealso
 #'
 #' @examples

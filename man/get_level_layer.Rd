@@ -47,19 +47,9 @@ library(tidyr)
 \seealso{
 
 
-Other geodimension functions: 
-\code{\link{add_geometry}()},
-\code{\link{add_level}()},
-\code{\link{complete_point_geometry}()},
-\code{\link{complete_relation_by_geography}()},
-\code{\link{geodimension}()},
-\code{\link{geolevel}()},
-\code{\link{get_empty_geometry_instances}()},
+Other information gathering functions: 
 \code{\link{get_level_data}()},
 \code{\link{get_level_geometries}()},
-\code{\link{get_level_names}()},
-\code{\link{get_unrelated_instances}()},
-\code{\link{relate_levels}()},
-\code{\link{select_levels}()}
+\code{\link{get_level_names}()}
 }
-\concept{geodimension functions}
+\concept{information gathering functions}

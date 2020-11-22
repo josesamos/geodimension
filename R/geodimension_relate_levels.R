@@ -10,7 +10,7 @@
 #'
 #' @return A `geodimension`.
 #'
-#' @family geodimension functions
+#' @family level association functions
 #' @seealso
 #'
 #' @examples
@@ -125,7 +125,7 @@ relate_levels.geodimension <- function(gd,
 #'
 #' @return A `tibble`.
 #'
-#' @family geodimension functions
+#' @family level association functions
 #' @seealso
 #'
 #' @examples
@@ -164,7 +164,7 @@ get_unrelated_instances.geodimension <- function(gd,
 #'
 #' @return A `geodimension` object.
 #'
-#' @family geodimension functions
+#' @family level association functions
 #' @seealso
 #'
 #' @examples

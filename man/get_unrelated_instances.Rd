@@ -30,19 +30,10 @@ library(tidyr)
 \seealso{
 
 
-Other geodimension functions: 
-\code{\link{add_geometry}()},
+Other level association functions: 
 \code{\link{add_level}()},
-\code{\link{complete_point_geometry}()},
 \code{\link{complete_relation_by_geography}()},
 \code{\link{geodimension}()},
-\code{\link{geolevel}()},
-\code{\link{get_empty_geometry_instances}()},
-\code{\link{get_level_data}()},
-\code{\link{get_level_geometries}()},
-\code{\link{get_level_layer}()},
-\code{\link{get_level_names}()},
-\code{\link{relate_levels}()},
-\code{\link{select_levels}()}
+\code{\link{relate_levels}()}
 }
-\concept{geodimension functions}
+\concept{level association functions}
