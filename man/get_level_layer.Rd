@@ -48,6 +48,7 @@ library(tidyr)
 
 
 Other information gathering functions: 
+\code{\link{get_higher_level_names}()},
 \code{\link{get_level_data}()},
 \code{\link{get_level_geometries}()},
 \code{\link{get_level_names}()}
