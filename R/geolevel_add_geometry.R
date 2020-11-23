@@ -1,13 +1,17 @@
 
 #' Add geometry to a level
 #'
-#' A level can have several associated geometries (*point*, *polygon* or
-#' *line*). Add the geometry of the layer or replace an existing one of the
-#' indicated type.
+#' A level can have several geometries (*point*, *polygon* or *line*). This
+#' function adds the geometry of the layer to the level.
+#'
+#' The association of the geometry to the existing instances is done through
+#' join using the level key and the layer key.
+#'
+#' If none is indicated, by default the key defined in the level is considered.
 #'
 #' @param gl A `geolevel` object.
 #' @param layer A `sf` object.
-#' @param key A vector of string.
+#' @param layer_key A vector of string.
 #' @param level_key A vector of string.
 #'
 #' @return A `geolevel`.
@@ -17,12 +21,23 @@
 #'
 #' @examples
 #' library(tidyr)
+#' library(sf)
 #'
+#' us_state_polygon <-
+#'   get_level_layer(gd_us_city, level_name = "state", attributes = TRUE, geometry = "polygon")
+#' us_state_point <-
+#'   get_level_layer(gd_us_city, level_name = "state", attributes = TRUE, geometry = "point")
+#'
+#' state <-
+#'   geolevel(name = "state",
+#'            layer = us_state_polygon,
+#'            key = c("geoid")) %>%
+#'   add_geometry(layer = us_state_point)
 #'
 #' @export
 add_geometry <- function(gl,
                          layer = NULL,
-                         key = NULL,
+                         layer_key = NULL,
                          level_key = NULL) {
   UseMethod("add_geometry")
 }
@@ -32,7 +47,7 @@ add_geometry <- function(gl,
 #' @export
 add_geometry.geolevel <- function(gl,
                                   layer = NULL,
-                                  key = NULL,
+                                  layer_key = NULL,
                                   level_key = NULL) {
   geometry <- get_geometry(layer)
   stopifnot(geometry %in% c("polygon", "point", "line"))
@@ -44,19 +59,19 @@ add_geometry.geolevel <- function(gl,
     level_key_is_a_key <- (nrow(gl$data) == nrow(unique(gl$data[, level_key])))
     stopifnot(level_key_is_a_key)
   }
-  if (is.null(key)) {
-    key <- level_key
+  if (is.null(layer_key)) {
+    layer_key <- level_key
   } else {
-    key <- unique(key)
-    stopifnot(length(key) == length(level_key))
+    layer_key <- unique(layer_key)
+    stopifnot(length(layer_key) == length(level_key))
   }
-  stopifnot(key %in% names(layer))
+  stopifnot(layer_key %in% names(layer))
 
   layer <- layer %>%
-    dplyr::select(tidyselect::all_of(key)) %>%
-    dplyr::group_by_at(key) %>%
+    dplyr::select(tidyselect::all_of(layer_key)) %>%
+    dplyr::group_by_at(layer_key) %>%
     dplyr::summarize(.groups = "drop")
-  # only the key and geometry
+  # only the layer_key and geometry
   names_layer <- names(layer)
   names(layer) <- c(level_key, names_layer[length(names_layer)])
 

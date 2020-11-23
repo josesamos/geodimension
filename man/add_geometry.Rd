@@ -5,16 +5,16 @@
 \alias{add_geometry.geolevel}
 \title{Add geometry to a level}
 \usage{
-add_geometry(gl, layer = NULL, key = NULL, level_key = NULL)
+add_geometry(gl, layer = NULL, layer_key = NULL, level_key = NULL)
 
-\method{add_geometry}{geolevel}(gl, layer = NULL, key = NULL, level_key = NULL)
+\method{add_geometry}{geolevel}(gl, layer = NULL, layer_key = NULL, level_key = NULL)
 }
 \arguments{
 \item{gl}{A \code{geolevel} object.}
 
 \item{layer}{A \code{sf} object.}
 
-\item{key}{A vector of string.}
+\item{layer_key}{A vector of string.}
 
 \item{level_key}{A vector of string.}
 }
@@ -22,13 +22,29 @@ add_geometry(gl, layer = NULL, key = NULL, level_key = NULL)
 A \code{geolevel}.
 }
 \description{
-A level can have several associated geometries (\emph{point}, \emph{polygon} or
-\emph{line}). Add the geometry of the layer or replace an existing one of the
-indicated type.
+A level can have several geometries (\emph{point}, \emph{polygon} or \emph{line}). This
+function adds the geometry of the layer to the level.
+}
+\details{
+The association of the geometry to the existing instances is done through
+join using the level key and the layer key.
+
+If none is indicated, by default the key defined in the level is considered.
 }
 \examples{
 library(tidyr)
+library(sf)
 
+us_state_polygon <-
+  get_level_layer(gd_us_city, level_name = "state", attributes = TRUE, geometry = "polygon")
+us_state_point <-
+  get_level_layer(gd_us_city, level_name = "state", attributes = TRUE, geometry = "point")
+
+state <-
+  geolevel(name = "state",
+           layer = us_state_polygon,
+           key = c("geoid")) \%>\%
+  add_geometry(layer = us_state_point)
 
 }
 \seealso{
