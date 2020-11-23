@@ -22,8 +22,9 @@ add_geometry(gl, layer = NULL, key = NULL, level_key = NULL)
 A \code{geolevel}.
 }
 \description{
-A level can have several associated geometries (point, polygon or line). Add
-the geometry of the layer or replace an existing one of the indicated type.
+A level can have several associated geometries (\emph{point}, \emph{polygon} or
+\emph{line}). Add the geometry of the layer or replace an existing one of the
+indicated type.
 }
 \examples{
 library(tidyr)
@@ -34,8 +35,10 @@ library(tidyr)
 
 
 Other level definition functions: 
+\code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},
 \code{\link{geolevel}()},
-\code{\link{get_empty_geometry_instances}()}
+\code{\link{get_empty_geometry_instances}()},
+\code{\link{get_geometry}()}
 }
 \concept{level definition functions}

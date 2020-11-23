@@ -31,7 +31,9 @@ library(tidyr)
 
 Other level definition functions: 
 \code{\link{add_geometry}()},
+\code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},
-\code{\link{geolevel}()}
+\code{\link{geolevel}()},
+\code{\link{get_geometry}()}
 }
 \concept{level definition functions}

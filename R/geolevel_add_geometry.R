@@ -1,8 +1,9 @@
 
 #' Add geometry to a level
 #'
-#' A level can have several associated geometries (point, polygon or line). Add
-#' the geometry of the layer or replace an existing one of the indicated type.
+#' A level can have several associated geometries (*point*, *polygon* or
+#' *line*). Add the geometry of the layer or replace an existing one of the
+#' indicated type.
 #'
 #' @param gl A `geolevel` object.
 #' @param layer A `sf` object.

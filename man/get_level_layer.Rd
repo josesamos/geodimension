@@ -9,6 +9,7 @@ get_level_layer(
   gd,
   level_name = NULL,
   attributes = FALSE,
+  surrogate_key = FALSE,
   inherited = FALSE,
   geometry = NULL
 )
@@ -17,6 +18,7 @@ get_level_layer(
   gd,
   level_name = NULL,
   attributes = FALSE,
+  surrogate_key = FALSE,
   inherited = FALSE,
   geometry = NULL
 )
@@ -28,12 +30,14 @@ get_level_layer(
 
 \item{attributes}{A boolean.}
 
+\item{surrogate_key}{A boolean.}
+
 \item{inherited}{A boolean.}
 
 \item{geometry}{A string.}
 }
 \value{
-A \code{geodimension}.
+A \code{sf} object.
 }
 \description{
 Add a level to a dimension. This level can then be related to other levels of

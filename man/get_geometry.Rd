@@ -2,7 +2,7 @@
 % Please edit documentation in R/geolevel.R
 \name{get_geometry}
 \alias{get_geometry}
-\title{get_geometry}
+\title{Get geometry}
 \usage{
 get_geometry(layer)
 }
@@ -13,5 +13,31 @@ get_geometry(layer)
 A string.
 }
 \description{
-get_geometry
+Get the geometry of a layer, as it is interpreted to define a \code{geolevel}
+object.
 }
+\details{
+It will only be valid if one of the three geometries is interpreted: \emph{point},
+\emph{line} or \emph{polygon}.
+}
+\examples{
+library(sf)
+
+us_region <-
+  get_level_layer(gd_us_city, level_name = "region", attributes = TRUE)
+
+geometry <- get_geometry(us_region)
+# [1] "polygon"
+
+}
+\seealso{
+
+
+Other level definition functions: 
+\code{\link{add_geometry}()},
+\code{\link{check_key}()},
+\code{\link{complete_point_geometry}()},
+\code{\link{geolevel}()},
+\code{\link{get_empty_geometry_instances}()}
+}
+\concept{level definition functions}

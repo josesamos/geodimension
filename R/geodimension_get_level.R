@@ -134,10 +134,11 @@ get_level_data.geodimension <- function(gd,
 #' @param gd A `geodimension` object.
 #' @param level_name A string.
 #' @param attributes A boolean.
+#' @param surrogate_key A boolean.
 #' @param inherited A boolean.
 #' @param geometry A string.
 #'
-#' @return A `geodimension`.
+#' @return A `sf` object.
 #'
 #' @family information gathering functions
 #' @seealso
@@ -150,6 +151,7 @@ get_level_data.geodimension <- function(gd,
 get_level_layer <- function(gd,
                             level_name = NULL,
                             attributes = FALSE,
+                            surrogate_key = FALSE,
                             inherited = FALSE,
                             geometry = NULL) {
   UseMethod("get_level_layer")
@@ -161,6 +163,7 @@ get_level_layer <- function(gd,
 get_level_layer.geodimension <- function(gd,
                                          level_name = NULL,
                                          attributes = FALSE,
+                                         surrogate_key = FALSE,
                                          inherited = FALSE,
                                          geometry = NULL) {
   stopifnot(level_name %in% names(gd$geolevel))
@@ -173,8 +176,14 @@ get_level_layer.geodimension <- function(gd,
   if (attributes) {
     data <- gd %>%
       get_level_data(level_name = level_name, inherited = inherited)
+    if (surrogate_key) {
+      sel <- NULL
+    } else {
+      sel <- c(1)
+    }
     layer <- data %>%
       dplyr::left_join(layer, by = names(data)[1]) %>%
+      dplyr::select(!sel) %>%
       sf::st_as_sf()
   }
   layer

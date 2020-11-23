@@ -20,20 +20,28 @@ A \code{geolevel} object.
 }
 \description{
 A \code{geolevel} object is created from a given geographic layer. The attributes
-of the layer to be included in the level are indicated, and the subset of
+of the layer to be included in the level can be indicated, and the subset of
 these that make up the natural key. If no attribute is indicated, all are
-considered.
+considered. In any case, the attributes that make up the key must be
+indicated.
 }
 \details{
-A level can have several associated geometries (point, polygon or line), the
-geometry of the layer is indicated.
+A level can have several associated geometries (point, polygon or line). The
+geometry is obtained from the layer data.
 
-The \emph{Top} level of any dimension is a special case since it has only one
-object. This situation is indicated by a boolean parameter.
+The name of the level is used later to reference it and relate it to other
+levels.
 }
 \examples{
-library(tidyr)
+library(sf)
 
+us_region <-
+  get_level_layer(gd_us_city, level_name = "region", attributes = TRUE)
+
+region <-
+  geolevel(name = "region",
+           layer = us_region,
+           key = c("geoid"))
 
 }
 \seealso{
@@ -41,7 +49,9 @@ library(tidyr)
 
 Other level definition functions: 
 \code{\link{add_geometry}()},
+\code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},
-\code{\link{get_empty_geometry_instances}()}
+\code{\link{get_empty_geometry_instances}()},
+\code{\link{get_geometry}()}
 }
 \concept{level definition functions}
