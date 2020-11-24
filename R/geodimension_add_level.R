@@ -1,8 +1,8 @@
 
 #' Add a level to a dimension
 #'
-#' Add a level to a dimension. This level can then be related to other levels of
-#' the dimension.
+#' Once a level is part of the dimension, it can then be related to other levels
+#' of the dimension.
 #'
 #' @param gd A `geodimension` object.
 #' @param level A `geolevel`, level to add to the dimension.
@@ -14,7 +14,22 @@
 #'
 #' @examples
 #' library(tidyr)
+#' library(sf)
 #'
+#' region <-
+#'   geolevel(name = "region",
+#'            layer = layer_us_region,
+#'            key = c("geoid"))
+#'
+#' division <-
+#'   geolevel(name = "division",
+#'            layer = layer_us_division,
+#'            key = c("geoid"))
+#'
+#' gd <-
+#'   geodimension(name = "gd_us",
+#'                level = region) %>%
+#'   add_level(division)
 #'
 #' @export
 add_level <- function(gd,
