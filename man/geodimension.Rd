@@ -15,8 +15,9 @@ geodimension(name = NULL, level = NULL)
 A \code{geodimension} object.
 }
 \description{
-A \code{geodimension} object is created. In addition to the name of the dimension,
-the lowest and highest level of the dimension are indicated.
+A \code{geodimension} object is created. A \code{geodimension} allows you to relate
+levels. In addition to the name of the \code{geodimension} , a \code{level} has to be
+given.
 }
 \examples{
 library(tidyr)
@@ -27,7 +28,9 @@ region <-
            layer = layer_us_region,
            key = c("geoid"))
 
-
+gd <-
+  geodimension(name = "gd_us",
+               level = region)
 
 }
 \seealso{

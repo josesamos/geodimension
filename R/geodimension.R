@@ -32,8 +32,9 @@ new_geodimension <-
 
 #' `geodimension` S3 class
 #'
-#' A `geodimension` object is created. In addition to the name of the dimension,
-#' the lowest and highest level of the dimension are indicated.
+#' A `geodimension` object is created. A `geodimension` allows you to relate
+#' levels. In addition to the name of the `geodimension` , a `level` has to be
+#' given.
 #'
 #' @inheritParams new_geodimension
 #'
@@ -51,7 +52,9 @@ new_geodimension <-
 #'            layer = layer_us_region,
 #'            key = c("geoid"))
 #'
-#'
+#' gd <-
+#'   geodimension(name = "gd_us",
+#'                level = region)
 #'
 #' @export
 geodimension <- function(name = NULL,
