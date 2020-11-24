@@ -35,14 +35,13 @@ If none is indicated, by default the key defined in the level is considered.
 library(tidyr)
 library(sf)
 
-us_state_polygon <-
-  get_level_layer(gd_us_city, level_name = "state", attributes = TRUE, geometry = "polygon")
 us_state_point <-
-  get_level_layer(gd_us_city, level_name = "state", attributes = TRUE, geometry = "point")
+  coordinates_to_geometry(layer_us_state,
+                          lon_lat = c("intptlon", "intptlat"))
 
 state <-
   geolevel(name = "state",
-           layer = us_state_polygon,
+           layer = layer_us_state,
            key = c("geoid")) \%>\%
   add_geometry(layer = us_state_point)
 
@@ -53,6 +52,7 @@ state <-
 Other level definition functions: 
 \code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},
+\code{\link{coordinates_to_geometry}()},
 \code{\link{geolevel}()},
 \code{\link{get_empty_geometry_instances}()},
 \code{\link{get_geometry}()}

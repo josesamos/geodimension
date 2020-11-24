@@ -3,12 +3,9 @@ context("test geolevel")
 library(sf) # It has to be included even if it is not used directly.
 
 test_that("geolevel works", {
-  us_region <-
-    get_level_layer(gd_us_city, level_name = "region", attributes = TRUE)
-
   region <-
     geolevel(name = "region",
-             layer = us_region,
+             layer = layer_us_region,
              key = c("geoid"))
 
   expect_equal(

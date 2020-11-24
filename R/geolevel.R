@@ -112,12 +112,9 @@ new_geolevel <-
 #' @examples
 #' library(sf)
 #'
-#' us_region <-
-#'   get_level_layer(gd_us_city, level_name = "region", attributes = TRUE)
-#'
 #' region <-
 #'   geolevel(name = "region",
-#'            layer = us_region,
+#'            layer = layer_us_region,
 #'            key = c("geoid"))
 #'
 #' @export
@@ -128,86 +125,3 @@ geolevel <-
            key = NULL) {
     new_geolevel(name, layer, attributes, key)
   }
-
-
-# -----------------------------------------------------------------------
-
-#' Get geometry
-#'
-#' Get the geometry of a layer, as it is interpreted to define a `geolevel`
-#' object.
-#'
-#' It will only be valid if one of the three geometries is interpreted: *point*,
-#' *line* or *polygon*.
-#'
-#' @param layer A `sf` object.
-#'
-#' @return A string.
-#'
-#' @family level definition functions
-#' @seealso
-#'
-#' @examples
-#' library(sf)
-#'
-#' us_region <-
-#'   get_level_layer(gd_us_city, level_name = "region", attributes = TRUE)
-#'
-#' geometry <- get_geometry(us_region)
-#' # [1] "polygon"
-#'
-#' @export
-get_geometry <- function(layer) {
-  geo <- unique(as.character(sf::st_geometry_type(layer, by_geometry = TRUE)))
-  if (length(intersect(geo, c("CIRCULARSTRING", "CURVEPOLYGON", "MULTIPOLYGON", "TRIANGLE", "POLYGON"))) > 0) {
-    return("polygon")
-  } else if (length(intersect(geo, c("LINESTRING", "MULTILINESTRING", "CURVE", "MULTICURVE", "COMPOUNDCURVE"))) > 0) {
-    return("line")
-  } else if (length(intersect(geo, c("POINT", "MULTIPOINT"))) > 0) {
-    return("point")
-  }
-  return("other")
-}
-
-
-# -----------------------------------------------------------------------
-
-#' Check key
-#'
-#' Check if the specified set of attributes can be the key of the table.
-#'
-#' The table can be a data table or a vector layer.
-#'
-#' @param table A `tibble` object.
-#' @param key A vector, attributes that compose the key.
-#'
-#' @return A boolean.
-#'
-#' @family level definition functions
-#' @seealso
-#'
-#' @examples
-#' library(sf)
-#'
-#' us_region <-
-#'   get_level_layer(gd_us_city, level_name = "region", attributes = TRUE)
-#'
-#' is_key <- check_key(us_region, key = c("name"))
-#'
-#' @export
-check_key <- function(table, key = NULL) {
-  if ("sf" %in% class(table)) {
-    table <- tibble::tibble((sf::st_drop_geometry(table)))
-  }
-  stopifnot(!is.null(key))
-  key <- unique(key)
-  stopifnot(key %in% names(table))
-
-  table_key <- table %>%
-    dplyr::select(tidyselect::all_of(key)) %>%
-    dplyr::group_by_at(key) %>%
-    dplyr::summarize(.groups = "drop")
-
-  (nrow(table) == nrow(table_key))
-}
-

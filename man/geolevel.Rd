@@ -35,12 +35,9 @@ levels.
 \examples{
 library(sf)
 
-us_region <-
-  get_level_layer(gd_us_city, level_name = "region", attributes = TRUE)
-
 region <-
   geolevel(name = "region",
-           layer = us_region,
+           layer = layer_us_region,
            key = c("geoid"))
 
 }
@@ -51,6 +48,7 @@ Other level definition functions:
 \code{\link{add_geometry}()},
 \code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},
+\code{\link{coordinates_to_geometry}()},
 \code{\link{get_empty_geometry_instances}()},
 \code{\link{get_geometry}()}
 }

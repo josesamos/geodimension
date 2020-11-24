@@ -23,14 +23,13 @@
 #' library(tidyr)
 #' library(sf)
 #'
-#' us_state_polygon <-
-#'   get_level_layer(gd_us_city, level_name = "state", attributes = TRUE, geometry = "polygon")
 #' us_state_point <-
-#'   get_level_layer(gd_us_city, level_name = "state", attributes = TRUE, geometry = "point")
+#'   coordinates_to_geometry(layer_us_state,
+#'                           lon_lat = c("intptlon", "intptlat"))
 #'
 #' state <-
 #'   geolevel(name = "state",
-#'            layer = us_state_polygon,
+#'            layer = layer_us_state,
 #'            key = c("geoid")) %>%
 #'   add_geometry(layer = us_state_point)
 #'
@@ -88,85 +87,3 @@ add_geometry.geolevel <- function(gl,
 
   gl
 }
-
-# empty geometry ----------------------------------------------------------
-
-#' get empty geometry
-#'
-#' A level can have several associated geometries (point, polygon or line). Add
-#' the geometry of the layer or replace an existing one of the indicated type.
-#'
-#' @param gl A `geolevel` object.
-#' @param geometry A string, type of geometry of the layer.
-#'
-#' @return A `tibble`.
-#'
-#' @family level definition functions
-#' @seealso
-#'
-#' @examples
-#' library(tidyr)
-#'
-#'
-#' @export
-get_empty_geometry_instances <- function(gl,
-                         geometry = NULL) {
-  UseMethod("get_empty_geometry_instances")
-}
-
-
-#' @rdname get_empty_geometry_instances
-#' @export
-get_empty_geometry_instances.geolevel <- function(gl,
-                                  geometry = NULL) {
-  stopifnot(geometry %in% names(gl$geometry))
-  if (is.null(geometry)) {
-    geometry <- names(gl$geometry)[1]
-  }
-  gl$data[!(gl$data[[1]] %in% gl$geometry[[geometry]][[1]]), ]
-}
-
-
-# complete point geometry ----------------------------------------------------------
-
-#' complete point geometry
-#'
-#' A level can have several associated geometries (point, polygon or line). Add
-#' the geometry of the layer or replace an existing one of the indicated type.
-#'
-#' @param gl A `geolevel` object.
-#'
-#' @return A `geolevel` object.
-#'
-#' @family level definition functions
-#' @seealso
-#'
-#' @examples
-#' library(tidyr)
-#'
-#'
-#' @export
-complete_point_geometry <- function(gl) {
-  UseMethod("complete_point_geometry")
-}
-
-
-#' @rdname complete_point_geometry
-#' @export
-complete_point_geometry.geolevel <- function(gl) {
-  stopifnot("polygon" %in% names(gl$geometry))
-  if ("point" %in% names(gl$geometry)) {
-    layer <- gl$geometry[["polygon"]][!(gl$data[[1]] %in% gl$geometry[["point"]][[1]]), ]
-    # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
-    sf::st_agr(layer) = "constant"
-    gl$geometry[["point"]] <- gl$geometry[["point"]] %>%
-      tibble::add_row(sf::st_point_on_surface(layer))
-  } else {
-    layer <- gl$geometry[["polygon"]]
-    # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
-    sf::st_agr(layer) = "constant"
-    gl$geometry[["point"]] <- sf::st_point_on_surface(layer)
-  }
-  gl
-}
-
