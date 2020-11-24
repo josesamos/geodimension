@@ -19,7 +19,7 @@
 #' library(tidyr)
 #' library(sf)
 #'
-#' \donttest{
+#' \dontrun{
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
