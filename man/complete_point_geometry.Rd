@@ -27,13 +27,13 @@ geometry empty, it completes them.
 library(tidyr)
 library(sf)
 
-\dontrun{
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = c("geoid")) \%>\%
-  complete_point_geometry()
-}
+           key = c("geoid"))
+# state <-  state \%>\%
+#   complete_point_geometry()
+
 }
 \seealso{
 

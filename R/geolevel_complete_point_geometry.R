@@ -19,13 +19,13 @@
 #' library(tidyr)
 #' library(sf)
 #'
-#' \dontrun{
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = c("geoid")) %>%
-#'   complete_point_geometry()
-#' }
+#'            key = c("geoid"))
+#' # state <-  state %>%
+#' #   complete_point_geometry()
+#'
 #' @export
 complete_point_geometry <- function(gl) {
   UseMethod("complete_point_geometry")
