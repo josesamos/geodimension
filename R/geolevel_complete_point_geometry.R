@@ -8,9 +8,6 @@
 #' If the point geometry was already defined, if there are instances with this
 #' geometry empty, it completes them.
 #'
-#' It is recommended to use a projected reference system to avoid errors in
-#' calculations.
-#'
 #' @param gl A `geolevel` object.
 #'
 #' @return A `geolevel` object.
@@ -43,6 +40,7 @@ complete_point_geometry.geolevel <- function(gl) {
     # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
     sf::st_agr(layer) = "constant"
     rest <- layer %>%
+      sf::st_transform(crs = 3395) %>%
       sf::st_point_on_surface() %>%
       sf::st_transform(crs = sf::st_crs(gl$geometry[["point"]]))
      gl$geometry[["point"]] <- gl$geometry[["point"]] %>%
@@ -52,7 +50,9 @@ complete_point_geometry.geolevel <- function(gl) {
     # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
     sf::st_agr(layer) = "constant"
     gl$geometry[["point"]] <- layer %>%
-      sf::st_point_on_surface()
+      sf::st_transform(crs = 3395) %>%
+      sf::st_point_on_surface() %>%
+      sf::st_transform(crs = sf::st_crs(gl$geometry[["polygon"]]))
   }
   gl
 }

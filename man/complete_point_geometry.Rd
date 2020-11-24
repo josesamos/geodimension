@@ -22,9 +22,6 @@ from it.
 \details{
 If the point geometry was already defined, if there are instances with this
 geometry empty, it completes them.
-
-It is recommended to use a projected reference system to avoid errors in
-calculations.
 }
 \examples{
 library(tidyr)
@@ -33,8 +30,9 @@ library(sf)
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = c("geoid")) \%>\%
-  complete_point_geometry()
+           key = c("geoid"))
+# state <-  state \%>\%
+#   complete_point_geometry()
 
 }
 \seealso{
