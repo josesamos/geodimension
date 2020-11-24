@@ -44,6 +44,13 @@ new_geodimension <-
 #'
 #' @examples
 #' library(tidyr)
+#' library(sf)
+#'
+#' region <-
+#'   geolevel(name = "region",
+#'            layer = layer_us_region,
+#'            key = c("geoid"))
+#'
 #'
 #'
 #' @export

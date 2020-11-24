@@ -20,6 +20,13 @@ the lowest and highest level of the dimension are indicated.
 }
 \examples{
 library(tidyr)
+library(sf)
+
+region <-
+  geolevel(name = "region",
+           layer = layer_us_region,
+           key = c("geoid"))
+
 
 
 }
