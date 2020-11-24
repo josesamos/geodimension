@@ -40,7 +40,7 @@ complete_point_geometry.geolevel <- function(gl) {
     # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
     sf::st_agr(layer) = "constant"
     rest <- layer %>%
-      sf::st_transform(crs = 3395) %>%
+ #     sf::st_transform(crs = 3395) %>%
       sf::st_point_on_surface() %>%
       sf::st_transform(crs = sf::st_crs(gl$geometry[["point"]]))
      gl$geometry[["point"]] <- gl$geometry[["point"]] %>%
@@ -50,9 +50,9 @@ complete_point_geometry.geolevel <- function(gl) {
     # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
     sf::st_agr(layer) = "constant"
     gl$geometry[["point"]] <- layer %>%
-      sf::st_transform(crs = 3395) %>%
-      sf::st_point_on_surface() %>%
-      sf::st_transform(crs = sf::st_crs(gl$geometry[["polygon"]]))
+#      sf::st_transform(crs = 3395) %>%
+      sf::st_point_on_surface() # %>%
+#      sf::st_transform(crs = sf::st_crs(gl$geometry[["polygon"]]))
   }
   gl
 }
