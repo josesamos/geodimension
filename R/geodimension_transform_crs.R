@@ -36,7 +36,7 @@ transform_crs.geodimension <- function(gd,
     for (geom in names(gd$geolevel[[layer]]$geometry)) {
       gd$geolevel[[layer]]$geometry[[geom]] <-
         gd$geolevel[[layer]]$geometry[[geom]] %>%
-        sf::st_transform(crs = crs)
+        sf::st_transform(crs = crs, use_gdal = FALSE)
     }
   }
   gd
