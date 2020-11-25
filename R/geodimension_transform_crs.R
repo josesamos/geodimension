@@ -14,13 +14,6 @@
 #' @family configuration functions
 #' @seealso
 #'
-#' @examples
-#' library(tidyr)
-#' library(sf)
-#'
-#' gdt <- gd_us # %>%
-#'   # transform_crs(crs = 3395)
-#'
 #' @export
 transform_crs <- function(gd,
                           crs = NULL) {

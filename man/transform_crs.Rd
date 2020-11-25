@@ -22,14 +22,6 @@ A \code{geodimension}.
 Transform the CRS of all the layers included in the dimension to the one
 indicated.
 }
-\examples{
-library(tidyr)
-library(sf)
-
-gdt <- gd_us # \%>\%
-  # transform_crs(crs = 3395)
-
-}
 \seealso{
 
 
