@@ -1,4 +1,4 @@
-#' `gd_us_city`
+#' `gd_us`
 #'
 #' `geodimension` obtained from vector layers over USA.
 #'
@@ -7,7 +7,7 @@
 #' @format A `geodimension`.
 #' @source
 #'   \url{https://www.census.gov}
-"gd_us_city"
+"gd_us"
 
 #' `layer_us_city`
 #'
