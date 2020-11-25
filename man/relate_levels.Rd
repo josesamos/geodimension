@@ -40,11 +40,47 @@ relate_levels(
 A \code{geodimension}.
 }
 \description{
-Relate levels in a dimension
+Definition of a direct relationship between two levels of the dimension: the
+lower level composes the higher level.
+}
+\details{
+The relationship may exist by having attributes with common values or by
+their geographic attributes. In the latter case, the geometry of the upper
+level must be of the polygon type.
+
+To use the geometric relationship, it must be explicitly indicated by the
+Boolean parameter.
+
+If no top-level attributes are indicated, the attributes that make up the key
+are considered by default, only the corresponding attributes of the lower
+level have to be indicated.
+
+As a special case, if the top level has only one instance, it is not
+necessary to specify any attributes to define the relationship.
 }
 \examples{
 library(tidyr)
+library(sf)
 
+region <-
+  geolevel(name = "region",
+           layer = layer_us_region,
+           key = c("geoid"))
+
+division <-
+  geolevel(name = "division",
+           layer = layer_us_division,
+           key = c("geoid"))
+
+gd <-
+  geodimension(name = "gd_us",
+               level = region) \%>\%
+  add_level(division)
+
+gd <- gd \%>\%
+  relate_levels(lower_level_name = "division",
+                upper_level_name = "region",
+                by_geography = TRUE)
 
 }
 \seealso{

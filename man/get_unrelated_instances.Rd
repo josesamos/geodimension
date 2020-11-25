@@ -3,7 +3,7 @@
 \name{get_unrelated_instances}
 \alias{get_unrelated_instances}
 \alias{get_unrelated_instances.geodimension}
-\title{Relate levels in a dimension}
+\title{Get unrelated instances}
 \usage{
 get_unrelated_instances(gd, lower_level_name = NULL, upper_level_name = NULL)
 
@@ -20,11 +20,37 @@ get_unrelated_instances(gd, lower_level_name = NULL, upper_level_name = NULL)
 A \code{tibble}.
 }
 \description{
-Relate levels in a dimension
+Given two levels between which an explicit relationship is defined, it
+returns the lower-level instances that are not related to any higher-level
+instances.
 }
 \examples{
 library(tidyr)
+library(sf)
 
+region <-
+  geolevel(name = "region",
+           layer = layer_us_region,
+           key = c("geoid"))
+
+division <-
+  geolevel(name = "division",
+           layer = layer_us_division,
+           key = c("geoid"))
+
+gd <-
+  geodimension(name = "gd_us",
+               level = region) \%>\%
+  add_level(division)
+
+gd <- gd \%>\%
+  relate_levels(lower_level_name = "division",
+                upper_level_name = "region",
+                by_geography = TRUE)
+
+ui <- gd \%>\%
+  get_unrelated_instances(lower_level_name = "division",
+                          upper_level_name = "region")
 
 }
 \seealso{
