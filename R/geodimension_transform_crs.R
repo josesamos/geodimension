@@ -1,9 +1,9 @@
-# transform crs ---------------------------------------------------------
+# Transform crs ---------------------------------------------------------
 
-#' Add a level to a dimension
+#' Transform CRS
 #'
-#' Add a level to a dimension. This level can then be related to other levels of
-#' the dimension.
+#' Transform the CRS of all the layers included in the dimension to the one
+#' indicated.
 #'
 #' @param gd A `geodimension` object.
 #' @param crs A coordinate reference system: integer with the EPSG code, or
@@ -16,7 +16,10 @@
 #'
 #' @examples
 #' library(tidyr)
+#' library(sf)
 #'
+#' gdt <- gd_us %>%
+#'   transform_crs(crs = 3395)
 #'
 #' @export
 transform_crs <- function(gd,
@@ -28,6 +31,7 @@ transform_crs <- function(gd,
 #' @export
 transform_crs.geodimension <- function(gd,
                                        crs = NULL) {
+  stopifnot(!is.null(crs))
   for (layer in names(gd$geolevel)) {
     for (geom in names(gd$geolevel[[layer]]$geometry)) {
       gd$geolevel[[layer]]$geometry[[geom]] <-

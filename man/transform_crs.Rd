@@ -3,7 +3,7 @@
 \name{transform_crs}
 \alias{transform_crs}
 \alias{transform_crs.geodimension}
-\title{Add a level to a dimension}
+\title{Transform CRS}
 \usage{
 transform_crs(gd, crs = NULL)
 
@@ -19,12 +19,15 @@ character with proj4string.}
 A \code{geodimension}.
 }
 \description{
-Add a level to a dimension. This level can then be related to other levels of
-the dimension.
+Transform the CRS of all the layers included in the dimension to the one
+indicated.
 }
 \examples{
 library(tidyr)
+library(sf)
 
+gdt <- gd_us \%>\%
+  transform_crs(crs = 3395)
 
 }
 \seealso{
