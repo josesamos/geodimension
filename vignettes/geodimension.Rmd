@@ -93,14 +93,22 @@ county <-
   complete_point_geometry()
 ```
 
-In the same way, the checks are made and the rest of the levels are defined. Although all the layers are of the polygon type, we generate the point layers only for those that we think may be needed. Below is only the definition of the levels.
+In the same way, the checks are made and the rest of the levels are defined. Although all the layers are of the polygon type, we generate the point layers only for those that we think may be needed.
+
+In some cases, latitude and longitude are stored as fields in the attribute table, from which we can generate a layer of points using the `coordinates_to_geometry` function. We can later associate that layer to the corresponding level using the `add_geometry` function mentioned above.
+
+Below is only the definition of the levels.
 
 ```{r message=FALSE, warning=FALSE}
+us_state_point <-
+  coordinates_to_geometry(layer_us_state,
+                          lon_lat = c("intptlon", "intptlat"))
+
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
            key = c("statefp")) %>%
-  complete_point_geometry()
+  add_geometry(layer = us_state_point)
 
 region <-
   geolevel(name = "region",
@@ -228,7 +236,26 @@ With these operations we have defined a `geodimension`.
 
 ## Obtaining information
 
-From it we can obtain the data table to define a dimension in a star schema or the layer or layers associated with that table at the level we need.
+From a `geodimension` we can obtain information in table or layer format, to define a geographic dimension in a star schema. We can also define new versions of the dimension.
+
+We can consult the levels of the `geodimension` using the following function:
+
+```{r }
+gd %>%
+  get_level_names()
+```
+
+A new geodimension is defined by selecting a subset of levels, which we want to take into account when obtaining information, or to define new dimensions.
+
+```{r }
+gds <- gd %>%
+  select_levels(level_names = c("state", "division", "region", "nation"))
+
+gds %>%
+  get_level_names()
+```
+
+From any level of the `geodimension`, a data table can be obtained that includes only the data of the level or all the data inherited from higher levels. For each level you can indicate whether or not a prefix is added to identify the origin of the fields. By default it is added, as you can see below.
 
 ```{r}
 ld <- gd %>%
@@ -240,29 +267,45 @@ ld <- gd %>%
                  inherited = TRUE)
 names(ld)
 
-ll <- gd %>%
-  get_level_layer(level_name = "division",
-                 inherited = TRUE)
-names(ll)
 ```
 
-If we need the data at another level of detail, we can obtain it in a similar way.
+Previously, if we need it, we can obtain the name of the levels from which a level will inherit attributes.
 
 ```{r}
+gd %>%
+  get_higher_level_names(level_name = "state",
+                         indirect_levels = TRUE)
+
 ld <- gd %>%
   get_level_data(level_name = "state",
                  inherited = TRUE)
 names(ld)
 
+```
+
+
+For a level we can obtain the available geometries and a layer with the attribute configuration we want and the selected geometry.
+
+
+```{r, fig.width=7, fig.height=2.5}
+gd %>%
+  get_level_geometries(level_name = "state")
+
 ll <- gd %>%
   get_level_layer(level_name = "state",
+                  geometry = "polygon",
                   only_key = TRUE)
 
 plot(ll)
 ```
 
-In addition to these functions, the package offers other support functions to aid in the definition of levels (for example, to determine the key attributes of a layer), to relate instances of levels whose relationship is not immediately established, or to configure the `geodimension` to obtain a customized output.
+In addition to these functions, the package offers the possibility to change the CRS of all the layers of a geodimension using the `transform_crs` function.
 
 
 # Conclusions
 
+The geographic dimension is very relevant for multidimensional systems. We can enrich a basic geographic dimension through information available in vector layers, generally, we will need several layers.
+
+Relationships between layers can be established through attributes or through the geographic relationships between their instances. The definition of these relationships can be systematized and is in part what is intended in this package.
+
+Additionally, once a `geodimension` has been defined, with the support of this package, we can easily obtain the attribute table with all the attributes of the levels that we want, if we need it, and also the layers with associated geographic information.
