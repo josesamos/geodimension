@@ -34,7 +34,7 @@ The rest of this document is structured as follows: First, an illustrative examp
 
 Suppose we have a multidimensional design on US data and the geographic dimension is defined at the *city* level. For each city we have its name and the code of the state in which it is located. It would be interesting to have other levels of detail in this dimension to be able to perform roll-up operations.
 
-With this objective, we look for layers of geographic information. In [Uited States Census Bureau](https://www.census.gov) we find layers at various levels of detail, including *place*, *county*, *state*, *region*, *division* and *nation*. We have obtained them (for *place* we have selected only the cities) and we have stored[^2] them in `layer_us_city`, `layer_us_county`, `layer_us_state`, `layer_us_region`, `layer_us_division` and `layer_us_nation`, respectively.
+With this objective, we look for layers of geographic information. In [United States Census Bureau](https://www.census.gov) we find layers at various levels of detail, including *place*, *county*, *state*, *region*, *division* and *nation*. We have obtained them (for *place* we have selected only the cities) and we have stored[^2] them in `layer_us_city`, `layer_us_county`, `layer_us_state`, `layer_us_region`, `layer_us_division` and `layer_us_nation`, respectively.
 
 [^2]: To take up less space in the package, its geometry has also been simplified.
 
@@ -308,4 +308,4 @@ The geographic dimension is very relevant for multidimensional systems. We can e
 
 Relationships between layers can be established through attributes or through the geographic relationships between their instances. The definition of these relationships can be systematized and is in part what is intended in this package.
 
-Additionally, once a `geodimension` has been defined, with the support of this package, we can easily obtain the attribute table with all the attributes of the levels that we want, if we need it, and also the layers with associated geographic information.
+Additionally, once a `geodimension` has been defined, with the support of this package, we can easily obtain the attribute table with all the attributes of the levels that we want (if we need it), and also the layers with associated geographic information.
