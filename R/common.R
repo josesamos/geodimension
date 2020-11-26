@@ -82,9 +82,9 @@ check_key <- function(table, key = NULL) {
 #'
 #' If we start from a geographic layer, it initially transforms it into a table.
 #'
-#' The crs of the new layer is indicated. If a crs is not indicated, it
-#' considers the layer's crs by default and, if it is not a layer, it considers
-#' 4326 crs (WGS84).
+#' The CRS of the new layer is indicated. If a CRS is not indicated, it
+#' considers the layer's CRS by default and, if it is not a layer, it considers
+#' 4326 CRS (WGS84).
 #'
 #' @param table A `tibble` object.
 #' @param lon_lat A vector, name of longitude and latitude attributes.
