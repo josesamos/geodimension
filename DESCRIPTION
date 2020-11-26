@@ -32,7 +32,8 @@ Imports:
     generics,
     sf,
     magrittr,
-    rlang
+    rlang,
+    pander
 Suggests: 
     testthat,
     knitr,
