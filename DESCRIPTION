@@ -1,14 +1,21 @@
 Package: geodimension
 Type: Package
 Title: Definition of Geographic Dimensions
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     person(given = "Jose",
            family = "Samos",
            role = c("aut", "cre", "cph"),
            email = "jsamos@ugr.es",
            comment = c(ORCID = "0000-0002-4457-3439"))
-Description: Definition of geographic dimensions.
+Description: The geographic dimension plays a fundamental role 
+    in multidimensional systems. To define a geographic dimension 
+    in a star schema, we need a table with attributes corresponding 
+    to the levels of the dimension. Additionally, we will also need 
+    one or more geographic layers to represent the data using this 
+    dimension. The goal of geodimension is to support the definition 
+    of geographic dimensions from layers of geographic information 
+    related to each other.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB
