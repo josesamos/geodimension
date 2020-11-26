@@ -3,7 +3,7 @@
 \name{get_level_geometries}
 \alias{get_level_geometries}
 \alias{get_level_geometries.geodimension}
-\title{Add a level to a dimension}
+\title{Get level geometries}
 \usage{
 get_level_geometries(gd, level_name = NULL)
 
@@ -18,21 +18,22 @@ get_level_geometries(gd, level_name = NULL)
 A vector of names.
 }
 \description{
-Add a level to a dimension. This level can then be related to other levels of
-the dimension.
+Gets the geometry types defined for a given level.
 }
 \examples{
 library(tidyr)
 
+lg <- gd_us \%>\%
+  get_level_geometries(level_name = "state")
 
 }
 \seealso{
 
 
-Other information gathering functions: 
+Other information output functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_data}()},
 \code{\link{get_level_layer}()},
 \code{\link{get_level_names}()}
 }
-\concept{information gathering functions}
+\concept{information output functions}

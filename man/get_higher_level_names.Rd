@@ -3,7 +3,7 @@
 \name{get_higher_level_names}
 \alias{get_higher_level_names}
 \alias{get_higher_level_names.geodimension}
-\title{Add a level to a dimension}
+\title{Get higher level names}
 \usage{
 get_higher_level_names(gd, level_name = NULL, indirect_levels = FALSE)
 
@@ -20,21 +20,28 @@ get_higher_level_names(gd, level_name = NULL, indirect_levels = FALSE)
 A vector of names.
 }
 \description{
-Add a level to a dimension. This level can then be related to other levels of
-the dimension.
+Get the names of levels included in the \code{geodimension} that are at a higher
+level than the indicated level. You can get only the direct levels or the
+levels reached by passing through other levels.
+}
+\details{
+The indicated level may inherit properties of the obtained levels.
 }
 \examples{
 library(tidyr)
 
+ln <- gd_us \%>\%
+  get_higher_level_names(level_name = "state",
+                         indirect_levels = TRUE)
 
 }
 \seealso{
 
 
-Other information gathering functions: 
+Other information output functions: 
 \code{\link{get_level_data}()},
 \code{\link{get_level_geometries}()},
 \code{\link{get_level_layer}()},
 \code{\link{get_level_names}()}
 }
-\concept{information gathering functions}
+\concept{information output functions}

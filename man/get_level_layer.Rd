@@ -3,24 +3,26 @@
 \name{get_level_layer}
 \alias{get_level_layer}
 \alias{get_level_layer.geodimension}
-\title{Add a level to a dimension}
+\title{Get level layer}
 \usage{
 get_level_layer(
   gd,
   level_name = NULL,
-  attributes = FALSE,
+  geometry = NULL,
+  only_key = FALSE,
   surrogate_key = FALSE,
   inherited = FALSE,
-  geometry = NULL
+  add_prefix = TRUE
 )
 
 \method{get_level_layer}{geodimension}(
   gd,
   level_name = NULL,
-  attributes = FALSE,
+  geometry = NULL,
+  only_key = FALSE,
   surrogate_key = FALSE,
   inherited = FALSE,
-  geometry = NULL
+  add_prefix = TRUE
 )
 }
 \arguments{
@@ -28,33 +30,45 @@ get_level_layer(
 
 \item{level_name}{A string.}
 
-\item{attributes}{A boolean.}
+\item{geometry}{A string.}
+
+\item{only_key}{A boolean.}
 
 \item{surrogate_key}{A boolean.}
 
 \item{inherited}{A boolean.}
 
-\item{geometry}{A string.}
+\item{add_prefix}{A boolean.}
 }
 \value{
 A \code{sf} object.
 }
 \description{
-Add a level to a dimension. This level can then be related to other levels of
-the dimension.
+Get a geographic layer associated with a level. We can select the geometry
+and, using booleans, which attributes are included in the layer's table: only
+the attributes that make up the key, the subrogate key, inherited attributes.
+}
+\details{
+In case of inheriting attributes from other levels, in the table, these can
+have as a prefix the name of the level in uppercase.
 }
 \examples{
 library(tidyr)
+library(sf)
 
+ll <- gd_us \%>\%
+  get_level_layer(level_name = "division",
+                  only_key = TRUE,
+                  surrogate_key = TRUE)
 
 }
 \seealso{
 
 
-Other information gathering functions: 
+Other information output functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_data}()},
 \code{\link{get_level_geometries}()},
 \code{\link{get_level_names}()}
 }
-\concept{information gathering functions}
+\concept{information output functions}

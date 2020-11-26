@@ -1,9 +1,12 @@
 # get higher level names ---------------------------------------------------------------
 
-#' Add a level to a dimension
+#' Get higher level names
 #'
-#' Add a level to a dimension. This level can then be related to other levels of
-#' the dimension.
+#' Get the names of levels included in the `geodimension` that are at a higher
+#' level than the indicated level. You can get only the direct levels or the
+#' levels reached by passing through other levels.
+#'
+#' The indicated level may inherit properties of the obtained levels.
 #'
 #' @param gd A `geodimension` object.
 #' @param level_name A string.
@@ -11,12 +14,15 @@
 #'
 #' @return A vector of names.
 #'
-#' @family information gathering functions
+#' @family information output functions
 #' @seealso
 #'
 #' @examples
 #' library(tidyr)
 #'
+#' ln <- gd_us %>%
+#'   get_higher_level_names(level_name = "state",
+#'                          indirect_levels = TRUE)
 #'
 #' @export
 get_higher_level_names <- function(gd,
@@ -38,5 +44,5 @@ get_higher_level_names.geodimension <- function(gd,
   } else {
     levels <- names(gd$relation[[level_name]])[-1]
   }
-  levels
+  sort(levels)
 }

@@ -3,7 +3,7 @@
 \name{select_levels}
 \alias{select_levels}
 \alias{select_levels.geodimension}
-\title{Add a level to a dimension}
+\title{Select levels}
 \usage{
 select_levels(gd, level_names = NULL)
 
@@ -18,12 +18,14 @@ select_levels(gd, level_names = NULL)
 A \code{geodimension} object.
 }
 \description{
-Add a level to a dimension. This level can then be related to other levels of
-the dimension.
+Select a subset of the levels of the dimension so that the rest of the levels
+no longer belong to it.
 }
 \examples{
 library(tidyr)
 
+gds <- gd_us \%>\%
+  select_levels(level_names = c("division", "region", "nation"))
 
 }
 \seealso{

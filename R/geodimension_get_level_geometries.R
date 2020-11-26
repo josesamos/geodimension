@@ -1,22 +1,22 @@
 # get level geometries ---------------------------------------------------------------
 
-
-#' Add a level to a dimension
+#' Get level geometries
 #'
-#' Add a level to a dimension. This level can then be related to other levels of
-#' the dimension.
+#' Gets the geometry types defined for a given level.
 #'
 #' @param gd A `geodimension` object.
 #' @param level_name A string.
 #'
 #' @return A vector of names.
 #'
-#' @family information gathering functions
+#' @family information output functions
 #' @seealso
 #'
 #' @examples
 #' library(tidyr)
 #'
+#' lg <- gd_us %>%
+#'   get_level_geometries(level_name = "state")
 #'
 #' @export
 get_level_geometries <- function(gd,
@@ -30,6 +30,6 @@ get_level_geometries <- function(gd,
 get_level_geometries.geodimension <- function(gd,
                                               level_name = NULL) {
   stopifnot(level_name %in% names(gd$geolevel))
-  names(gd$geolevel[[level_name]]$geometry)
+  sort(names(gd$geolevel[[level_name]]$geometry))
 }
 

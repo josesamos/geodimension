@@ -3,7 +3,7 @@
 \name{get_level_names}
 \alias{get_level_names}
 \alias{get_level_names.geodimension}
-\title{Add a level to a dimension}
+\title{Get level names}
 \usage{
 get_level_names(gd)
 
@@ -16,21 +16,22 @@ get_level_names(gd)
 A vector of names.
 }
 \description{
-Add a level to a dimension. This level can then be related to other levels of
-the dimension.
+Get the names of levels included in the \code{geodimension}.
 }
 \examples{
 library(tidyr)
 
+ln <- gd_us \%>\%
+  get_level_names()
 
 }
 \seealso{
 
 
-Other information gathering functions: 
+Other information output functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_data}()},
 \code{\link{get_level_geometries}()},
 \code{\link{get_level_layer}()}
 }
-\concept{information gathering functions}
+\concept{information output functions}

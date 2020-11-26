@@ -1,7 +1,17 @@
 # complete relation by geography -----------------------------------------------------
 
-#' complete relation by geography
+#' Complete relation by geography
 #'
+#' Two levels can be related by attributes or by geography (if the upper level
+#' has polygon-type geometry). Once related, if there are unrelated instances,
+#' you can try to relate those instances using this function, which considers
+#' alternative geographic relationships.
+#'
+#' For example, if the lower level has associated point and polygon geometries,
+#' only point geometry is considered to establish the initial relationship.
+#' Polygon geometry is also considered in this function.
+#'
+#' It does not necessarily succeed trying to relate the instances.
 #'
 #' @param gd A `geodimension` object.
 #' @param lower_level_name A string, name of the lower level.
@@ -14,7 +24,15 @@
 #'
 #' @examples
 #' library(tidyr)
+#' library(sf)
 #'
+#' ui <- gd_us %>%
+#'   get_unrelated_instances(lower_level_name = "state",
+#'                           upper_level_name = "division")
+#'
+#' gd <- gd_us %>%
+#'   complete_relation_by_geography(lower_level_name = "state",
+#'                           upper_level_name = "division")
 #'
 #' @export
 complete_relation_by_geography <- function(gd,

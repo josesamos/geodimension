@@ -3,11 +3,11 @@
 \name{get_level_data}
 \alias{get_level_data}
 \alias{get_level_data.geodimension}
-\title{Add a level to a dimension}
+\title{Get level data}
 \usage{
-get_level_data(gd, level_name = NULL, inherited = FALSE)
+get_level_data(gd, level_name = NULL, inherited = FALSE, add_prefix = TRUE)
 
-\method{get_level_data}{geodimension}(gd, level_name = NULL, inherited = FALSE)
+\method{get_level_data}{geodimension}(gd, level_name = NULL, inherited = FALSE, add_prefix = TRUE)
 }
 \arguments{
 \item{gd}{A \code{geodimension} object.}
@@ -15,26 +15,38 @@ get_level_data(gd, level_name = NULL, inherited = FALSE)
 \item{level_name}{A string.}
 
 \item{inherited}{A boolean.}
+
+\item{add_prefix}{A boolean.}
 }
 \value{
 A \code{tibble} object.
 }
 \description{
-Add a level to a dimension. This level can then be related to other levels of
-the dimension.
+Get the data table of a given level.
+}
+\details{
+It allows selecting whether we want only the data defined locally in the
+level or also those that it inherits from other higher levels with which it
+is related.
+
+In case of inheriting attributes from other levels, in the table, these can
+have as a prefix the name of the level in uppercase.
 }
 \examples{
 library(tidyr)
 
+ld <- gd_us \%>\%
+  get_level_data(level_name = "state",
+                 inherited = TRUE)
 
 }
 \seealso{
 
 
-Other information gathering functions: 
+Other information output functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_geometries}()},
 \code{\link{get_level_layer}()},
 \code{\link{get_level_names}()}
 }
-\concept{information gathering functions}
+\concept{information output functions}

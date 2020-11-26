@@ -1,9 +1,9 @@
 # select levels ---------------------------------------------------------
 
-#' Add a level to a dimension
+#' Select levels
 #'
-#' Add a level to a dimension. This level can then be related to other levels of
-#' the dimension.
+#' Select a subset of the levels of the dimension so that the rest of the levels
+#' no longer belong to it.
 #'
 #' @param gd A `geodimension` object.
 #' @param level_names A vector of names.
@@ -16,6 +16,8 @@
 #' @examples
 #' library(tidyr)
 #'
+#' gds <- gd_us %>%
+#'   select_levels(level_names = c("division", "region", "nation"))
 #'
 #' @export
 select_levels <- function(gd, level_names = NULL) {
@@ -40,5 +42,3 @@ select_levels.geodimension <- function(gd, level_names = NULL) {
   }
   gd
 }
-
-
