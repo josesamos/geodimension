@@ -15,7 +15,8 @@ Description: The geographic dimension plays a fundamental role
     one or more geographic layers to represent the data using this 
     dimension. The goal of geodimension is to support the definition 
     of geographic dimensions from layers of geographic information 
-    related to each other.
+    related to each other. It makes it easy to define relationships 
+    between layers and obtain the necessary data from them.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB
