@@ -3,8 +3,9 @@
 #' Get level layer
 #'
 #' Get a geographic layer associated with a level. We can select the geometry
-#' and, using booleans, which attributes are included in the layer's table: only
-#' the attributes that make up the key, the subrogate key, inherited attributes.
+#' and, using boolean parameters, which attributes are included in the layer's
+#' table: only the attributes that make up the key, the subrogate key, inherited
+#' attributes.
 #'
 #' In case of inheriting attributes from other levels, in the table, these can
 #' have as a prefix the name of the level in uppercase.
