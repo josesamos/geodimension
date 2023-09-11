@@ -11,7 +11,6 @@
 #' @return A `geodimension` object.
 #'
 #' @family level association functions
-#' @seealso
 #'
 #' @examples
 #' region <-
@@ -68,7 +67,7 @@ calculate_inherited_relationships <- function(gd,
       rel_names <- names(gd$relation[[upper_level]])[-1]
       rel_names <- generics::setdiff(rel_names, upper_level_names)
       for (rel in rel_names) {
-        gd$relation[[level_name]] <- gd$relation[[level_name]] %>%
+        gd$relation[[level_name]] <- gd$relation[[level_name]] |>
           dplyr::left_join(gd$relation[[upper_level]][, c(upper_level, rel)], by = upper_level)
       }
       upper_level_names <- names(gd$relation[[level_name]])[-1]

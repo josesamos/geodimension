@@ -21,9 +21,7 @@ A vector of names.
 Gets the geometry types defined for a given level.
 }
 \examples{
-library(tidyr)
-
-lg <- gd_us \%>\%
+lg <- gd_us |>
   get_level_geometries(level_name = "state")
 
 }

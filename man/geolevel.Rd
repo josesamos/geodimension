@@ -40,12 +40,7 @@ region <-
 
 }
 \seealso{
-Other level definition functions: 
-\code{\link{add_geometry}()},
-\code{\link{check_key}()},
-\code{\link{complete_point_geometry}()},
-\code{\link{coordinates_to_geometry}()},
-\code{\link{get_empty_geometry_instances}()},
-\code{\link{get_geometry}()}
+Other geolevel definition functions: 
+\code{\link{add_geometry}()}
 }
-\concept{level definition functions}
+\concept{geolevel definition functions}

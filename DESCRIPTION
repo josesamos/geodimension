@@ -1,43 +1,42 @@
-Package: geodimension
 Type: Package
+Package: geodimension
 Title: Definition of Geographic Dimensions
 Version: 1.0.0.9000
 Authors@R: 
-    person(given = "Jose",
-           family = "Samos",
-           role = c("aut", "cre", "cph"),
-           email = "jsamos@ugr.es",
+    person("Jose", "Samos", , "jsamos@ugr.es", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-4457-3439"))
-Description: The geographic dimension plays a fundamental role 
-    in multidimensional systems. To define a geographic dimension 
-    in a star schema, we need a table with attributes corresponding 
-    to the levels of the dimension. Additionally, we will also need 
-    one or more geographic layers to represent the data using this 
-    dimension. The goal of this package is to support the definition 
-    of geographic dimensions from layers of geographic information 
-    related to each other. It makes it easy to define relationships 
-    between layers and obtain the necessary data from them.
+Description: The geographic dimension plays a fundamental role in
+    multidimensional systems. To define a geographic dimension in a star
+    schema, we need a table with attributes corresponding to the levels of
+    the dimension. Additionally, we will also need one or more geographic
+    layers to represent the data using this dimension. The goal of this
+    package is to support the definition of geographic dimensions from
+    layers of geographic information related to each other. It makes it
+    easy to define relationships between layers and obtain the necessary
+    data from them.
 License: MIT + file LICENSE
+URL: https://josesamos.github.io/geodimension/,
+    https://github.com/josesamos/geodimension
+BugReports: https://github.com/josesamos/geodimension/issues
+Depends: 
+    R (>= 2.10)
+Imports: 
+    dplyr,
+    generics,
+    methods,
+    rlang,
+    sf,
+    snakecase,
+    tibble,
+    tidyselect
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Imports: 
-    dplyr,
-    readr,
-    tibble,
-    tidyr,
-    tidyselect,
-    generics,
-    sf,
-    magrittr,
-    rlang,
-    pander
-Suggests: 
-    testthat,
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr
-Depends: 
-    R (>= 2.10)

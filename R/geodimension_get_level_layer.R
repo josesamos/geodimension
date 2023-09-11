@@ -21,13 +21,9 @@
 #' @return A `sf` object.
 #'
 #' @family information output functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#' library(sf)
-#'
-#' ll <- gd_us %>%
+#' ll <- gd_us |>
 #'   get_level_layer(level_name = "division",
 #'                   only_key = TRUE,
 #'                   surrogate_key = TRUE)
@@ -60,10 +56,10 @@ get_level_layer.geodimension <- function(gd,
     stopifnot(geometry %in% names(gd$geolevel[[level_name]]$geometry))
   }
   layer <- gd$geolevel[[level_name]]$geometry[[geometry]]
-  data <- gd %>%
+  data <- gd |>
     get_level_data(level_name = level_name, inherited = inherited, add_prefix = add_prefix)
   if (only_key) {
-    data <- data %>%
+    data <- data |>
       dplyr::select(c(attr(gd$geolevel[[level_name]], "surrogate_key"), attr(gd$geolevel[[level_name]], "key")))
   }
   if (surrogate_key) {
@@ -72,8 +68,8 @@ get_level_layer.geodimension <- function(gd,
     sel <- c(1)
   }
 
-  data %>%
-    dplyr::left_join(layer, by = names(data)[1]) %>%
-    dplyr::select(!sel) %>%
+  data |>
+    dplyr::left_join(layer, by = names(data)[1]) |>
+    dplyr::select(!sel) |>
     sf::st_as_sf()
 }

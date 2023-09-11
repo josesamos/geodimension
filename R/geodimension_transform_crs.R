@@ -12,7 +12,6 @@
 #' @return A `geodimension`.
 #'
 #' @family configuration functions
-#' @seealso
 #'
 #' @export
 transform_crs <- function(gd,
@@ -28,7 +27,7 @@ transform_crs.geodimension <- function(gd,
   for (layer in names(gd$geolevel)) {
     for (geom in names(gd$geolevel[[layer]]$geometry)) {
       gd$geolevel[[layer]]$geometry[[geom]] <-
-        gd$geolevel[[layer]]$geometry[[geom]] %>%
+        gd$geolevel[[layer]]$geometry[[geom]] |>
         sf::st_transform(crs = crs, use_gdal = FALSE)
     }
   }

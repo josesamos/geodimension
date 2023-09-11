@@ -22,9 +22,7 @@ Select a subset of the levels of the dimension so that the rest of the levels
 no longer belong to it.
 }
 \examples{
-library(tidyr)
-
-gds <- gd_us \%>\%
+gds <- gd_us |>
   select_levels(level_names = c("division", "region", "nation"))
 
 }

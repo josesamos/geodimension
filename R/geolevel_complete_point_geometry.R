@@ -18,16 +18,12 @@
 #' @return A `geolevel` object.
 #'
 #' @family level definition functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#' library(sf)
-#'
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = c("geoid")) %>%
+#'            key = c("geoid")) |>
 #'   complete_point_geometry()
 #'
 #' @export
@@ -45,27 +41,27 @@ complete_point_geometry.geolevel <- function(gl, use_intermediate_projected_crs 
     # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
     sf::st_agr(layer) = "constant"
     if (use_intermediate_projected_crs) {
-      rest <- layer %>%
+      rest <- layer |>
         sf::st_transform(crs = 3395)
     } else {
       rest <- layer
     }
-    rest <- rest %>%
-      sf::st_point_on_surface() %>%
+    rest <- rest |>
+      sf::st_point_on_surface() |>
       sf::st_transform(crs = sf::st_crs(gl$geometry[["point"]]))
-    gl$geometry[["point"]] <- gl$geometry[["point"]] %>%
+    gl$geometry[["point"]] <- gl$geometry[["point"]] |>
       tibble::add_row(rest)
   } else {
     layer <- gl$geometry[["polygon"]]
     # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
     sf::st_agr(layer) = "constant"
     if (use_intermediate_projected_crs) {
-      gl$geometry[["point"]] <- layer %>%
-        sf::st_transform(crs = 3395) %>%
-        sf::st_point_on_surface()  %>%
+      gl$geometry[["point"]] <- layer |>
+        sf::st_transform(crs = 3395) |>
+        sf::st_point_on_surface()  |>
         sf::st_transform(crs = sf::st_crs(gl$geometry[["polygon"]]))
     } else {
-      gl$geometry[["point"]] <- layer %>%
+      gl$geometry[["point"]] <- layer |>
         sf::st_point_on_surface()
     }
   }

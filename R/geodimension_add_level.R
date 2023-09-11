@@ -10,12 +10,8 @@
 #' @return A `geodimension`.
 #'
 #' @family level association functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#' library(sf)
-#'
 #' region <-
 #'   geolevel(name = "region",
 #'            layer = layer_us_region,
@@ -28,7 +24,7 @@
 #'
 #' gd <-
 #'   geodimension(name = "gd_us",
-#'                level = region) %>%
+#'                level = region) |>
 #'   add_level(division)
 #'
 #' @export

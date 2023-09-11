@@ -29,8 +29,6 @@ considers the layer's CRS by default and, if it is not a layer, it considers
 4326 CRS (WGS84).
 }
 \examples{
-library(sf)
-
 us_state_point <-
   coordinates_to_geometry(layer_us_state,
                           lon_lat = c("intptlon", "intptlat"))
@@ -38,10 +36,8 @@ us_state_point <-
 }
 \seealso{
 Other level definition functions: 
-\code{\link{add_geometry}()},
 \code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},
-\code{\link{geolevel}()},
 \code{\link{get_empty_geometry_instances}()},
 \code{\link{get_geometry}()}
 }

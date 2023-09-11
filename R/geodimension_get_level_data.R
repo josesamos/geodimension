@@ -19,12 +19,9 @@
 #' @return A `tibble` object.
 #'
 #' @family information output functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#'
-#' ld <- gd_us %>%
+#' ld <- gd_us |>
 #'   get_level_data(level_name = "state",
 #'                  inherited = TRUE)
 #'
@@ -53,7 +50,7 @@ get_level_data.geodimension <- function(gd,
       if (add_prefix) {
         names(relation)[2] <- paste(toupper(names(relation)[2]), names(relation)[2], sep = "_")
       }
-      data <- data %>%
+      data <- data |>
         dplyr::left_join(relation, by = stats::setNames(level_name, key))
       rel_data <- gd$geolevel[[rel]]$data
       if (add_prefix) {
@@ -62,7 +59,7 @@ get_level_data.geodimension <- function(gd,
       key_rel <- names(rel_data)[1]
       names(data)[length(names(data))] <- key_rel
       fk <- names(data)[length(names(data))]
-      data <- data %>%
+      data <- data |>
         dplyr::left_join(rel_data, by = stats::setNames(key_rel, fk))
     }
   }

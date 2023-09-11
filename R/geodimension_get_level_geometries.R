@@ -10,12 +10,9 @@
 #' @return A vector of names.
 #'
 #' @family information output functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#'
-#' lg <- gd_us %>%
+#' lg <- gd_us |>
 #'   get_level_geometries(level_name = "state")
 #'
 #' @export

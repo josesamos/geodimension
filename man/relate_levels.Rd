@@ -59,9 +59,6 @@ As a special case, if the top level has only one instance, it is not
 necessary to specify any attributes to define the relationship.
 }
 \examples{
-library(tidyr)
-library(sf)
-
 region <-
   geolevel(name = "region",
            layer = layer_us_region,
@@ -74,10 +71,10 @@ division <-
 
 gd <-
   geodimension(name = "gd_us",
-               level = region) \%>\%
+               level = region) |>
   add_level(division)
 
-gd <- gd \%>\%
+gd <- gd |>
   relate_levels(lower_level_name = "division",
                 upper_level_name = "region",
                 by_geography = TRUE)

@@ -15,12 +15,9 @@
 #' @return A vector of names.
 #'
 #' @family information output functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#'
-#' ln <- gd_us %>%
+#' ln <- gd_us |>
 #'   get_higher_level_names(level_name = "state",
 #'                          indirect_levels = TRUE)
 #'

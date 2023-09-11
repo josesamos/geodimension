@@ -27,12 +27,8 @@
 #' @return A `geodimension`.
 #'
 #' @family level association functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#' library(sf)
-#'
 #' region <-
 #'   geolevel(name = "region",
 #'            layer = layer_us_region,
@@ -45,10 +41,10 @@
 #'
 #' gd <-
 #'   geodimension(name = "gd_us",
-#'                level = region) %>%
+#'                level = region) |>
 #'   add_level(division)
 #'
-#' gd <- gd %>%
+#' gd <- gd |>
 #'   relate_levels(lower_level_name = "division",
 #'                 upper_level_name = "region",
 #'                 by_geography = TRUE)
@@ -106,7 +102,7 @@ relate_levels.geodimension <- function(gd,
       layer <- sf::st_point_on_surface(layer)
     }
 
-    res <- sf::st_join(layer, gd$geolevel[[upper_level_name]]$geometry[["polygon"]], join = sf::st_within) %>%
+    res <- sf::st_join(layer, gd$geolevel[[upper_level_name]]$geometry[["polygon"]], join = sf::st_within) |>
       sf::st_drop_geometry()
     names(res) <- c(lower_level_name, upper_level_name)
 
@@ -114,12 +110,12 @@ relate_levels.geodimension <- function(gd,
     stopifnot(multiplicity_n_1)
 
     gd$relation[[lower_level_name]] <-
-      gd$relation[[lower_level_name]] %>%
+      gd$relation[[lower_level_name]] |>
       dplyr::left_join(res, by = lower_level_name)
 
   } else if (attr(gd$geolevel[[upper_level_name]], "n_instances_data") == 1) {
     stopifnot(is.null(lower_level_attributes))
-    gd$relation[[lower_level_name]] <- gd$relation[[lower_level_name]] %>%
+    gd$relation[[lower_level_name]] <- gd$relation[[lower_level_name]] |>
       tibble::add_column(!!upper_level_name := gd$relation[[upper_level_name]][[upper_level_name]])
   } else {
     lower_data <-
@@ -131,8 +127,8 @@ relate_levels.geodimension <- function(gd,
     upper_data <-
       gd$geolevel[[upper_level_name]]$data[, c(attr(gd$geolevel[[upper_level_name]], "surrogate_key"),
                                                upper_level_key)]
-    lower_data <- lower_data %>%
-      dplyr::left_join(upper_data, by = upper_level_key) %>%
+    lower_data <- lower_data |>
+      dplyr::left_join(upper_data, by = upper_level_key) |>
       dplyr::select(c(
         attr(gd$geolevel[[lower_level_name]], "surrogate_key"),
         attr(gd$geolevel[[upper_level_name]], "surrogate_key")
@@ -142,7 +138,7 @@ relate_levels.geodimension <- function(gd,
     multiplicity_n_1 <- nrow(lower_data) == nrow(gd$relation[[lower_level_name]])
     stopifnot(multiplicity_n_1)
 
-    gd$relation[[lower_level_name]] <- gd$relation[[lower_level_name]] %>%
+    gd$relation[[lower_level_name]] <- gd$relation[[lower_level_name]] |>
       dplyr::left_join(lower_data, by = lower_level_name)
 
   }
