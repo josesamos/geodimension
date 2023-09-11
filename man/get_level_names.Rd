@@ -26,8 +26,6 @@ ln <- gd_us \%>\%
 
 }
 \seealso{
-
-
 Other information output functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_data}()},

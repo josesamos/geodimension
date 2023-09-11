@@ -40,8 +40,6 @@ empty_geometry_instances <- state \%>\%
 
 }
 \seealso{
-
-
 Other level definition functions: 
 \code{\link{add_geometry}()},
 \code{\link{check_key}()},

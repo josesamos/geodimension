@@ -42,8 +42,6 @@ gd <-
 
 }
 \seealso{
-
-
 Other level association functions: 
 \code{\link{complete_relation_by_geography}()},
 \code{\link{geodimension}()},

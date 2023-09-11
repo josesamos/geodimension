@@ -23,8 +23,6 @@ Transform the CRS of all the layers included in the dimension to the one
 indicated.
 }
 \seealso{
-
-
 Other configuration functions: 
 \code{\link{select_levels}()}
 }

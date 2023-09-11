@@ -27,8 +27,6 @@ geometry <- get_geometry(layer_us_region)
 
 }
 \seealso{
-
-
 Other level definition functions: 
 \code{\link{add_geometry}()},
 \code{\link{check_key}()},

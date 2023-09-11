@@ -84,8 +84,6 @@ gd <- gd \%>\%
 
 }
 \seealso{
-
-
 Other level association functions: 
 \code{\link{add_level}()},
 \code{\link{complete_relation_by_geography}()},

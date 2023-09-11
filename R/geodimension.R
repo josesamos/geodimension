@@ -1,18 +1,30 @@
+
 #' `geodimension` S3 class
 #'
-#' Internal low-level constructor that creates new objects with the correct
-#' structure.
+#' A `geodimension` object is created. A `geodimension` allows us to relate
+#' levels. In addition to the name of the `geodimension` , a `level` has to be
+#' given.
 #'
 #' @param name A string, name of the dimension.
 #' @param level A `geolevel`.
 #'
 #' @return A `geodimension` object.
 #'
-#' @keywords internal
-new_geodimension <-
-  function(name = NULL,
-           level = NULL) {
-
+#' @family level association functions
+#' @seealso
+#'
+#' @examples
+#' region <-
+#'   geolevel(name = "region",
+#'            layer = layer_us_region,
+#'            key = c("geoid"))
+#'
+#' gd <-
+#'   geodimension(name = "gd_us",
+#'                level = region)
+#'
+#' @export
+geodimension <- function(name = NULL, level = NULL) {
     geolevel <- list()
     geolevel[[attr(level, "name")]] <- level
 
@@ -29,38 +41,6 @@ new_geodimension <-
       class = "geodimension"
     )
   }
-
-#' `geodimension` S3 class
-#'
-#' A `geodimension` object is created. A `geodimension` allows you to relate
-#' levels. In addition to the name of the `geodimension` , a `level` has to be
-#' given.
-#'
-#' @inheritParams new_geodimension
-#'
-#' @return A `geodimension` object.
-#'
-#' @family level association functions
-#' @seealso
-#'
-#' @examples
-#' library(tidyr)
-#' library(sf)
-#'
-#' region <-
-#'   geolevel(name = "region",
-#'            layer = layer_us_region,
-#'            key = c("geoid"))
-#'
-#' gd <-
-#'   geodimension(name = "gd_us",
-#'                level = region)
-#'
-#' @export
-geodimension <- function(name = NULL,
-                         level = NULL) {
-  new_geodimension(name, level)
-}
 
 # calculate inherited relationships ---------------------------------------
 

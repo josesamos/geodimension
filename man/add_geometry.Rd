@@ -47,8 +47,6 @@ state <-
 
 }
 \seealso{
-
-
 Other level definition functions: 
 \code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},

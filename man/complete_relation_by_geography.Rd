@@ -54,8 +54,6 @@ gd <- gd_us \%>\%
 
 }
 \seealso{
-
-
 Other level association functions: 
 \code{\link{add_level}()},
 \code{\link{geodimension}()},

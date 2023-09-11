@@ -33,8 +33,6 @@ The name of the level is used later to reference it and relate it to other
 levels.
 }
 \examples{
-library(sf)
-
 region <-
   geolevel(name = "region",
            layer = layer_us_region,
@@ -42,8 +40,6 @@ region <-
 
 }
 \seealso{
-
-
 Other level definition functions: 
 \code{\link{add_geometry}()},
 \code{\link{check_key}()},

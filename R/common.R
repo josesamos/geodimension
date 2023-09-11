@@ -30,7 +30,7 @@ get_geometry <- function(layer) {
   } else if (length(intersect(geo, c("POINT", "MULTIPOINT"))) > 0) {
     return("point")
   }
-  return("other")
+  geo
 }
 
 

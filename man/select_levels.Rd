@@ -29,8 +29,6 @@ gds <- gd_us \%>\%
 
 }
 \seealso{
-
-
 Other configuration functions: 
 \code{\link{transform_crs}()}
 }

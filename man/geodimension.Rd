@@ -15,14 +15,11 @@ geodimension(name = NULL, level = NULL)
 A \code{geodimension} object.
 }
 \description{
-A \code{geodimension} object is created. A \code{geodimension} allows you to relate
+A \code{geodimension} object is created. A \code{geodimension} allows us to relate
 levels. In addition to the name of the \code{geodimension} , a \code{level} has to be
 given.
 }
 \examples{
-library(tidyr)
-library(sf)
-
 region <-
   geolevel(name = "region",
            layer = layer_us_region,
@@ -34,8 +31,6 @@ gd <-
 
 }
 \seealso{
-
-
 Other level association functions: 
 \code{\link{add_level}()},
 \code{\link{complete_relation_by_geography}()},

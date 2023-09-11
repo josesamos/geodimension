@@ -37,8 +37,6 @@ us_state_point <-
 
 }
 \seealso{
-
-
 Other level definition functions: 
 \code{\link{add_geometry}()},
 \code{\link{check_key}()},

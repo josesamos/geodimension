@@ -36,8 +36,6 @@ ln <- gd_us \%>\%
 
 }
 \seealso{
-
-
 Other information output functions: 
 \code{\link{get_level_data}()},
 \code{\link{get_level_geometries}()},
