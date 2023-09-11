@@ -22,9 +22,6 @@ Get the instances of the data table that do not have associated geometry for
 the specified geometry type.
 }
 \examples{
-library(tidyr)
-library(sf)
-
 us_state_point <-
   coordinates_to_geometry(layer_us_state,
                           lon_lat = c("intptlon", "intptlat"))
@@ -32,22 +29,18 @@ us_state_point <-
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = c("geoid")) \%>\%
+           key = c("geoid")) |>
   add_geometry(layer = us_state_point)
 
-empty_geometry_instances <- state \%>\%
+empty_geometry_instances <- state |>
   get_empty_geometry_instances(geometry = "point")
 
 }
 \seealso{
-
-
 Other level definition functions: 
-\code{\link{add_geometry}()},
 \code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},
 \code{\link{coordinates_to_geometry}()},
-\code{\link{geolevel}()},
 \code{\link{get_geometry}()}
 }
 \concept{level definition functions}

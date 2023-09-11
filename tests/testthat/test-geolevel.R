@@ -1,8 +1,4 @@
-context("test geolevel")
-
-library(sf) # It has to be included even if it is not used directly.
-
-test_that("geolevel works", {
+test_that("geolevel()", {
   region <-
     geolevel(name = "region",
              layer = layer_us_region,
@@ -35,4 +31,23 @@ test_that("geolevel works", {
   )
   expect_equal(names(region$geometry$polygon),
                c("region_key", "geom"))
+})
+
+
+test_that("add_geometry()", {
+  us_state_point <-
+    coordinates_to_geometry(layer_us_state,
+                            lon_lat = c("intptlon", "intptlat"))
+
+  state <-
+    geolevel(name = "state",
+             layer = layer_us_state,
+             key = c("geoid")) %>%
+    add_geometry(layer = us_state_point)
+
+  expect_equal(names(state$geometry$polygon),
+               c("state_key", "Shape"))
+
+  expect_equal(names(state$geometry$point),
+               c("state_key", "geometry"))
 })

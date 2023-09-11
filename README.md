@@ -1,12 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# geodimension
+# geodimension <a href="https://josesamos.github.io/geodimension/"><img src="man/figures/logo.png" align="right" height="139" alt="geodimension website" /></a>
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.com/josesamos/geodimension.svg?branch=master)](https://travis-ci.com/josesamos/geodimension)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/geodimension)](https://CRAN.R-project.org/package=geodimension)
+[![R-CMD-check](https://github.com/josesamos/geodimension/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/josesamos/geodimension/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The *geographic dimension* plays a fundamental role in multidimensional
@@ -57,14 +58,12 @@ have obtained geographic layers for each of these levels:
 `layer_us_nation`. From each layer, we define a `geolevel`.
 
 ``` r
-library(tidyr)
-library(sf)
 library(geodimension)
 
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = c("geoid")) %>%
+           key = c("geoid")) |>
   complete_point_geometry()
 
 region <-
@@ -89,9 +88,9 @@ interested.
 ``` r
 gd <-
   geodimension(name = "gd_us",
-               level = region) %>%
-  add_level(division) %>%
-  add_level(state) %>%
+               level = region) |>
+  add_level(division) |>
+  add_level(state) |>
   add_level(nation)
 ```
 
@@ -100,13 +99,13 @@ based on common attributes, others on geographic relationships between
 their instances.
 
 ``` r
-gd <- gd %>%
+gd <- gd |>
   relate_levels(lower_level_name = "state",
                 lower_level_attributes = c("division"),
-                upper_level_name = "division") %>%
+                upper_level_name = "division") |>
   relate_levels(lower_level_name = "division",
                 upper_level_name = "region",
-                by_geography = TRUE) %>%
+                by_geography = TRUE) |>
   relate_levels(lower_level_name = "region",
                 upper_level_name = "nation",
                 by_geography = TRUE)
@@ -120,13 +119,13 @@ obtain the data table to define a dimension in a star schema or the
 layer or layers associated with that table at the level we need.
 
 ``` r
-ld <- gd %>%
+ld <- gd |>
   get_level_data(level_name = "division")
 names(ld)
 #> [1] "division_key" "geoid"        "divisionce"   "affgeoid"     "name"        
 #> [6] "lsad"         "aland"        "awater"
 
-ld <- gd %>%
+ld <- gd |>
   get_level_data(level_name = "division",
                  inherited = TRUE)
 names(ld)
@@ -138,7 +137,7 @@ names(ld)
 #> [16] "REGION_affgeoid"   "REGION_name"       "REGION_lsad"      
 #> [19] "REGION_aland"      "REGION_awater"
 
-ll <- gd %>%
+ll <- gd |>
   get_level_layer(level_name = "division",
                  inherited = TRUE)
 names(ll)
@@ -155,7 +154,7 @@ If we need the data at another level of detail, we can obtain it in a
 similar way.
 
 ``` r
-ld <- gd %>%
+ld <- gd |>
   get_level_data(level_name = "state",
                  inherited = TRUE)
 names(ld)
@@ -173,7 +172,7 @@ names(ld)
 #> [34] "REGION_affgeoid"       "REGION_name"           "REGION_lsad"          
 #> [37] "REGION_aland"          "REGION_awater"
 
-ll <- gd %>%
+ll <- gd |>
   get_level_layer(level_name = "state",
                   only_key = TRUE)
 

@@ -11,12 +11,9 @@
 #' @return A `geodimension` object.
 #'
 #' @family configuration functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#'
-#' gds <- gd_us %>%
+#' gds <- gd_us |>
 #'   select_levels(level_names = c("division", "region", "nation"))
 #'
 #' @export

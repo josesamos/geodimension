@@ -30,24 +30,17 @@ may not be correct. A projected intermediate geometry can be used to perform
 the operation, indicating it by the boolean parameter.
 }
 \examples{
-library(tidyr)
-library(sf)
-
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = c("geoid")) \%>\%
+           key = c("geoid")) |>
   complete_point_geometry()
 
 }
 \seealso{
-
-
 Other level definition functions: 
-\code{\link{add_geometry}()},
 \code{\link{check_key}()},
 \code{\link{coordinates_to_geometry}()},
-\code{\link{geolevel}()},
 \code{\link{get_empty_geometry_instances}()},
 \code{\link{get_geometry}()}
 }

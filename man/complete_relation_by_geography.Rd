@@ -41,21 +41,16 @@ Polygon geometry is also considered in this function.
 It does not necessarily succeed trying to relate the instances.
 }
 \examples{
-library(tidyr)
-library(sf)
-
-ui <- gd_us \%>\%
+ui <- gd_us |>
   get_unrelated_instances(lower_level_name = "state",
                           upper_level_name = "division")
 
-gd <- gd_us \%>\%
+gd <- gd_us |>
   complete_relation_by_geography(lower_level_name = "state",
                           upper_level_name = "division")
 
 }
 \seealso{
-
-
 Other level association functions: 
 \code{\link{add_level}()},
 \code{\link{geodimension}()},

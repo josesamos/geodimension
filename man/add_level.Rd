@@ -22,9 +22,6 @@ Once a level is part of the dimension, it can then be related to other levels
 of the dimension.
 }
 \examples{
-library(tidyr)
-library(sf)
-
 region <-
   geolevel(name = "region",
            layer = layer_us_region,
@@ -37,13 +34,11 @@ division <-
 
 gd <-
   geodimension(name = "gd_us",
-               level = region) \%>\%
+               level = region) |>
   add_level(division)
 
 }
 \seealso{
-
-
 Other level association functions: 
 \code{\link{complete_relation_by_geography}()},
 \code{\link{geodimension}()},

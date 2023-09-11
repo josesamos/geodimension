@@ -13,11 +13,8 @@
 #' @return A string.
 #'
 #' @family level definition functions
-#' @seealso
 #'
 #' @examples
-#' library(sf)
-#'
 #' geometry <- get_geometry(layer_us_region)
 #'
 #' @export
@@ -30,7 +27,7 @@ get_geometry <- function(layer) {
   } else if (length(intersect(geo, c("POINT", "MULTIPOINT"))) > 0) {
     return("point")
   }
-  return("other")
+  geo
 }
 
 
@@ -48,11 +45,8 @@ get_geometry <- function(layer) {
 #' @return A boolean.
 #'
 #' @family level definition functions
-#' @seealso
 #'
 #' @examples
-#' library(sf)
-#'
 #' is_key <- check_key(layer_us_region, key = c("name"))
 #'
 #' @export
@@ -64,9 +58,9 @@ check_key <- function(table, key = NULL) {
   key <- unique(key)
   stopifnot(key %in% names(table))
 
-  table_key <- table %>%
-    dplyr::select(tidyselect::all_of(key)) %>%
-    dplyr::group_by_at(key) %>%
+  table_key <- table |>
+    dplyr::select(tidyselect::all_of(key)) |>
+    dplyr::group_by_at(key) |>
     dplyr::summarize(.groups = "drop")
 
   (nrow(table) == nrow(table_key))
@@ -94,11 +88,8 @@ check_key <- function(table, key = NULL) {
 #' @return A `sf` object.
 #'
 #' @family level definition functions
-#' @seealso
 #'
 #' @examples
-#' library(sf)
-#'
 #' us_state_point <-
 #'   coordinates_to_geometry(layer_us_state,
 #'                           lon_lat = c("intptlon", "intptlat"))
@@ -119,7 +110,7 @@ coordinates_to_geometry <- function(table, lon_lat = NULL, crs = NULL) {
     crs <- 4326 # WGS84
   }
 
-  table %>%
+  table |>
     sf::st_as_sf(
       coords = lon_lat,
       crs = crs,

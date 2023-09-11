@@ -21,15 +21,11 @@ A vector of names.
 Gets the geometry types defined for a given level.
 }
 \examples{
-library(tidyr)
-
-lg <- gd_us \%>\%
+lg <- gd_us |>
   get_level_geometries(level_name = "state")
 
 }
 \seealso{
-
-
 Other information output functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_data}()},

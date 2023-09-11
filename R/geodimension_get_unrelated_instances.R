@@ -13,12 +13,8 @@
 #' @return A `tibble`.
 #'
 #' @family level association functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#' library(sf)
-#'
 #' region <-
 #'   geolevel(name = "region",
 #'            layer = layer_us_region,
@@ -31,15 +27,15 @@
 #'
 #' gd <-
 #'   geodimension(name = "gd_us",
-#'                level = region) %>%
+#'                level = region) |>
 #'   add_level(division)
 #'
-#' gd <- gd %>%
+#' gd <- gd |>
 #'   relate_levels(lower_level_name = "division",
 #'                 upper_level_name = "region",
 #'                 by_geography = TRUE)
 #'
-#' ui <- gd %>%
+#' ui <- gd |>
 #'   get_unrelated_instances(lower_level_name = "division",
 #'                           upper_level_name = "region")
 #'

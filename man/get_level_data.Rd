@@ -33,16 +33,12 @@ In case of inheriting attributes from other levels, in the table, these can
 have as a prefix the name of the level in uppercase.
 }
 \examples{
-library(tidyr)
-
-ld <- gd_us \%>\%
+ld <- gd_us |>
   get_level_data(level_name = "state",
                  inherited = TRUE)
 
 }
 \seealso{
-
-
 Other information output functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_geometries}()},

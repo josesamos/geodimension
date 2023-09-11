@@ -55,8 +55,6 @@ Each of the layers that we have obtained represents a conceptual level of the ge
 We can previously check if a set of attributes form a key of the layer using the `check_key` function.
 
 ```{r message=FALSE}
-library(tidyr)
-library(sf)
 library(geodimension)
 
 names(layer_us_city)
@@ -89,7 +87,7 @@ get_geometry(layer_us_county)
 county <-
   geolevel(name = "county",
            layer = layer_us_county,
-           key = c("geoid")) %>%
+           key = c("geoid")) |>
   complete_point_geometry()
 ```
 
@@ -107,7 +105,7 @@ us_state_point <-
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = c("statefp")) %>%
+           key = c("statefp")) |>
   add_geometry(layer = us_state_point)
 
 region <-
@@ -135,11 +133,11 @@ To define a `geodimension`, we give it a name and start from any `geolevel`. Nex
 ```{r}
 gd <-
   geodimension(name = "gd_us",
-               level = region) %>%
-  add_level(division) %>%
-  add_level(state) %>%
-  add_level(nation) %>%
-  add_level(city) %>%
+               level = region) |>
+  add_level(division) |>
+  add_level(state) |>
+  add_level(nation) |>
+  add_level(city) |>
   add_level(county)
 ```
 
@@ -158,13 +156,13 @@ Next, we can define the relationships that we want to consider between the level
 The relationships between *state*, *region*, *division* and *nation* are defined below.
 
 ```{r message=FALSE, warning=FALSE}
-gd <- gd %>%
+gd <- gd |>
   relate_levels(lower_level_name = "state",
                 lower_level_attributes = c("division"),
-                upper_level_name = "division") %>%
+                upper_level_name = "division") |>
   relate_levels(lower_level_name = "division",
                 upper_level_name = "region",
-                by_geography = TRUE) %>%
+                by_geography = TRUE) |>
   relate_levels(lower_level_name = "region",
                 upper_level_name = "nation")
 ```
@@ -178,10 +176,10 @@ Finally, as *nation* has only one instance, it relates directly to all instances
 In addition to these relationships there is a clear relationship between *city* and *state* and also between *county* and *state*. In both cases it can be defined by attributes.
 
 ```{r}
-gd <- gd %>%
+gd <- gd |>
   relate_levels(lower_level_name = "city",
                 lower_level_attributes = c("statefp"),
-                upper_level_name = "state") %>%
+                upper_level_name = "state") |>
   relate_levels(lower_level_name = "county",
                 lower_level_attributes = c("statefp"),
                 upper_level_name = "state")
@@ -190,7 +188,7 @@ gd <- gd %>%
 The relationship between *city* and *county* is a bit fuzzy (at least for me), it depends on the state, the city and also the county. In any case, if we are interested in establishing a relationship, we could define it between *city* and *state* using the geographical properties of the levels, since county includes polygon-type geometry.
 
 ```{r message=FALSE, warning=FALSE}
-gd <- gd %>%
+gd <- gd |>
   relate_levels(lower_level_name = "city",
                 upper_level_name = "county",
                 by_geography = TRUE)
@@ -200,7 +198,7 @@ We can check if all the instances have been related using the following function
 
 ```{r}
 nrow(
-  gd %>% get_unrelated_instances(lower_level_name = "city",
+  gd |> get_unrelated_instances(lower_level_name = "city",
                                  upper_level_name = "county")
 )
 ```
@@ -211,7 +209,7 @@ If we did a similar check for each defined relation, we would observe that all t
 
 ```{r}
 nrow(
-  gd %>% get_unrelated_instances(lower_level_name = "state",
+  gd |> get_unrelated_instances(lower_level_name = "state",
                                  upper_level_name = "division")
 )
 ```
@@ -219,7 +217,7 @@ nrow(
 If we look at the content:
 
 ```{r, results = "asis", echo = FALSE}
-t <-gd %>% get_unrelated_instances(lower_level_name = "state",
+t <-gd |> get_unrelated_instances(lower_level_name = "state",
                                  upper_level_name = "division")
 pander::pandoc.table(t, split.table = Inf)
 ```
@@ -227,7 +225,7 @@ pander::pandoc.table(t, split.table = Inf)
 The region or division code does not correspond to any of the existing ones. If we want to relate all the instances of *state* to the *nation* level, we must define the relationship explicitly (there are other solutions but we will not consider them here, in any case they can be generated from this one).
 
 ```{r }
-gd <- gd %>%
+gd <- gd |>
   relate_levels(lower_level_name = "state",
                 upper_level_name = "nation")
 ```
@@ -241,28 +239,28 @@ From a `geodimension` we can obtain information in table or layer format, to def
 We can consult the levels of the `geodimension` using the following function:
 
 ```{r }
-gd %>%
+gd |>
   get_level_names()
 ```
 
 A new geodimension is defined by selecting a subset of levels, which we want to take into account when obtaining information, or to define new dimensions.
 
 ```{r }
-gds <- gd %>%
+gds <- gd |>
   select_levels(level_names = c("state", "division", "region", "nation"))
 
-gds %>%
+gds |>
   get_level_names()
 ```
 
 From any level of the `geodimension`, a data table can be obtained that includes only the data of the level or all the data inherited from higher levels. For each level you can indicate whether or not a prefix is added to identify the origin of the fields. By default it is added, as you can see below.
 
 ```{r}
-ld <- gd %>%
+ld <- gd |>
   get_level_data(level_name = "division")
 names(ld)
 
-ld <- gd %>%
+ld <- gd |>
   get_level_data(level_name = "division",
                  inherited = TRUE)
 names(ld)
@@ -272,11 +270,11 @@ names(ld)
 Previously, if we need it, we can obtain the name of the levels from which a level will inherit attributes.
 
 ```{r}
-gd %>%
+gd |>
   get_higher_level_names(level_name = "state",
                          indirect_levels = TRUE)
 
-ld <- gd %>%
+ld <- gd |>
   get_level_data(level_name = "state",
                  inherited = TRUE)
 names(ld)
@@ -288,10 +286,10 @@ For a level we can obtain the available geometries and a layer with the attribut
 
 
 ```{r, fig.width=7, fig.height=2.5}
-gd %>%
+gd |>
   get_level_geometries(level_name = "state")
 
-ll <- gd %>%
+ll <- gd |>
   get_level_layer(level_name = "state",
                   geometry = "polygon",
                   only_key = TRUE)

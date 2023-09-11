@@ -19,15 +19,11 @@ A vector of names.
 Get the names of levels included in the \code{geodimension}.
 }
 \examples{
-library(tidyr)
-
-ln <- gd_us \%>\%
+ln <- gd_us |>
   get_level_names()
 
 }
 \seealso{
-
-
 Other information output functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_data}()},

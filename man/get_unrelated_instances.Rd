@@ -25,9 +25,6 @@ returns the lower-level instances that are not related to any higher-level
 instances.
 }
 \examples{
-library(tidyr)
-library(sf)
-
 region <-
   geolevel(name = "region",
            layer = layer_us_region,
@@ -40,22 +37,20 @@ division <-
 
 gd <-
   geodimension(name = "gd_us",
-               level = region) \%>\%
+               level = region) |>
   add_level(division)
 
-gd <- gd \%>\%
+gd <- gd |>
   relate_levels(lower_level_name = "division",
                 upper_level_name = "region",
                 by_geography = TRUE)
 
-ui <- gd \%>\%
+ui <- gd |>
   get_unrelated_instances(lower_level_name = "division",
                           upper_level_name = "region")
 
 }
 \seealso{
-
-
 Other level association functions: 
 \code{\link{add_level}()},
 \code{\link{complete_relation_by_geography}()},

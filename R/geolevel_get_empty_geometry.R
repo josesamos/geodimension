@@ -11,12 +11,8 @@
 #' @return A `tibble`.
 #'
 #' @family level definition functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#' library(sf)
-#'
 #' us_state_point <-
 #'   coordinates_to_geometry(layer_us_state,
 #'                           lon_lat = c("intptlon", "intptlat"))
@@ -24,10 +20,10 @@
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = c("geoid")) %>%
+#'            key = c("geoid")) |>
 #'   add_geometry(layer = us_state_point)
 #'
-#' empty_geometry_instances <- state %>%
+#' empty_geometry_instances <- state |>
 #'   get_empty_geometry_instances(geometry = "point")
 #'
 #' @export

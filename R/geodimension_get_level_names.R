@@ -10,12 +10,9 @@
 #' @return A vector of names.
 #'
 #' @family information output functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#'
-#' ln <- gd_us %>%
+#' ln <- gd_us |>
 #'   get_level_names()
 #'
 #' @export

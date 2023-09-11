@@ -20,17 +20,13 @@
 #' @return A `geodimension` object.
 #'
 #' @family level association functions
-#' @seealso
 #'
 #' @examples
-#' library(tidyr)
-#' library(sf)
-#'
-#' ui <- gd_us %>%
+#' ui <- gd_us |>
 #'   get_unrelated_instances(lower_level_name = "state",
 #'                           upper_level_name = "division")
 #'
-#' gd <- gd_us %>%
+#' gd <- gd_us |>
 #'   complete_relation_by_geography(lower_level_name = "state",
 #'                           upper_level_name = "division")
 #'
@@ -84,7 +80,7 @@ complete_relation_by_geography.geodimension <- function(gd,
         layer <- sf::st_point_on_surface(layer)
       }
 
-      res <- sf::st_join(layer, gd$geolevel[[upper_level_name]]$geometry[["polygon"]], join = sf::st_within) %>%
+      res <- sf::st_join(layer, gd$geolevel[[upper_level_name]]$geometry[["polygon"]], join = sf::st_within) |>
         sf::st_drop_geometry()
       names(res) <- c(lower_level_name, upper_level_name)
 

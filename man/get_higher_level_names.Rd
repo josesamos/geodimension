@@ -28,16 +28,12 @@ levels reached by passing through other levels.
 The indicated level may inherit properties of the obtained levels.
 }
 \examples{
-library(tidyr)
-
-ln <- gd_us \%>\%
+ln <- gd_us |>
   get_higher_level_names(level_name = "state",
                          indirect_levels = TRUE)
 
 }
 \seealso{
-
-
 Other information output functions: 
 \code{\link{get_level_data}()},
 \code{\link{get_level_geometries}()},

@@ -21,20 +21,14 @@ It will only be valid if one of the three geometries is interpreted: \emph{point
 \emph{line} or \emph{polygon}.
 }
 \examples{
-library(sf)
-
 geometry <- get_geometry(layer_us_region)
 
 }
 \seealso{
-
-
 Other level definition functions: 
-\code{\link{add_geometry}()},
 \code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},
 \code{\link{coordinates_to_geometry}()},
-\code{\link{geolevel}()},
 \code{\link{get_empty_geometry_instances}()}
 }
 \concept{level definition functions}
