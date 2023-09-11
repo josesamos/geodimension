@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# geodimension
+# geodimension <a href="https://josesamos.github.io/geodimension/"><img src="man/figures/logo.png" align="right" height="139" alt="geodimension website" /></a>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/geodimension)](https://CRAN.R-project.org/package=geodimension)
