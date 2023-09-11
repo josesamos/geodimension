@@ -31,6 +31,7 @@ Imports:
     tidyselect
 Suggests: 
     knitr,
+    pander,
     rmarkdown,
     testthat
 VignetteBuilder: 

@@ -5,8 +5,9 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.com/josesamos/geodimension.svg?branch=master)](https://travis-ci.com/josesamos/geodimension)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/geodimension)](https://CRAN.R-project.org/package=geodimension)
+[![R-CMD-check](https://github.com/josesamos/geodimension/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/josesamos/geodimension/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The *geographic dimension* plays a fundamental role in multidimensional
