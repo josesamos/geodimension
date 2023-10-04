@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/geodimension)](https://CRAN.R-project.org/package=geodimension)
 [![R-CMD-check](https://github.com/josesamos/geodimension/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/josesamos/geodimension/actions/workflows/R-CMD-check.yaml)
+[![Downloads](http://cranlogs.r-pkg.org/badges/geodimension?color=brightgreen)](http://www.r-pkg.org/pkg/geodimension)
 <!-- badges: end -->
 
 The *geographic dimension* plays a fundamental role in multidimensional systems. To define a geographic dimension in a star schema, we need a table with attributes corresponding to the levels of the dimension. Additionally, we will also need one or more geographic layers to represent the data using this dimension. 

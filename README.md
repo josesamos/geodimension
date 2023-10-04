@@ -8,6 +8,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/geodimension)](https://CRAN.R-project.org/package=geodimension)
 [![R-CMD-check](https://github.com/josesamos/geodimension/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/josesamos/geodimension/actions/workflows/R-CMD-check.yaml)
+[![Downloads](http://cranlogs.r-pkg.org/badges/geodimension?color=brightgreen)](http://www.r-pkg.org/pkg/geodimension)
 <!-- badges: end -->
 
 The *geographic dimension* plays a fundamental role in multidimensional
