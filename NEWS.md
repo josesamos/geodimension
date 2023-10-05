@@ -1,5 +1,6 @@
 # geodimension 1.0.0.9000
-
+* Update documentation and website.
+* Use core pipe operator.
 
 # geodimension 1.0.0
 * Initial functionality.
