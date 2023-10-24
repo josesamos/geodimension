@@ -11,9 +11,9 @@ geolevel(name = NULL, layer = NULL, attributes = NULL, key = NULL)
 
 \item{layer}{A \code{sf} object.}
 
-\item{attributes}{A vector, selected attributes.}
+\item{attributes}{A string vector, selected attributes.}
 
-\item{key}{A vector, attributes that compose the key.}
+\item{key}{A string vector, attributes that compose the key.}
 }
 \value{
 A \code{geolevel} object.
