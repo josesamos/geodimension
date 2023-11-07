@@ -5,7 +5,7 @@
 \alias{complete_point_geometry.geolevel}
 \title{Complete point geometry}
 \usage{
-complete_point_geometry(gl, use_intermediate_projected_crs = FALSE)
+complete_point_geometry(gl, use_intermediate_projected_crs)
 
 \method{complete_point_geometry}{geolevel}(gl, use_intermediate_projected_crs = FALSE)
 }
@@ -33,7 +33,7 @@ the operation, indicating it by the boolean parameter.
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = c("geoid")) |>
+           key = "geoid") |>
   complete_point_geometry()
 
 }

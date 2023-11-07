@@ -23,7 +23,7 @@ given.
 region <-
   geolevel(name = "region",
            layer = layer_us_region,
-           key = c("geoid"))
+           key = "geoid")
 
 gd <-
   geodimension(name = "gd_us",

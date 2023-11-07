@@ -29,7 +29,7 @@ us_state_point <-
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = c("geoid")) |>
+           key = "geoid") |>
   add_geometry(layer = us_state_point)
 
 empty_geometry_instances <- state |>

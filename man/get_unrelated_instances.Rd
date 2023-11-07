@@ -28,12 +28,12 @@ instances.
 region <-
   geolevel(name = "region",
            layer = layer_us_region,
-           key = c("geoid"))
+           key = "geoid")
 
 division <-
   geolevel(name = "division",
            layer = layer_us_division,
-           key = c("geoid"))
+           key = "geoid")
 
 gd <-
   geodimension(name = "gd_us",

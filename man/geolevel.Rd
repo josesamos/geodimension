@@ -20,9 +20,8 @@ A \code{geolevel} object.
 }
 \description{
 A \code{geolevel} object is created from a given geographic layer. The attributes
-of the layer to be included in the level can be indicated, and the subset of
-these that make up the natural key. If no attribute is indicated, all are
-considered. In any case, the attributes that make up the key must be
+of the layer to be included in the level can be indicated; if no attribute is
+indicated, all are considered. The attributes that make up the key must be
 indicated.
 }
 \details{
@@ -36,7 +35,7 @@ levels.
 region <-
   geolevel(name = "region",
            layer = layer_us_region,
-           key = c("geoid"))
+           key = "geoid")
 
 }
 \seealso{

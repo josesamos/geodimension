@@ -16,7 +16,7 @@
 #' region <-
 #'   geolevel(name = "region",
 #'            layer = layer_us_region,
-#'            key = c("geoid"))
+#'            key = "geoid")
 #'
 #' gd <-
 #'   geodimension(name = "gd_us",
@@ -94,12 +94,12 @@ calculate_inherited_relationships <- function(gd,
 #' region <-
 #'   geolevel(name = "region",
 #'            layer = layer_us_region,
-#'            key = c("geoid"))
+#'            key = "geoid")
 #'
 #' division <-
 #'   geolevel(name = "division",
 #'            layer = layer_us_division,
-#'            key = c("geoid"))
+#'            key = "geoid")
 #'
 #' gd <-
 #'   geodimension(name = "gd_us",
@@ -472,12 +472,12 @@ get_level_names.geodimension <- function(gd) {
 #' region <-
 #'   geolevel(name = "region",
 #'            layer = layer_us_region,
-#'            key = c("geoid"))
+#'            key = "geoid")
 #'
 #' division <-
 #'   geolevel(name = "division",
 #'            layer = layer_us_division,
-#'            key = c("geoid"))
+#'            key = "geoid")
 #'
 #' gd <-
 #'   geodimension(name = "gd_us",

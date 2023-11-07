@@ -126,7 +126,7 @@ geolevel <-
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = c("geoid")) |>
+#'            key = "geoid") |>
 #'   add_geometry(layer = us_state_point)
 #'
 #' @export
@@ -142,14 +142,14 @@ add_geometry.geolevel <- function(gl,
   stopifnot("layer does not include sf object." = methods::is(layer, "sf"))
   geometry <- get_geometry(layer)
   if (!(geometry %in% c("polygon", "point", "line"))) {
-    stop(sprintf('layer has unsupported geometry: %s.', geometry[1]))
+    stop(sprintf('`layer` has unsupported geometry: %s.', geometry[1]))
   }
   stopifnot("This geometry type is already defined for the layer." = !(geometry %in% names(gl$geometry)))
   if (is.null(level_key)) {
     level_key <- attr(gl, "key")
   } else {
     level_key <- validate_attributes(names(gl$data), level_key)
-    stopifnot("level_key is not a key o the level." = nrow(gl$data) == nrow(unique(gl$data[, level_key])))
+    stopifnot("`level_key` is not a key of the level." = nrow(gl$data) == nrow(unique(gl$data[, level_key])))
   }
   if (is.null(layer_key)) {
     layer_key <- level_key
@@ -246,7 +246,7 @@ surrogate_key_name <- function(name) {
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = c("geoid")) |>
+#'            key = "geoid") |>
 #'   add_geometry(layer = us_state_point)
 #'
 #' empty_geometry_instances <- state |>
@@ -261,11 +261,11 @@ get_empty_geometry_instances <- function(gl,
 
 #' @rdname get_empty_geometry_instances
 #' @export
-get_empty_geometry_instances.geolevel <- function(gl,
-                                                  geometry = NULL) {
-  stopifnot(geometry %in% names(gl$geometry))
+get_empty_geometry_instances.geolevel <- function(gl, geometry = NULL) {
   if (is.null(geometry)) {
     geometry <- names(gl$geometry)[1]
+  } else {
+    stopifnot("This geometry is not included in the geolevel." = geometry %in% names(gl$geometry))
   }
   gl$data[!(gl$data[[1]] %in% gl$geometry[[geometry]][[1]]), ]
 }
@@ -295,14 +295,13 @@ get_empty_geometry_instances.geolevel <- function(gl,
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = c("geoid")) |>
+#'            key = "geoid") |>
 #'   complete_point_geometry()
 #'
 #' @export
-complete_point_geometry <- function(gl, use_intermediate_projected_crs = FALSE) {
+complete_point_geometry <- function(gl, use_intermediate_projected_crs) {
   UseMethod("complete_point_geometry")
 }
-
 
 #' @rdname complete_point_geometry
 #' @export
@@ -339,5 +338,3 @@ complete_point_geometry.geolevel <- function(gl, use_intermediate_projected_crs 
   }
   gl
 }
-
-
