@@ -1,11 +1,7 @@
-context("test coordinates_to_geometry")
-
-library(sf) # It has to be included even if it is not used directly.
-
-test_that("coordinates_to_geometry works", {
+test_that("coordinates_to_geometry()", {
   us_state_point <-
     coordinates_to_geometry(layer_us_state,
-                            lon_lat = c("intptlon", "intptlat"))
+                            lon_lat = c("intPtlon", "intptlat"))
   expect_equal(
     attributes(us_state_point),
     list(

@@ -54,9 +54,9 @@ check_key <- function(table, key = NULL) {
   if ("sf" %in% class(table)) {
     table <- tibble::tibble((sf::st_drop_geometry(table)))
   }
-  stopifnot(!is.null(key))
+  stopifnot("The attributes that make up the key need to be indicated." = !is.null(key))
   key <- unique(key)
-  stopifnot(key %in% names(table))
+  stopifnot("The attributes that make up the key must be included in the table." = key %in% names(table))
 
   table_key <- table |>
     dplyr::select(tidyselect::all_of(key)) |>
@@ -95,24 +95,26 @@ check_key <- function(table, key = NULL) {
 #'                           lon_lat = c("intptlon", "intptlat"))
 #'
 #' @export
-coordinates_to_geometry <- function(table, lon_lat = NULL, crs = NULL) {
+coordinates_to_geometry <- function(table, lon_lat = c("intptlon", "intptlat"), crs = NULL) {
   if ("sf" %in% class(table)) {
     if (is.null(crs)) {
       crs <- sf::st_crs(table)
     }
     table <- tibble::tibble((sf::st_drop_geometry(table)))
   }
-  stopifnot(!is.null(lon_lat))
   lon_lat <- unique(lon_lat)
-  stopifnot(length(lon_lat) == 2)
-  stopifnot(lon_lat %in% names(table))
+  stopifnot("Two attributes must be indicated: longitude and latitude." = length(lon_lat) == 2)
+  names <- names(table)
+  lon <- grep(lon_lat[1], names, ignore.case = TRUE)
+  lat <- grep(lon_lat[2], names, ignore.case = TRUE)
+  stopifnot("Two attributes of the table must be indicated." = length(lon) > 0 & length(lat) > 0)
   if (is.null(crs)) {
     crs <- 4326 # WGS84
   }
 
   table |>
     sf::st_as_sf(
-      coords = lon_lat,
+      coords = names[c(lon, lat)],
       crs = crs,
       remove = TRUE
     )

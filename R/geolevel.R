@@ -2,9 +2,8 @@
 #' `geolevel` S3 class
 #'
 #' A `geolevel` object is created from a given geographic layer. The attributes
-#' of the layer to be included in the level can be indicated, and the subset of
-#' these that make up the natural key. If no attribute is indicated, all are
-#' considered. In any case, the attributes that make up the key must be
+#' of the layer to be included in the level can be indicated; if no attribute is
+#' indicated, all are considered. The attributes that make up the key must be
 #' indicated.
 #'
 #' A level can have several associated geometries (point, polygon or line). The
@@ -26,7 +25,7 @@
 #' region <-
 #'   geolevel(name = "region",
 #'            layer = layer_us_region,
-#'            key = c("geoid"))
+#'            key = "geoid")
 #'
 #' @importFrom rlang :=
 #'
@@ -37,7 +36,7 @@ geolevel <-
            attributes = NULL,
            key = NULL) {
     stopifnot("Missing geolevel name." = !is.null(name))
-    stopifnot("Layer does not include an sf object." = methods::is(layer, "sf"))
+    stopifnot("Layer does not include an `sf` object." = methods::is(layer, "sf"))
     geometry <- get_geometry(layer)
     if (!(geometry %in% c("polygon", "point", "line"))) {
       stop(sprintf('layer has unsupported geometry: %s.', geometry[1]))

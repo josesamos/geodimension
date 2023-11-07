@@ -4,7 +4,7 @@
 \alias{coordinates_to_geometry}
 \title{Transform coordinates to point geometry}
 \usage{
-coordinates_to_geometry(table, lon_lat = NULL, crs = NULL)
+coordinates_to_geometry(table, lon_lat = c("intptlon", "intptlat"), crs = NULL)
 }
 \arguments{
 \item{table}{A \code{tibble} object.}

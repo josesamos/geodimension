@@ -1,4 +1,5 @@
 # geodimension (development version)
+* Include error messages in parameter validations.
 
 # geodimension 1.0.1
 * Update documentation and website.
