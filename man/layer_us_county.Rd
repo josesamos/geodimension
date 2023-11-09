@@ -3,17 +3,34 @@
 \docType{data}
 \name{layer_us_county}
 \alias{layer_us_county}
-\title{\code{layer_us_county}}
+\title{\code{gd_us}}
 \format{
+A \code{geodimension}.
+
+A \code{sf} object.
+
 A \code{sf} object.
 }
 \source{
+\url{https://www.census.gov}
+\code{layer_us_city}
+
+Point geometry layer, with data for US cities.
+
+\url{https://www.census.gov}
+\code{layer_us_county}
+
+Polygon geometry layer, with data for US counties.
+
 \url{https://www.census.gov}
 }
 \usage{
 layer_us_county
 }
 \description{
-Polygon geometry layer, with data for US counties.
+\code{geodimension} obtained from vector layers over USA.
+}
+\details{
+It includes the levels city, county, state, region, division and nation.
 }
 \keyword{datasets}

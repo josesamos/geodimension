@@ -7,7 +7,7 @@
 #' @format A `geodimension`.
 #' @source
 #'   \url{https://www.census.gov}
-"gd_us"
+# "gd_us"
 
 #' `layer_us_city`
 #'
@@ -16,7 +16,7 @@
 #' @format A `sf` object.
 #' @source
 #'   \url{https://www.census.gov}
-"layer_us_city"
+# "layer_us_city"
 
 #' `layer_us_county`
 #'
