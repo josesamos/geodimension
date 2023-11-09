@@ -6,8 +6,8 @@
 #' indicated, all are considered. The attributes that make up the key must be
 #' indicated.
 #'
-#' A level can have several associated geometries (point, polygon or line). The
-#' geometry is obtained from the layer data.
+#' A level can have two associated geometries (point or polygon). The geometry
+#' is obtained from the layer data.
 #'
 #' The name of the level is used later to reference it and relate it to other
 #' levels.

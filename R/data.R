@@ -1,3 +1,14 @@
+#' `gd_us`
+#'
+#' `geodimension` obtained from vector layers over USA.
+#'
+#' It includes the levels city, county, state, region, division and nation.
+#'
+#' @format A `geodimension`.
+#' @source
+#'   \url{https://www.census.gov}
+"gd_us"
+
 #' `layer_us_place`
 #'
 #' Point geometry layer, with data for US Places.
