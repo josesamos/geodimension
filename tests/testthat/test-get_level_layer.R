@@ -3,7 +3,7 @@ context("test get_level_layer")
 library(sf) # It has to be included even if it is not used directly.
 
 test_that("get_level_layer works", {
-  ll <- gd_us %>%
+  ll <- gd_us |>
     get_level_layer(level_name = "division",
                     only_key = TRUE,
                     surrogate_key = TRUE)
@@ -24,7 +24,7 @@ test_that("get_level_layer works", {
     )
   )
 
-  ll <- gd_us %>%
+  ll <- gd_us |>
     get_level_layer(level_name = "division",
                     surrogate_key = TRUE,
                     inherited = TRUE)

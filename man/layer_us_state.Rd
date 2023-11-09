@@ -14,6 +14,6 @@ A \code{sf} object.
 layer_us_state
 }
 \description{
-Polygon geometry layer, with data for US states.
+Polygon geometry layer, with data for US States.
 }
 \keyword{datasets}

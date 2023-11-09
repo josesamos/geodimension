@@ -10,10 +10,10 @@ test_that("get_empty_geometry_instances works", {
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
-             key = c("geoid")) %>%
+             key = c("geoid")) |>
     add_geometry(layer = us_state_point)
 
-  res <- state %>% get_empty_geometry_instances(geometry = "point")
+  res <- state |> get_empty_geometry_instances(geometry = "point")
 
   expect_equal(res,
                structure(

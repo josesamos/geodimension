@@ -13,7 +13,7 @@ test_that("add_level works", {
              key = c("geoid"))
   gd <-
     geodimension(name = "gd_us",
-                 level = region) %>%
+                 level = region) |>
     add_level(division)
 
   expect_equal(attributes(gd),

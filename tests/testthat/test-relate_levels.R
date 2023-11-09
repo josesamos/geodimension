@@ -13,10 +13,10 @@ test_that("relate_levels works", {
              key = c("geoid"))
   gd <-
     geodimension(name = "gd_us",
-                 level = region) %>%
+                 level = region) |>
     add_level(division)
 
-  gd <- gd %>%
+  gd <- gd |>
     relate_levels(lower_level_name = "division",
                   upper_level_name = "region",
                   by_geography = TRUE)
