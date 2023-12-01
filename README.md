@@ -180,7 +180,7 @@ ll <- gd |>
   get_level_layer(level_name = "state",
                   only_key = TRUE)
 
-plot(ll)
+plot(sf::st_shift_longitude(ll))
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />

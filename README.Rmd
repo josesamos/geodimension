@@ -134,7 +134,7 @@ ll <- gd |>
   get_level_layer(level_name = "state",
                   only_key = TRUE)
 
-plot(ll)
+plot(sf::st_shift_longitude(ll))
 ```
 
 In addition to these functions, the package offers other support functions to aid in the definition of levels (for example, to determine the key attributes of a layer), to relate instances of levels whose relationship is not immediately established, or to configure the `geodimension` to obtain a customized output.
