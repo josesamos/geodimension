@@ -38,7 +38,7 @@ geolevel <-
     stopifnot("Missing geolevel name." = !is.null(name))
     stopifnot("Layer does not include an `sf` object." = methods::is(layer, "sf"))
     geometry <- get_geometry(layer)
-    if (!(geometry %in% c("polygon", "point", "line"))) {
+    if (!(geometry %in% c("polygon", "point"))) {
       stop(sprintf('layer has unsupported geometry: %s.', geometry[1]))
     }
 
@@ -59,7 +59,6 @@ geolevel <-
       dplyr::group_by_at(key) |>
       dplyr::summarize(.groups = "drop")
 
-    is_a_valid_key <- (nrow(data) == nrow(data_key))
     stopifnot("The key is invalid." = nrow(data) == nrow(data_key))
 
     surrogate_key <- surrogate_key_name(name)
@@ -93,7 +92,6 @@ geolevel <-
       attributes = attributes,
       key = key,
       surrogate_key = surrogate_key,
-      n_instances_data = nrow(data),
       class = "geolevel"
     )
   }
