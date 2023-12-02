@@ -294,7 +294,7 @@ ll <- gd |>
                   geometry = "polygon",
                   only_key = TRUE)
 
-plot(ll)
+plot(sf::st_shift_longitude(ll))
 ```
 
 In addition to these functions, the package offers the possibility to change the CRS of all the layers of a geodimension using the `transform_crs` function.

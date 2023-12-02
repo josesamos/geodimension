@@ -1,9 +1,7 @@
 context("test get_level_data")
 
-library(sf) # It has to be included even if it is not used directly.
-
 test_that("get_level_data works", {
-  ld <- gd_us %>%
+  ld <- gd_us |>
     get_level_data(level_name = "state",
                    inherited = TRUE)
 

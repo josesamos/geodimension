@@ -1,7 +1,5 @@
 context("test get_unrelated_instances")
 
-library(sf) # It has to be included even if it is not used directly.
-
 test_that("get_unrelated_instances works", {
   region <-
     geolevel(name = "region",
@@ -13,15 +11,15 @@ test_that("get_unrelated_instances works", {
              key = c("geoid"))
   gd <-
     geodimension(name = "gd_us",
-                 level = region) %>%
+                 level = region) |>
     add_level(division)
 
-  gd <- gd %>%
+  gd <- gd |>
     relate_levels(lower_level_name = "division",
                   upper_level_name = "region",
                   by_geography = TRUE)
 
-  ui <- gd %>%
+  ui <- gd |>
     get_unrelated_instances(lower_level_name = "division",
                             upper_level_name = "region")
 

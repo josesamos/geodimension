@@ -1,13 +1,11 @@
 context("test get_level_data")
 
-library(sf) # It has to be included even if it is not used directly.
-
 test_that("get_level_data works", {
-  gd <- gd_us %>%
+  gd <- gd_us |>
     complete_relation_by_geography(lower_level_name = "state",
                                    upper_level_name = "division")
 
-  ui <- gd_us %>%
+  ui <- gd_us |>
     get_unrelated_instances(lower_level_name = "state",
                             upper_level_name = "division")
 

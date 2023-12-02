@@ -1,7 +1,5 @@
 context("test add_level")
 
-library(sf) # It has to be included even if it is not used directly.
-
 test_that("add_level works", {
   region <-
     geolevel(name = "region",
@@ -13,7 +11,7 @@ test_that("add_level works", {
              key = c("geoid"))
   gd <-
     geodimension(name = "gd_us",
-                 level = region) %>%
+                 level = region) |>
     add_level(division)
 
   expect_equal(attributes(gd),

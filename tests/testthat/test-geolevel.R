@@ -42,7 +42,7 @@ test_that("add_geometry()", {
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
-             key = c("geoid")) %>%
+             key = c("geoid")) |>
     add_geometry(layer = us_state_point)
 
   expect_equal(names(state$geometry$polygon),
