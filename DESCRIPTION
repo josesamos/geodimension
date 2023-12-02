@@ -1,7 +1,7 @@
 Type: Package
 Package: geodimension
 Title: Definition of Geographic Dimensions
-Version: 1.0.1.9000
+Version: 1.0.2.9000
 Authors@R: 
     person("Jose", "Samos", , "jsamos@ugr.es", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-4457-3439"))
