@@ -1,3 +1,5 @@
+# geodimension (development version)
+
 # geodimension 1.0.2
 * Fix test problem.
 * Use core pipe operator in tests.
