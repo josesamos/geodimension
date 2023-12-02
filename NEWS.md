@@ -1,5 +1,6 @@
 # geodimension (development version)
 * Fix test problem.
+* Use core pipe operator in tests.
 * Use the `st_shift_longitude` function to plot the map of the US with Alaska.
 
 # geodimension 1.0.1
