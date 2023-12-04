@@ -4,7 +4,7 @@
 \alias{geodimension}
 \title{\code{geodimension} S3 class}
 \usage{
-geodimension(name = NULL, level = NULL)
+geodimension(name = NULL, level = NULL, snake_case = FALSE)
 }
 \arguments{
 \item{name}{A string, name of the dimension.}
@@ -29,14 +29,12 @@ region <-
 
 gd <-
   geodimension(name = "gd_us",
-               level = region)
+               level = region,
+               snake_case = TRUE)
 
 }
 \seealso{
-Other level association functions: 
-\code{\link{add_level}()},
-\code{\link{complete_relation_by_geography}()},
-\code{\link{get_unrelated_instances}()},
-\code{\link{relate_levels}()}
+Other geodimension definition functions: 
+\code{\link{add_level}()}
 }
-\concept{level association functions}
+\concept{geodimension definition functions}

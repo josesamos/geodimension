@@ -5,7 +5,7 @@
 \alias{get_empty_geometry_instances.geolevel}
 \title{Get empty geometry instances}
 \usage{
-get_empty_geometry_instances(gl, geometry = NULL)
+get_empty_geometry_instances(gl, geometry)
 
 \method{get_empty_geometry_instances}{geolevel}(gl, geometry = NULL)
 }

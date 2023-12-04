@@ -11,7 +11,7 @@
 #'
 #' @return A `geodimension` object.
 #'
-#' @family level association functions
+#' @family geodimension definition functions
 #'
 #' @examples
 #' region <-
@@ -21,26 +21,83 @@
 #'
 #' gd <-
 #'   geodimension(name = "gd_us",
-#'                level = region)
+#'                level = region,
+#'                snake_case = TRUE)
 #'
 #' @export
-geodimension <- function(name = NULL, level = NULL) {
+geodimension <-
+  function(name = NULL,
+           level = NULL,
+           snake_case = FALSE) {
+    stopifnot("Missing geodimension name." = !is.null(name))
+    stopifnot("level does not include geolevel object." = methods::is(level, "geolevel"))
+    if (snake_case) {
+      name <- snakecase::to_snake_case(name)
+      level <- snake_case_geolevel(level)
+    }
     geolevel <- list()
-    geolevel[[attr(level, "name")]] <- level
-
+    geolevel[[level$name]] <- level
     relation <- list()
-    data <- level$data[1]
-    names(data) <- attr(level, "name")
-    relation[[attr(level, "name")]] <- data
 
-    geodimension <- list(geolevel = geolevel, relation = relation)
-
-    structure(
-      geodimension,
+    geodimension <- list(
       name = name,
-      class = "geodimension"
+      snake_case = snake_case,
+      geolevel = geolevel,
+      relation = relation
     )
+
+    structure(geodimension,
+              class = "geodimension")
   }
+
+
+#' Add a level to a dimension
+#'
+#' Once a level is part of the dimension, it can then be related to other levels
+#' of the dimension.
+#'
+#' @param gd A `geodimension` object.
+#' @param level A `geolevel`, level to add to the dimension.
+#'
+#' @return A `geodimension`.
+#'
+#' @family geodimension definition functions
+#'
+#' @examples
+#' region <-
+#'   geolevel(name = "region",
+#'            layer = layer_us_region,
+#'            key = "geoid")
+#'
+#' division <-
+#'   geolevel(name = "division",
+#'            layer = layer_us_division,
+#'            key = "geoid")
+#'
+#' gd <-
+#'   geodimension(name = "gd_us",
+#'                level = region,
+#'                snake_case = TRUE) |>
+#'   add_level(division)
+#'
+#' @export
+add_level <- function(gd, level) {
+  UseMethod("add_level")
+}
+
+#' @rdname add_level
+#' @export
+add_level.geodimension <- function(gd,
+                                   level = NULL) {
+  stopifnot("level does not include geolevel object." = methods::is(level, "geolevel"))
+  if (gd$snake_case) {
+    level <- snake_case_geolevel(level)
+  }
+  stopifnot("The level was already included in the dimension." = !(level$name %in% names(gd$geolevel)))
+  geolevel[[level$name]] <- level
+  gd
+}
+
 
 # calculate inherited relationships ---------------------------------------
 
@@ -78,54 +135,6 @@ calculate_inherited_relationships <- function(gd,
   gd
 }
 
-
-#' Add a level to a dimension
-#'
-#' Once a level is part of the dimension, it can then be related to other levels
-#' of the dimension.
-#'
-#' @param gd A `geodimension` object.
-#' @param level A `geolevel`, level to add to the dimension.
-#'
-#' @return A `geodimension`.
-#'
-#' @family level association functions
-#'
-#' @examples
-#' region <-
-#'   geolevel(name = "region",
-#'            layer = layer_us_region,
-#'            key = "geoid")
-#'
-#' division <-
-#'   geolevel(name = "division",
-#'            layer = layer_us_division,
-#'            key = "geoid")
-#'
-#' gd <-
-#'   geodimension(name = "gd_us",
-#'                level = region) |>
-#'   add_level(division)
-#'
-#' @export
-add_level <- function(gd,
-                      level = NULL) {
-  UseMethod("add_level")
-}
-
-
-#' @rdname add_level
-#' @export
-add_level.geodimension <- function(gd,
-                                   level = NULL) {
-  stopifnot(!(attr(level, "name") %in% names(gd$geolevel)))
-  gd$geolevel[[attr(level, "name")]] <- level
-
-  data <- level$data[1]
-  names(data) <- attr(level, "name")
-  gd$relation[[attr(level, "name")]] <- data
-  gd
-}
 
 # get higher level names ---------------------------------------------------------------
 

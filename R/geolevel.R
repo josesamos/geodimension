@@ -216,6 +216,25 @@ validate_attributes <- function(defined_attributes, attributes, repeated = FALSE
   attributes
 }
 
+
+#' snake case geolevel
+#'
+#' @param gl A `geolevel` object.
+#'
+#' @return A `geolevel` object.
+#'
+#' @keywords internal
+snake_case_geolevel <- function(gl) {
+  gl$name <- snakecase::to_snake_case(gl$name)
+  gl$key <- snakecase::to_snake_case(gl$key)
+  gl$snake_case <- TRUE
+  names(gl$data) <- snakecase::to_snake_case(names(gl$data))
+  for (i in names(gl$geometry)) {
+    names(gl$geometry[[i]]) <- snakecase::to_snake_case(names(gl$geometry[[i]]))
+  }
+  gl
+}
+
 # empty geometry ----------------------------------------------------------
 
 #' Get empty geometry instances
@@ -246,8 +265,7 @@ validate_attributes <- function(defined_attributes, attributes, repeated = FALSE
 #'   get_empty_geometry_instances(geometry = "point")
 #'
 #' @export
-get_empty_geometry_instances <- function(gl,
-                                         geometry = NULL) {
+get_empty_geometry_instances <- function(gl, geometry) {
   UseMethod("get_empty_geometry_instances")
 }
 

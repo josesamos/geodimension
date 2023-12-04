@@ -69,6 +69,28 @@ test_that("geolevel()", {
                5)
 })
 
+
+test_that("snake_case_geolevel()", {
+  region <-
+    geolevel(name = "region",
+             layer = layer_us_region,
+             key = "geoid")
+  region <- snake_case_geolevel(region)
+
+  expect_equal(
+    region$snake_case,
+    TRUE
+  )
+  expect_equal(
+    names(region$data),
+    c("geoid", "regionce", "awater", "affgeoid", "name", "lsad",
+      "region", "aland")
+  )
+  expect_equal(names(region$geometry$polygon),
+               c("geoid", "geom"))
+})
+
+
 test_that("add_geometry()", {
   us_state_point <-
     coordinates_to_geometry(layer_us_state,

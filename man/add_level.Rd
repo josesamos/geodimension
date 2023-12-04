@@ -5,7 +5,7 @@
 \alias{add_level.geodimension}
 \title{Add a level to a dimension}
 \usage{
-add_level(gd, level = NULL)
+add_level(gd, level)
 
 \method{add_level}{geodimension}(gd, level = NULL)
 }
@@ -34,15 +34,13 @@ division <-
 
 gd <-
   geodimension(name = "gd_us",
-               level = region) |>
+               level = region,
+               snake_case = TRUE) |>
   add_level(division)
 
 }
 \seealso{
-Other level association functions: 
-\code{\link{complete_relation_by_geography}()},
-\code{\link{geodimension}()},
-\code{\link{get_unrelated_instances}()},
-\code{\link{relate_levels}()}
+Other geodimension definition functions: 
+\code{\link{geodimension}()}
 }
-\concept{level association functions}
+\concept{geodimension definition functions}

@@ -52,8 +52,6 @@ gd <- gd_us |>
 }
 \seealso{
 Other level association functions: 
-\code{\link{add_level}()},
-\code{\link{geodimension}()},
 \code{\link{get_unrelated_instances}()},
 \code{\link{relate_levels}()}
 }
