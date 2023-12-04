@@ -99,382 +99,33 @@ add_level.geodimension <- function(gd,
 }
 
 
-# calculate inherited relationships ---------------------------------------
-
-#' calculate inherited relationships
+#' Relate levels in a dimension
 #'
-#' Each level has explicitly defined relationships with other levels. For a
-#' given level, all the relationships with the levels of the dimension, direct
-#' and indirect, are obtained.
+#' Definition of a direct relationship between two levels of the dimension: the
+#' lower level composes the higher level.
 #'
-#' @param gd A `geodimension` object.
-#' @param level_name A string, name of the lower level.
+#' The relationship may exist by having attributes with common values or by
+#' their geographic attributes. In the latter case, the geometry of the upper
+#' level must be of the polygon type.
 #'
-#' @keywords internal
-calculate_inherited_relationships <- function(gd,
-                                              level_name = NULL) {
-  stopifnot(level_name %in% names(gd$geolevel))
-  stopifnot(level_name %in% names(gd$relation))
-
-  upper_level_names <- names(gd$relation[[level_name]])[-1]
-  names_new <- upper_level_names
-  already_considered <- NULL
-  while (length(names_new) > 0) {
-    already_considered <- c(already_considered, names_new)
-    for (upper_level in names_new) {
-      rel_names <- names(gd$relation[[upper_level]])[-1]
-      rel_names <- generics::setdiff(rel_names, upper_level_names)
-      for (rel in rel_names) {
-        gd$relation[[level_name]] <- gd$relation[[level_name]] |>
-          dplyr::left_join(gd$relation[[upper_level]][, c(upper_level, rel)], by = upper_level)
-      }
-      upper_level_names <- names(gd$relation[[level_name]])[-1]
-    }
-    names_new <- generics::setdiff(upper_level_names, already_considered)
-  }
-  gd
-}
-
-
-# get higher level names ---------------------------------------------------------------
-
-#' Get higher level names
+#' To use the geometric relationship, it must be explicitly indicated by the
+#' Boolean parameter.
 #'
-#' Get the names of levels included in the `geodimension` that are at a higher
-#' level than the indicated level. You can get only the direct levels or the
-#' levels reached by passing through other levels.
+#' If no top-level attributes are indicated, the attributes that make up the key
+#' are considered by default, only the corresponding attributes of the lower
+#' level have to be indicated.
 #'
-#' The indicated level may inherit properties of the obtained levels.
-#'
-#' @param gd A `geodimension` object.
-#' @param level_name A string.
-#' @param indirect_levels A boolean.
-#'
-#' @return A vector of names.
-#'
-#' @family information output functions
-#'
-#' @examples
-#' ln <- gd_us |>
-#'   get_higher_level_names(level_name = "state",
-#'                          indirect_levels = TRUE)
-#'
-#' @export
-get_higher_level_names <- function(gd,
-                                   level_name = NULL,
-                                   indirect_levels = FALSE) {
-  UseMethod("get_higher_level_names")
-}
-
-
-#' @rdname get_higher_level_names
-#' @export
-get_higher_level_names.geodimension <- function(gd,
-                                                level_name = NULL,
-                                                indirect_levels = FALSE) {
-  stopifnot(level_name %in% names(gd$geolevel))
-  if (indirect_levels) {
-    gdil <- calculate_inherited_relationships(gd, level_name = level_name)
-    levels <- names(gdil$relation[[level_name]])[-1]
-  } else {
-    levels <- names(gd$relation[[level_name]])[-1]
-  }
-  sort(levels)
-}
-
-# get level data ---------------------------------------------------------------
-
-#' Get level data
-#'
-#' Get the data table of a given level.
-#'
-#' It allows selecting whether we want only the data defined locally in the
-#' level or also those that it inherits from other higher levels with which it
-#' is related.
-#'
-#' In case of inheriting attributes from other levels, in the table, these can
-#' have as a prefix the name of the level in uppercase.
-#'
-#' @param gd A `geodimension` object.
-#' @param level_name A string.
-#' @param inherited A boolean.
-#' @param add_prefix A boolean.
-#'
-#' @return A `tibble` object.
-#'
-#' @family information output functions
-#'
-#' @examples
-#' ld <- gd_us |>
-#'   get_level_data(level_name = "state",
-#'                  inherited = TRUE)
-#'
-#' @export
-get_level_data <- function(gd,
-                           level_name = NULL,
-                           inherited = FALSE,
-                           add_prefix = TRUE) {
-  UseMethod("get_level_data")
-}
-
-
-#' @rdname get_level_data
-#' @export
-get_level_data.geodimension <- function(gd,
-                                        level_name = NULL,
-                                        inherited = FALSE,
-                                        add_prefix = TRUE) {
-  stopifnot(level_name %in% names(gd$geolevel))
-  data <- gd$geolevel[[level_name]]$data
-  if (inherited) {
-    gd <- calculate_inherited_relationships(gd, level_name = level_name)
-    key <- names(data)[1]
-    for (rel in sort(names(gd$relation[[level_name]])[-1])) {
-      relation <- gd$relation[[level_name]][, c(level_name, rel)]
-      if (add_prefix) {
-        names(relation)[2] <- paste(toupper(names(relation)[2]), names(relation)[2], sep = "_")
-      }
-      data <- data |>
-        dplyr::left_join(relation, by = stats::setNames(level_name, key))
-      rel_data <- gd$geolevel[[rel]]$data
-      if (add_prefix) {
-        names(rel_data) <- paste(toupper(rel), names(rel_data), sep = "_")
-      }
-      key_rel <- names(rel_data)[1]
-      names(data)[length(names(data))] <- key_rel
-      fk <- names(data)[length(names(data))]
-      data <- data |>
-        dplyr::left_join(rel_data, by = stats::setNames(key_rel, fk))
-    }
-  }
-  data
-}
-
-# get level geometries ---------------------------------------------------------------
-
-#' Get level geometries
-#'
-#' Gets the geometry types defined for a given level.
-#'
-#' @param gd A `geodimension` object.
-#' @param level_name A string.
-#'
-#' @return A vector of names.
-#'
-#' @family information output functions
-#'
-#' @examples
-#' lg <- gd_us |>
-#'   get_level_geometries(level_name = "state")
-#'
-#' @export
-get_level_geometries <- function(gd,
-                                 level_name = NULL) {
-  UseMethod("get_level_geometries")
-}
-
-
-#' @rdname get_level_geometries
-#' @export
-get_level_geometries.geodimension <- function(gd,
-                                              level_name = NULL) {
-  stopifnot(level_name %in% names(gd$geolevel))
-  sort(names(gd$geolevel[[level_name]]$geometry))
-}
-
-# get level layer ---------------------------------------------------------------
-
-#' Get level layer
-#'
-#' Get a geographic layer associated with a level. We can select the geometry
-#' and, using boolean parameters, which attributes are included in the layer's
-#' table: only the attributes that make up the key, the subrogate key, inherited
-#' attributes.
-#'
-#' In case of inheriting attributes from other levels, in the table, these can
-#' have as a prefix the name of the level in uppercase.
-#'
-#' @param gd A `geodimension` object.
-#' @param level_name A string.
-#' @param geometry A string.
-#' @param only_key A boolean.
-#' @param surrogate_key A boolean.
-#' @param inherited A boolean.
-#' @param add_prefix A boolean.
-#'
-#' @return A `sf` object.
-#'
-#' @family information output functions
-#'
-#' @examples
-#' ll <- gd_us |>
-#'   get_level_layer(level_name = "division",
-#'                   only_key = TRUE,
-#'                   surrogate_key = TRUE)
-#'
-#' @export
-get_level_layer <- function(gd,
-                            level_name = NULL,
-                            geometry = NULL,
-                            only_key = FALSE,
-                            surrogate_key = FALSE,
-                            inherited = FALSE,
-                            add_prefix = TRUE) {
-  UseMethod("get_level_layer")
-}
-
-
-#' @rdname get_level_layer
-#' @export
-get_level_layer.geodimension <- function(gd,
-                                         level_name = NULL,
-                                         geometry = NULL,
-                                         only_key = FALSE,
-                                         surrogate_key = FALSE,
-                                         inherited = FALSE,
-                                         add_prefix = TRUE) {
-  stopifnot(level_name %in% names(gd$geolevel))
-  if (is.null(geometry)) {
-    geometry <- names(gd$geolevel[[level_name]]$geometry)[1]
-  } else {
-    stopifnot(geometry %in% names(gd$geolevel[[level_name]]$geometry))
-  }
-  layer <- gd$geolevel[[level_name]]$geometry[[geometry]]
-  data <- gd |>
-    get_level_data(level_name = level_name, inherited = inherited, add_prefix = add_prefix)
-  if (only_key) {
-    data <- data |>
-      dplyr::select(c(attr(gd$geolevel[[level_name]], "surrogate_key"), attr(gd$geolevel[[level_name]], "key")))
-  }
-  if (surrogate_key) {
-    sel <- NULL
-  } else {
-    sel <- c(1)
-  }
-
-  data |>
-    dplyr::left_join(layer, by = names(data)[1]) |>
-    dplyr::select(!sel) |>
-    sf::st_as_sf()
-}
-# get level layer ---------------------------------------------------------------
-
-#' Get level layer
-#'
-#' Get a geographic layer associated with a level. We can select the geometry
-#' and, using boolean parameters, which attributes are included in the layer's
-#' table: only the attributes that make up the key, the subrogate key, inherited
-#' attributes.
-#'
-#' In case of inheriting attributes from other levels, in the table, these can
-#' have as a prefix the name of the level in uppercase.
-#'
-#' @param gd A `geodimension` object.
-#' @param level_name A string.
-#' @param geometry A string.
-#' @param only_key A boolean.
-#' @param surrogate_key A boolean.
-#' @param inherited A boolean.
-#' @param add_prefix A boolean.
-#'
-#' @return A `sf` object.
-#'
-#' @family information output functions
-#'
-#' @examples
-#' ll <- gd_us |>
-#'   get_level_layer(level_name = "division",
-#'                   only_key = TRUE,
-#'                   surrogate_key = TRUE)
-#'
-#' @export
-get_level_layer <- function(gd,
-                            level_name = NULL,
-                            geometry = NULL,
-                            only_key = FALSE,
-                            surrogate_key = FALSE,
-                            inherited = FALSE,
-                            add_prefix = TRUE) {
-  UseMethod("get_level_layer")
-}
-
-
-#' @rdname get_level_layer
-#' @export
-get_level_layer.geodimension <- function(gd,
-                                         level_name = NULL,
-                                         geometry = NULL,
-                                         only_key = FALSE,
-                                         surrogate_key = FALSE,
-                                         inherited = FALSE,
-                                         add_prefix = TRUE) {
-  stopifnot(level_name %in% names(gd$geolevel))
-  if (is.null(geometry)) {
-    geometry <- names(gd$geolevel[[level_name]]$geometry)[1]
-  } else {
-    stopifnot(geometry %in% names(gd$geolevel[[level_name]]$geometry))
-  }
-  layer <- gd$geolevel[[level_name]]$geometry[[geometry]]
-  data <- gd |>
-    get_level_data(level_name = level_name, inherited = inherited, add_prefix = add_prefix)
-  if (only_key) {
-    data <- data |>
-      dplyr::select(c(attr(gd$geolevel[[level_name]], "surrogate_key"), attr(gd$geolevel[[level_name]], "key")))
-  }
-  if (surrogate_key) {
-    sel <- NULL
-  } else {
-    sel <- c(1)
-  }
-
-  data |>
-    dplyr::left_join(layer, by = names(data)[1]) |>
-    dplyr::select(!sel) |>
-    sf::st_as_sf()
-}
-
-
-# get level names ---------------------------------------------------------
-
-#' Get level names
-#'
-#' Get the names of levels included in the `geodimension`.
-#'
-#' @param gd A `geodimension` object.
-#'
-#' @return A vector of names.
-#'
-#' @family information output functions
-#'
-#' @examples
-#' ln <- gd_us |>
-#'   get_level_names()
-#'
-#' @export
-get_level_names <- function(gd) {
-  UseMethod("get_level_names")
-}
-
-
-#' @rdname get_level_names
-#' @export
-get_level_names.geodimension <- function(gd) {
-  sort(names(gd$geolevel))
-}
-
-# unrelated instances -----------------------------------------------------
-
-#' Get unrelated instances
-#'
-#' Given two levels between which an explicit relationship is defined, it
-#' returns the lower-level instances that are not related to any higher-level
-#' instances.
+#' As a special case, if the top level has only one instance, it is not
+#' necessary to specify any attributes to define the relationship.
 #'
 #' @param gd A `geodimension` object.
 #' @param lower_level_name A string, name of the lower level.
+#' @param lower_level_attributes A vector of attribute names.
 #' @param upper_level_name A string, name of the upper lever.
+#' @param upper_level_key A vector of attribute names.
+#' @param by_geography A boolean.
 #'
-#' @return A `tibble`.
+#' @return A `geodimension`.
 #'
 #' @family level association functions
 #'
@@ -499,105 +150,98 @@ get_level_names.geodimension <- function(gd) {
 #'                 upper_level_name = "region",
 #'                 by_geography = TRUE)
 #'
-#' ui <- gd |>
-#'   get_unrelated_instances(lower_level_name = "division",
-#'                           upper_level_name = "region")
-#'
 #' @export
-get_unrelated_instances <- function(gd,
-                                    lower_level_name = NULL,
-                                    upper_level_name = NULL) {
-  UseMethod("get_unrelated_instances")
+relate_levels <- function(gd,
+                          lower_level_name,
+                          lower_level_attributes,
+                          upper_level_name,
+                          upper_level_key,
+                          by_geography) {
+  UseMethod("relate_levels")
 }
 
 
-#' @rdname get_unrelated_instances
+#' @rdname relate_levels
 #' @export
-get_unrelated_instances.geodimension <- function(gd,
-                                                 lower_level_name = NULL,
-                                                 upper_level_name = NULL) {
+relate_levels.geodimension <- function(gd,
+                                       lower_level_name = NULL,
+                                       lower_level_attributes = NULL,
+                                       upper_level_name = NULL,
+                                       upper_level_key = NULL,
+                                       by_geography = FALSE) {
   stopifnot(lower_level_name %in% names(gd$geolevel))
   stopifnot(upper_level_name %in% names(gd$geolevel))
-  stopifnot(upper_level_name %in% names(gd$relation[[lower_level_name]]))
-
-  unrelated <- gd$relation[[lower_level_name]][[lower_level_name]][is.na(gd$relation[[lower_level_name]][[upper_level_name]])]
-  gd$geolevel[[lower_level_name]]$data[unrelated, ]
-}
-
-# select levels ---------------------------------------------------------
-
-#' Select levels
-#'
-#' Select a subset of the levels of the dimension so that the rest of the levels
-#' no longer belong to it.
-#'
-#' @param gd A `geodimension` object.
-#' @param level_names A vector of names.
-#'
-#' @return A `geodimension` object.
-#'
-#' @family configuration functions
-#'
-#' @examples
-#' gds <- gd_us |>
-#'   select_levels(level_names = c("division", "region", "nation"))
-#'
-#' @export
-select_levels <- function(gd, level_names = NULL) {
-  UseMethod("select_levels")
-}
-
-
-#' @rdname select_levels
-#' @export
-select_levels.geodimension <- function(gd, level_names = NULL) {
-  level_names <- unique(level_names)
-  existing_names <- names(gd$geolevel)
-  stopifnot(level_names %in% existing_names)
-  delete <- generics::setdiff(existing_names, level_names)
-  for (del in delete) {
-    gd$geolevel[[del]] <- NULL
-    gd$relation[[del]] <- NULL
+  lower_level_attributes <- unique(lower_level_attributes)
+  if (is.null(upper_level_key)) {
+    upper_level_key <- attr(gd$geolevel[[upper_level_name]], "key")
+  } else {
+    upper_level_key <- unique(upper_level_key)
+    upper_level_key_is_a_key <-
+      (nrow(gd$geolevel[[upper_level_name]]$data) == nrow(unique(gd$geolevel[[upper_level_name]]$data[, upper_level_key])))
+    stopifnot(upper_level_key_is_a_key)
   }
-  for (level in names(gd$relation)) {
-    rel_names <- generics::setdiff(names(gd$relation[[level]]), delete)
-    gd$relation[[level]] <- gd$relation[[level]][, rel_names]
+  if (!is.null(lower_level_attributes)) {
+    stopifnot(length(lower_level_attributes) == length(upper_level_key))
+    stopifnot(lower_level_attributes %in% attr(gd$geolevel[[lower_level_name]], "attributes"))
+    stopifnot(upper_level_key %in% attr(gd$geolevel[[upper_level_name]], "attributes"))
   }
-  gd
-}
+  stopifnot(!(upper_level_name %in% names(gd$relation[[lower_level_name]])))
 
-# Transform crs ---------------------------------------------------------
-
-#' Transform CRS
-#'
-#' Transform the CRS of all the layers included in the dimension to the one
-#' indicated.
-#'
-#' @param gd A `geodimension` object.
-#' @param crs A coordinate reference system: integer with the EPSG code, or
-#'   character with proj4string.
-#'
-#' @return A `geodimension`.
-#'
-#' @family configuration functions
-#'
-#' @export
-transform_crs <- function(gd,
-                          crs = NULL) {
-  UseMethod("transform_crs")
-}
-
-#' @rdname transform_crs
-#' @export
-transform_crs.geodimension <- function(gd,
-                                       crs = NULL) {
-  stopifnot(!is.null(crs))
-  for (layer in names(gd$geolevel)) {
-    for (geom in names(gd$geolevel[[layer]]$geometry)) {
-      gd$geolevel[[layer]]$geometry[[geom]] <-
-        gd$geolevel[[layer]]$geometry[[geom]] |>
-        sf::st_transform(crs = crs, use_gdal = FALSE)
+  if (by_geography) {
+    stopifnot(is.null(lower_level_attributes))
+    stopifnot("polygon" %in% names(gd$geolevel[[upper_level_name]]$geometry))
+    lower_geom <- names(gd$geolevel[[lower_level_name]]$geometry)
+    if ("point" %in% lower_geom) {
+      lower_geom <- "point"
+    } else if ("line" %in% lower_geom) {
+      lower_geom <- "line"
     }
+    layer <- gd$geolevel[[lower_level_name]]$geometry[[lower_geom]]
+    if (lower_geom == "polygon") {
+      # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
+      sf::st_agr(layer) = "constant"
+      layer <- sf::st_point_on_surface(layer)
+    }
+
+    res <- sf::st_join(layer, gd$geolevel[[upper_level_name]]$geometry[["polygon"]], join = sf::st_within) |>
+      sf::st_drop_geometry()
+    names(res) <- c(lower_level_name, upper_level_name)
+
+    multiplicity_n_1 <- nrow(res) == nrow(gd$relation[[lower_level_name]])
+    stopifnot(multiplicity_n_1)
+
+    gd$relation[[lower_level_name]] <-
+      gd$relation[[lower_level_name]] |>
+      dplyr::left_join(res, by = lower_level_name)
+
+  } else if (attr(gd$geolevel[[upper_level_name]], "n_instances_data") == 1) {
+    stopifnot(is.null(lower_level_attributes))
+    gd$relation[[lower_level_name]] <- gd$relation[[lower_level_name]] |>
+      tibble::add_column(!!upper_level_name := gd$relation[[upper_level_name]][[upper_level_name]])
+  } else {
+    lower_data <-
+      gd$geolevel[[lower_level_name]]$data[, c(attr(gd$geolevel[[lower_level_name]], "surrogate_key"),
+                                               lower_level_attributes)]
+    names(lower_data) <-
+      c(attr(gd$geolevel[[lower_level_name]], "surrogate_key"),
+        upper_level_key)
+    upper_data <-
+      gd$geolevel[[upper_level_name]]$data[, c(attr(gd$geolevel[[upper_level_name]], "surrogate_key"),
+                                               upper_level_key)]
+    lower_data <- lower_data |>
+      dplyr::left_join(upper_data, by = upper_level_key) |>
+      dplyr::select(c(
+        attr(gd$geolevel[[lower_level_name]], "surrogate_key"),
+        attr(gd$geolevel[[upper_level_name]], "surrogate_key")
+      ))
+    names(lower_data) <- c(lower_level_name, upper_level_name)
+
+    multiplicity_n_1 <- nrow(lower_data) == nrow(gd$relation[[lower_level_name]])
+    stopifnot(multiplicity_n_1)
+
+    gd$relation[[lower_level_name]] <- gd$relation[[lower_level_name]] |>
+      dplyr::left_join(lower_data, by = lower_level_name)
+
   }
   gd
 }
