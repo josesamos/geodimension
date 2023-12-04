@@ -26,9 +26,8 @@
 #' region <-
 #'   geolevel(name = "region",
 #'            layer = layer_us_region,
-#'            key = "geoid")
-#'
-#' @importFrom rlang :=
+#'            key = "geoid",
+#'            snake_case = TRUE)
 #'
 #' @export
 geolevel <-
@@ -123,7 +122,8 @@ geolevel <-
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = "geoid") |>
+#'            key = "geoid",
+#'            snake_case = TRUE) |>
 #'   add_geometry(layer = us_state_point)
 #'
 #' @export
@@ -228,7 +228,7 @@ validate_attributes <- function(defined_attributes, attributes, repeated = FALSE
 #'
 #' @return A `tibble`.
 #'
-#' @family level definition functions
+#' @family geolevel definition functions
 #'
 #' @examples
 #' us_state_point <-
@@ -238,7 +238,8 @@ validate_attributes <- function(defined_attributes, attributes, repeated = FALSE
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = "geoid") |>
+#'            key = "geoid",
+#'            snake_case = TRUE) |>
 #'   add_geometry(layer = us_state_point)
 #'
 #' empty_geometry_instances <- state |>
@@ -282,13 +283,14 @@ get_empty_geometry_instances.geolevel <- function(gl, geometry = NULL) {
 #'
 #' @return A `geolevel` object.
 #'
-#' @family level definition functions
+#' @family geolevel definition functions
 #'
 #' @examples
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = "geoid") |>
+#'            key = "geoid",
+#'            snake_case = TRUE) |>
 #'   complete_point_geometry()
 #'
 #' @export

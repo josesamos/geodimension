@@ -10,6 +10,8 @@ geodimension(name = NULL, level = NULL)
 \item{name}{A string, name of the dimension.}
 
 \item{level}{A \code{geolevel}.}
+
+\item{snake_case}{A boolean, transform all names to snake_case.}
 }
 \value{
 A \code{geodimension} object.

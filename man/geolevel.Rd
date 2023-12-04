@@ -43,11 +43,14 @@ levels.
 region <-
   geolevel(name = "region",
            layer = layer_us_region,
-           key = "geoid")
+           key = "geoid",
+           snake_case = TRUE)
 
 }
 \seealso{
 Other geolevel definition functions: 
-\code{\link{add_geometry}()}
+\code{\link{add_geometry}()},
+\code{\link{complete_point_geometry}()},
+\code{\link{get_empty_geometry_instances}()}
 }
 \concept{geolevel definition functions}

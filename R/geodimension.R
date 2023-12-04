@@ -7,6 +7,7 @@
 #'
 #' @param name A string, name of the dimension.
 #' @param level A `geolevel`.
+#' @param snake_case A boolean, transform all names to snake_case.
 #'
 #' @return A `geodimension` object.
 #'

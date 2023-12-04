@@ -39,12 +39,15 @@ us_state_point <-
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = "geoid") |>
+           key = "geoid",
+           snake_case = TRUE) |>
   add_geometry(layer = us_state_point)
 
 }
 \seealso{
 Other geolevel definition functions: 
-\code{\link{geolevel}()}
+\code{\link{complete_point_geometry}()},
+\code{\link{geolevel}()},
+\code{\link{get_empty_geometry_instances}()}
 }
 \concept{geolevel definition functions}

@@ -27,15 +27,15 @@ geometry empty, it completes them.
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = "geoid") |>
+           key = "geoid",
+           snake_case = TRUE) |>
   complete_point_geometry()
 
 }
 \seealso{
-Other level definition functions: 
-\code{\link{check_key}()},
-\code{\link{coordinates_to_geometry}()},
-\code{\link{get_empty_geometry_instances}()},
-\code{\link{get_geometry}()}
+Other geolevel definition functions: 
+\code{\link{add_geometry}()},
+\code{\link{geolevel}()},
+\code{\link{get_empty_geometry_instances}()}
 }
-\concept{level definition functions}
+\concept{geolevel definition functions}

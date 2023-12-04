@@ -37,8 +37,6 @@ us_state_point <-
 \seealso{
 Other level definition functions: 
 \code{\link{check_key}()},
-\code{\link{complete_point_geometry}()},
-\code{\link{get_empty_geometry_instances}()},
 \code{\link{get_geometry}()}
 }
 \concept{level definition functions}

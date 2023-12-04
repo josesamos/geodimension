@@ -27,8 +27,6 @@ geometry <- get_geometry(layer_us_region)
 \seealso{
 Other level definition functions: 
 \code{\link{check_key}()},
-\code{\link{complete_point_geometry}()},
-\code{\link{coordinates_to_geometry}()},
-\code{\link{get_empty_geometry_instances}()}
+\code{\link{coordinates_to_geometry}()}
 }
 \concept{level definition functions}
