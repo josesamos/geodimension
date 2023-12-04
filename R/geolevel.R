@@ -16,6 +16,7 @@
 #' @param layer A `sf` object.
 #' @param attributes A string vector, selected attributes.
 #' @param key A string vector, attributes that compose the key.
+#' @param snake_case A boolean, transform all names to snake_case.
 #'
 #' @return A `geolevel` object.
 #'
@@ -34,12 +35,24 @@ geolevel <-
   function(name = NULL,
            layer = NULL,
            attributes = NULL,
-           key = NULL) {
+           key = NULL,
+           snake_case = FALSE) {
     stopifnot("Missing geolevel name." = !is.null(name))
     stopifnot("Layer does not include an `sf` object." = methods::is(layer, "sf"))
     geometry <- get_geometry(layer)
     if (!(geometry %in% c("polygon", "point"))) {
       stop(sprintf('layer has unsupported geometry: %s.', geometry[1]))
+    }
+
+    if (snake_case) {
+      name <- snakecase::to_snake_case(name)
+      if (!is.null(attributes)) {
+        attributes <- snakecase::to_snake_case(attributes)
+      }
+      if (!is.null(key)) {
+        key <- snakecase::to_snake_case(key)
+      }
+      names(layer) <- snakecase::to_snake_case(names(layer))
     }
 
     data <- tibble::tibble((sf::st_drop_geometry(layer)))
@@ -61,37 +74,23 @@ geolevel <-
 
     stopifnot("The key is invalid." = nrow(data) == nrow(data_key))
 
-    surrogate_key <- surrogate_key_name(name)
-    data_key <- data_key |>
-      tibble::add_column(!!surrogate_key := 1:nrow(data_key), .before = 1)
-
-    data <- data_key |>
-      dplyr::left_join(data, by = key)
-
     layer <- layer |>
       dplyr::select(tidyselect::all_of(key)) |>
       dplyr::group_by_at(key) |>
       dplyr::summarize(.groups = "drop")
 
-    # only surrogate key and geometry
-    layer <- data_key |>
-      dplyr::left_join(layer, by = key) |>
-      sf::st_as_sf() |>
-      dplyr::select(tidyselect::all_of(names(data_key)[1]))
-
     # only instances with geometry
     layer <- layer[!is.na(sf::st_dimension(layer)),]
 
-    geolevel <- list(data = data,
+    geolevel <- list(name = name,
+                     key = key,
+                     snake_case = snake_case,
+                     data = data,
                      geometry = list(geometry = layer))
     names(geolevel$geometry) <- geometry
 
     structure(
       geolevel,
-      name = name,
-      attributes = attributes,
-      key = key,
-      surrogate_key = surrogate_key,
       class = "geolevel"
     )
   }
@@ -99,11 +98,11 @@ geolevel <-
 
 #' Add geometry to a level
 #'
-#' A level can have several geometries (*point*, *polygon* or *line*). This
-#' function adds the geometry of the layer to the level.
+#' A level can have several geometries (*point* or *polygon*). This function adds
+#' the geometry of the layer to the level.
 #'
-#' The association of the geometry to the existing instances is done through
-#' join using the level and layer keys.
+#' The association of the geometry to the existing instances is done through join
+#' using the level and layer keys.
 #'
 #' If none is indicated, by default the key defined in the level is considered.
 #'
@@ -139,20 +138,29 @@ add_geometry.geolevel <- function(gl,
                                   level_key = NULL) {
   stopifnot("layer does not include sf object." = methods::is(layer, "sf"))
   geometry <- get_geometry(layer)
-  if (!(geometry %in% c("polygon", "point", "line"))) {
+  if (!(geometry %in% c("polygon", "point"))) {
     stop(sprintf('`layer` has unsupported geometry: %s.', geometry[1]))
   }
   stopifnot("This geometry type is already defined for the layer." = !(geometry %in% names(gl$geometry)))
   if (is.null(level_key)) {
-    level_key <- attr(gl, "key")
+    level_key <- gl$key
   } else {
+    if (gl$snake_case) {
+      level_key <- snakecase::to_snake_case(level_key)
+    }
     level_key <- validate_attributes(names(gl$data), level_key)
     stopifnot("`level_key` is not a key of the level." = nrow(gl$data) == nrow(unique(gl$data[, level_key])))
   }
   if (is.null(layer_key)) {
     layer_key <- level_key
   } else {
+    if (gl$snake_case) {
+      layer_key <- snakecase::to_snake_case(layer_key)
+    }
     stopifnot("Keys are not the same length." = length(unique(layer_key)) == length(level_key))
+  }
+  if (gl$snake_case) {
+    names(layer) <- snakecase::to_snake_case(names(layer))
   }
   layer_key <- validate_attributes(names(layer), layer_key)
 
@@ -165,10 +173,10 @@ add_geometry.geolevel <- function(gl,
   names(layer) <- c(level_key, names_layer[length(names_layer)])
 
   layer <- gl$data |>
-    dplyr::select(tidyselect::all_of(c(attr(gl, "surrogate_key"), level_key))) |>
+    dplyr::select(tidyselect::all_of(unique(c(gl$key, level_key)))) |>
     dplyr::left_join(layer, by = level_key) |>
     sf::st_as_sf() |>
-    dplyr::select(attr(gl, "surrogate_key"))
+    dplyr::select(gl$key)
 
   # only instances with geometry
   layer <- layer[!is.na(sf::st_dimension(layer)),]
@@ -207,20 +215,6 @@ validate_attributes <- function(defined_attributes, attributes, repeated = FALSE
   }
   attributes
 }
-
-# -----------------------------------------------------------------------
-
-#' Surrogate key name
-#'
-#' @param name A string.
-#'
-#' @return A string.
-#'
-#' @keywords internal
-surrogate_key_name <- function(name) {
-  sprintf("%s_key", snakecase::to_snake_case(name))
-}
-
 
 # empty geometry ----------------------------------------------------------
 
@@ -265,7 +259,12 @@ get_empty_geometry_instances.geolevel <- function(gl, geometry = NULL) {
   } else {
     stopifnot("This geometry is not included in the geolevel." = geometry %in% names(gl$geometry))
   }
-  gl$data[!(gl$data[[1]] %in% gl$geometry[[geometry]][[1]]), ]
+  layer_data <- tibble::tibble((sf::st_drop_geometry(gl$geometry[[geometry]])))
+
+  empty <- dplyr::setdiff(gl$data[, gl$key], layer_data) |>
+     dplyr::inner_join(gl$data, by = gl$key)
+
+  empty
 }
 
 # complete point geometry ----------------------------------------------------------
@@ -278,12 +277,8 @@ get_empty_geometry_instances.geolevel <- function(gl, geometry = NULL) {
 #' If the point geometry was already defined, if there are instances with this
 #' geometry empty, it completes them.
 #'
-#' If the geometry of the CRS is not projected, it warns that the calculations
-#' may not be correct. A projected intermediate geometry can be used to perform
-#' the operation, indicating it by the boolean parameter.
 #'
 #' @param gl A `geolevel` object.
-#' @param use_intermediate_projected_crs A boolean.
 #'
 #' @return A `geolevel` object.
 #'
@@ -297,42 +292,34 @@ get_empty_geometry_instances.geolevel <- function(gl, geometry = NULL) {
 #'   complete_point_geometry()
 #'
 #' @export
-complete_point_geometry <- function(gl, use_intermediate_projected_crs) {
+complete_point_geometry <- function(gl) {
   UseMethod("complete_point_geometry")
 }
 
 #' @rdname complete_point_geometry
 #' @export
-complete_point_geometry.geolevel <- function(gl, use_intermediate_projected_crs = FALSE) {
+complete_point_geometry.geolevel <- function(gl) {
   stopifnot("polygon" %in% names(gl$geometry))
+  layer <- gl$geometry[["polygon"]]
+  # suppress warning message
+  sf::st_agr(layer) = "constant"
+  crs <- sf::st_crs(layer)
+  layer <-
+    sf::st_transform(layer, 3857) |>
+    sf::st_point_on_surface() |>
+    sf::st_transform(crs)
   if ("point" %in% names(gl$geometry)) {
-    layer <- gl$geometry[["polygon"]][!(gl$data[[1]] %in% gl$geometry[["point"]][[1]]), ]
-    # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
-    sf::st_agr(layer) = "constant"
-    if (use_intermediate_projected_crs) {
-      rest <- layer |>
-        sf::st_transform(crs = 3395)
-    } else {
-      rest <- layer
+    empty <- get_empty_geometry_instances(gl, "point")
+    if (nrow(empty) > 0) {
+      empty <-  empty |>
+        dplyr::inner_join(layer, by = gl$key) |>
+        sf::st_as_sf() |>
+        dplyr::select(gl$key) |>
+        sf::st_transform(sf::st_crs(gl$geometry[["point"]]))
+      gl$geometry[["point"]] <- rbind(gl$geometry[["point"]], empty)
     }
-    rest <- rest |>
-      sf::st_point_on_surface() |>
-      sf::st_transform(crs = sf::st_crs(gl$geometry[["point"]]))
-    gl$geometry[["point"]] <- gl$geometry[["point"]] |>
-      tibble::add_row(rest)
   } else {
-    layer <- gl$geometry[["polygon"]]
-    # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
-    sf::st_agr(layer) = "constant"
-    if (use_intermediate_projected_crs) {
-      gl$geometry[["point"]] <- layer |>
-        sf::st_transform(crs = 3395) |>
-        sf::st_point_on_surface()  |>
-        sf::st_transform(crs = sf::st_crs(gl$geometry[["polygon"]]))
-    } else {
-      gl$geometry[["point"]] <- layer |>
-        sf::st_point_on_surface()
-    }
+    gl$geometry[["point"]] <- layer
   }
   gl
 }

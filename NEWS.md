@@ -1,4 +1,6 @@
 # geodimension (development version)
+* Add parameter `snake_case` to `geolevel()` function.
+* Delete parameter `use_intermediate_projected_crs` from function `complete_point_geometry()`.
 
 # geodimension 1.0.2
 * Fix test problem.

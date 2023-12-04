@@ -5,14 +5,12 @@
 \alias{complete_point_geometry.geolevel}
 \title{Complete point geometry}
 \usage{
-complete_point_geometry(gl, use_intermediate_projected_crs)
+complete_point_geometry(gl)
 
-\method{complete_point_geometry}{geolevel}(gl, use_intermediate_projected_crs = FALSE)
+\method{complete_point_geometry}{geolevel}(gl)
 }
 \arguments{
 \item{gl}{A \code{geolevel} object.}
-
-\item{use_intermediate_projected_crs}{A boolean.}
 }
 \value{
 A \code{geolevel} object.
@@ -24,10 +22,6 @@ from it.
 \details{
 If the point geometry was already defined, if there are instances with this
 geometry empty, it completes them.
-
-If the geometry of the CRS is not projected, it warns that the calculations
-may not be correct. A projected intermediate geometry can be used to perform
-the operation, indicating it by the boolean parameter.
 }
 \examples{
 state <-

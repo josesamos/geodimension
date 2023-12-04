@@ -22,12 +22,12 @@ add_geometry(gl, layer, layer_key, level_key)
 A \code{geolevel}.
 }
 \description{
-A level can have several geometries (\emph{point}, \emph{polygon} or \emph{line}). This
-function adds the geometry of the layer to the level.
+A level can have several geometries (\emph{point} or \emph{polygon}). This function adds
+the geometry of the layer to the level.
 }
 \details{
-The association of the geometry to the existing instances is done through
-join using the level and layer keys.
+The association of the geometry to the existing instances is done through join
+using the level and layer keys.
 
 If none is indicated, by default the key defined in the level is considered.
 }

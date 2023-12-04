@@ -4,7 +4,13 @@
 \alias{geolevel}
 \title{\code{geolevel} S3 class}
 \usage{
-geolevel(name = NULL, layer = NULL, attributes = NULL, key = NULL)
+geolevel(
+  name = NULL,
+  layer = NULL,
+  attributes = NULL,
+  key = NULL,
+  snake_case = FALSE
+)
 }
 \arguments{
 \item{name}{A string, level name.}
@@ -14,6 +20,8 @@ geolevel(name = NULL, layer = NULL, attributes = NULL, key = NULL)
 \item{attributes}{A string vector, selected attributes.}
 
 \item{key}{A string vector, attributes that compose the key.}
+
+\item{snake_case}{A boolean, transform all names to snake_case.}
 }
 \value{
 A \code{geolevel} object.
