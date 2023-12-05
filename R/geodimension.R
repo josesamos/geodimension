@@ -114,8 +114,10 @@ add_level.geodimension <- function(gd,
 #'
 #' To use the geometric relationship, it must be explicitly indicated by the
 #' Boolean parameter. In this case, the attributes of the lower level must not
-#' exist in the table, they will be added with the values of the key of the higher
-#' level, according to the established relationship.
+#' exist in the table, they will be added with the values of the key of the upper
+#' level, according to the established relationship. If lower level attribute names
+#' are not provided, they will be generated from the upper level key names, adding
+#' a prefix.
 #'
 #' @param gd A `geodimension` object.
 #' @param lower_level_name A string, name of the lower level.
@@ -185,12 +187,15 @@ relate_levels.geodimension <- function(gd,
   } else {
     upper_level_key <- gd$geolevel[[upper_level_name]]$key
   }
-  stopifnot("Missing lower level attributes." = !is.null(lower_level_attributes))
   if (by_geography) {
+    if (is.null(lower_level_attributes)) {
+      lower_level_attributes <- paste0("fk_", upper_level_name, "_", upper_level_key)
+    }
     for (a in lower_level_attributes) {
       stopifnot("The lower level attributes already exist." = !(a %in% names(gd$geolevel[[lower_level_name]]$data)))
     }
   } else {
+    stopifnot("Missing lower level attributes." = !is.null(lower_level_attributes))
     lower_level_attributes <-
       validate_names(names(gd$geolevel[[lower_level_name]]$data),
                      lower_level_attributes,
@@ -211,85 +216,88 @@ relate_levels.geodimension <- function(gd,
     if (!("point" %in% lower_geom)) {
       gd$geolevel[[lower_level_name]] <- complete_point_geometry(gd$geolevel[[lower_level_name]])
     }
-    lower_geom <- "point"
-    layer <- gd$geolevel[[lower_level_name]]$geometry[[lower_geom]]
-
+    layer <- gd$geolevel[[lower_level_name]]$geometry[["point"]]
     res <- sf::st_join(layer, gd$geolevel[[upper_level_name]]$geometry[["polygon"]], join = sf::st_within) |>
       sf::st_drop_geometry()
     names(res) <- c(gd$geolevel[[lower_level_name]]$key, lower_level_attributes)
-
-
-
-
-
-
-    multiplicity_n_1 <- nrow(res) == nrow(gd$relation[[lower_level_name]])
-    stopifnot(multiplicity_n_1)
-
-    gd$relation[[lower_level_name]] <-
-      gd$relation[[lower_level_name]] |>
-      dplyr::left_join(res, by = lower_level_name)
-
+    gd$geolevel[[lower_level_name]]$data <- gd$geolevel[[lower_level_name]]$data |>
+      dplyr::left_join(res, by = gd$geolevel[[lower_level_name]]$key)
   }
 
-
-  stopifnot(!(upper_level_name %in% names(gd$relation[[lower_level_name]])))
-
-  if (by_geography) {
-    stopifnot(is.null(lower_level_attributes))
-    stopifnot("polygon" %in% names(gd$geolevel[[upper_level_name]]$geometry))
-    lower_geom <- names(gd$geolevel[[lower_level_name]]$geometry)
-    if ("point" %in% lower_geom) {
-      lower_geom <- "point"
-    } else if ("line" %in% lower_geom) {
-      lower_geom <- "line"
-    }
-    layer <- gd$geolevel[[lower_level_name]]$geometry[[lower_geom]]
-    if (lower_geom == "polygon") {
-      # to avoid warning: make the assumption (that the attribute is constant throughout the geometry)
-      sf::st_agr(layer) = "constant"
-      layer <- sf::st_point_on_surface(layer)
-    }
-
-    res <- sf::st_join(layer, gd$geolevel[[upper_level_name]]$geometry[["polygon"]], join = sf::st_within) |>
-      sf::st_drop_geometry()
-    names(res) <- c(lower_level_name, upper_level_name)
-
-    multiplicity_n_1 <- nrow(res) == nrow(gd$relation[[lower_level_name]])
-    stopifnot(multiplicity_n_1)
-
-    gd$relation[[lower_level_name]] <-
-      gd$relation[[lower_level_name]] |>
-      dplyr::left_join(res, by = lower_level_name)
-
-  } else if (attr(gd$geolevel[[upper_level_name]], "n_instances_data") == 1) {
-    stopifnot(is.null(lower_level_attributes))
-    gd$relation[[lower_level_name]] <- gd$relation[[lower_level_name]] |>
-      tibble::add_column(!!upper_level_name := gd$relation[[upper_level_name]][[upper_level_name]])
-  } else {
-    lower_data <-
-      gd$geolevel[[lower_level_name]]$data[, c(attr(gd$geolevel[[lower_level_name]], "surrogate_key"),
-                                               lower_level_attributes)]
-    names(lower_data) <-
-      c(attr(gd$geolevel[[lower_level_name]], "surrogate_key"),
-        upper_level_key)
-    upper_data <-
-      gd$geolevel[[upper_level_name]]$data[, c(attr(gd$geolevel[[upper_level_name]], "surrogate_key"),
-                                               upper_level_key)]
-    lower_data <- lower_data |>
-      dplyr::left_join(upper_data, by = upper_level_key) |>
-      dplyr::select(c(
-        attr(gd$geolevel[[lower_level_name]], "surrogate_key"),
-        attr(gd$geolevel[[upper_level_name]], "surrogate_key")
-      ))
-    names(lower_data) <- c(lower_level_name, upper_level_name)
-
-    multiplicity_n_1 <- nrow(lower_data) == nrow(gd$relation[[lower_level_name]])
-    stopifnot(multiplicity_n_1)
-
-    gd$relation[[lower_level_name]] <- gd$relation[[lower_level_name]] |>
-      dplyr::left_join(lower_data, by = lower_level_name)
-
+  data <- gd$geolevel[[upper_level_name]]$data[, upper_level_key]
+  names(data) <- lower_level_attributes
+  data <- gd$geolevel[[lower_level_name]]$data[, c(gd$geolevel[[lower_level_name]]$key, lower_level_attributes)] |>
+    dplyr::inner_join(data, by = lower_level_attributes)
+  if (nrow(data) != nrow(gd$geolevel[[lower_level_name]]$data)) {
+    warning(
+      "There are rows left on the lower level not related to the upper level. Check them using `check_related_levels()`."
+    )
   }
   gd
+}
+
+
+#' Check related levels in a dimension
+#'
+#' Given two previously related levels of a dimension, it obtains the instances
+#' of the lower level that have not been related to the upper level.
+#'
+#' @param gd A `geodimension` object.
+#' @param lower_level_name A string, name of the lower level.
+#' @param upper_level_name A string, name of the upper lever.
+#'
+#' @return A `tibble`, unrelated lower level instances.
+#'
+#' @family level association functions
+#'
+#' @examples
+#' region <-
+#'   geolevel(name = "region",
+#'            layer = layer_us_region,
+#'            key = "geoid")
+#'
+#' division <-
+#'   geolevel(name = "division",
+#'            layer = layer_us_division,
+#'            key = "geoid")
+#'
+#' gd <-
+#'   geodimension(name = "gd_us",
+#'                level = region) |>
+#'   add_level(division)
+#'
+#' gd <- gd |>
+#'   relate_levels(lower_level_name = "division",
+#'                 upper_level_name = "region",
+#'                 by_geography = TRUE)
+#'
+#' t <- gd |>
+#'   check_related_levels(lower_level_name = "division",
+#'                        upper_level_name = "region")
+#'
+#' @export
+check_related_levels <- function(gd,
+                          lower_level_name,
+                          upper_level_name) {
+  UseMethod("check_related_levels")
+}
+
+
+#' @rdname check_related_levels
+#' @export
+check_related_levels.geodimension <- function(gd,
+                                       lower_level_name = NULL,
+                                       upper_level_name = NULL) {
+  stopifnot("Missing lower level name." = !is.null(lower_level_name))
+  stopifnot("Missing upper level name." = !is.null(upper_level_name))
+  lower_level_attributes <- gd$relation[[lower_level_name]][[upper_level_name]]$lower_fk
+  upper_level_key <- gd$relation[[lower_level_name]][[upper_level_name]]$upper_pk
+  stopifnot("The levels are not related yet." = !(is.null(lower_level_attributes) | is.null(upper_level_key)))
+  upper <- gd$geolevel[[upper_level_name]]$data[, upper_level_key]
+  names(upper) <- lower_level_attributes
+  lower <- unique(gd$geolevel[[lower_level_name]]$data[, lower_level_attributes])
+  lower <- dplyr::setdiff(lower, upper)
+  lower <- gd$geolevel[[lower_level_name]]$data |>
+    dplyr::inner_join(lower, by = lower_level_attributes)
+  lower
 }

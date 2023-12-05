@@ -48,15 +48,16 @@ The relationship may exist by having attributes with common values or by
 their geographic attributes. In the latter case, the geometry of the upper
 level must be of the polygon type.
 
-To use the geometric relationship, it must be explicitly indicated by the
-Boolean parameter.
-
 If no top-level attributes are indicated, the attributes that make up the key
 are considered by default, only the corresponding attributes of the lower
 level have to be indicated.
 
-As a special case, if the top level has only one instance, it is not
-necessary to specify any attributes to define the relationship.
+To use the geometric relationship, it must be explicitly indicated by the
+Boolean parameter. In this case, the attributes of the lower level must not
+exist in the table, they will be added with the values of the key of the upper
+level, according to the established relationship. If lower level attribute names
+are not provided, they will be generated from the upper level key names, adding
+a prefix.
 }
 \examples{
 region <-
@@ -82,6 +83,7 @@ gd <- gd |>
 }
 \seealso{
 Other level association functions: 
+\code{\link{check_related_levels}()},
 \code{\link{complete_relation_by_geography}()},
 \code{\link{get_unrelated_instances}()}
 }

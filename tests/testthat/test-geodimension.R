@@ -1,8 +1,4 @@
-context("test geodimension")
-
-library(sf) # It has to be included even if it is not used directly.
-
-test_that("geodimension works", {
+test_that("geodimension()", {
   region <-
     geolevel(name = "region",
              layer = layer_us_region,
@@ -12,38 +8,15 @@ test_that("geodimension works", {
                  level = region)
 
   expect_equal(attributes(gd),
-               list(
-                 names = c("geolevel", "relation"),
-                 name = "gd_us",
-                 class = "geodimension"
-               ))
+               list(names = c("name", "snake_case", "geolevel", "relation"),
+                    class = "geodimension"))
 
   expect_equal(
     attributes(gd$geolevel$region),
-    list(
-      names = c("data", "geometry"),
-      name = "region",
-      attributes = c(
-        "geoid",
-        "regionce",
-        "affgeoid",
-        "name",
-        "lsad",
-        "aland",
-        "awater"
-      ),
-      key = "geoid",
-      surrogate_key = "region_key",
-      n_instances_data = 4L,
-      class = "geolevel"
-    )
+    list(names = c("name", "key", "snake_case", "data", "geometry"
+    ), class = "geolevel")
   )
 
-  expect_equal(attributes(gd$relation$region),
-               list(
-                 names = "region",
-                 row.names = 1:4,
-                 class = c("tbl_df", "tbl",
-                           "data.frame")
-               ))
+  expect_equal(attributes(gd$relation),
+               NULL)
 })
