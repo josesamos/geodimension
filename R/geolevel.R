@@ -55,11 +55,11 @@ geolevel <-
     }
 
     data <- tibble::tibble((sf::st_drop_geometry(layer)))
-    attributes <- validate_attributes(names(data), attributes)
+    attributes <- validate_names(names(data), attributes, 'attribute')
 
     stopifnot("The key is missing." = !is.null(key))
-    key <- validate_attributes(names(data), key)
-    attributes <- unique(c(key, attributes))
+    key <- validate_names(names(data), key)
+    attributes <- unique(c(key, attributes), 'attribute')
 
     data <- data |>
       dplyr::select(tidyselect::all_of(attributes)) |>
@@ -148,7 +148,7 @@ add_geometry.geolevel <- function(gl,
     if (gl$snake_case) {
       level_key <- snakecase::to_snake_case(level_key)
     }
-    level_key <- validate_attributes(names(gl$data), level_key)
+    level_key <- validate_names(names(gl$data), level_key, 'attribute')
     stopifnot("`level_key` is not a key of the level." = nrow(gl$data) == nrow(unique(gl$data[, level_key])))
   }
   if (is.null(layer_key)) {
@@ -162,7 +162,7 @@ add_geometry.geolevel <- function(gl,
   if (gl$snake_case) {
     names(layer) <- snakecase::to_snake_case(names(layer))
   }
-  layer_key <- validate_attributes(names(layer), layer_key)
+  layer_key <- validate_names(names(layer), layer_key, 'attribute')
 
   layer <- layer |>
     dplyr::select(tidyselect::all_of(layer_key)) |>
@@ -187,35 +187,6 @@ add_geometry.geolevel <- function(gl,
 
 
 # -----------------------------------------------------------------------
-
-#' Validate attribute names
-#'
-#' @param defined_attributes A vector of strings, defined attribute names.
-#' @param attributes A vector of strings, new attribute names.
-#' @param repeated A boolean, repeated attributes allowed.
-#'
-#' @return A vector of strings, attribute names.
-#'
-#' @keywords internal
-validate_attributes <- function(defined_attributes, attributes, repeated = FALSE) {
-  if (is.null(attributes)) {
-    attributes <- defined_attributes
-  } else {
-    if (!repeated) {
-      stopifnot("There are repeated attributes." = length(attributes) == length(unique(attributes)))
-    }
-    for (attribute in attributes) {
-      if (!(attribute %in% defined_attributes)) {
-        stop(sprintf(
-          "'%s' is not defined as attribute.",
-          attribute
-        ))
-      }
-    }
-  }
-  attributes
-}
-
 
 #' snake case geolevel
 #'
