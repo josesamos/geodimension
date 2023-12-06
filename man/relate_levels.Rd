@@ -88,7 +88,6 @@ gd_2 <- gd |>
 }
 \seealso{
 Other level association functions: 
-\code{\link{check_related_levels}()},
 \code{\link{complete_relation_by_geography}()},
 \code{\link{get_unrelated_instances}()}
 }

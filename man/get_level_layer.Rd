@@ -24,26 +24,6 @@ get_level_layer(
   inherited = FALSE,
   add_prefix = TRUE
 )
-
-get_level_layer(
-  gd,
-  level_name = NULL,
-  geometry = NULL,
-  only_key = FALSE,
-  surrogate_key = FALSE,
-  inherited = FALSE,
-  add_prefix = TRUE
-)
-
-\method{get_level_layer}{geodimension}(
-  gd,
-  level_name = NULL,
-  geometry = NULL,
-  only_key = FALSE,
-  surrogate_key = FALSE,
-  inherited = FALSE,
-  add_prefix = TRUE
-)
 }
 \arguments{
 \item{gd}{A \code{geodimension} object.}
@@ -62,24 +42,14 @@ get_level_layer(
 }
 \value{
 A \code{sf} object.
-
-A \code{sf} object.
 }
 \description{
 Get a geographic layer associated with a level. We can select the geometry
 and, using boolean parameters, which attributes are included in the layer's
 table: only the attributes that make up the key, the subrogate key, inherited
 attributes.
-
-Get a geographic layer associated with a level. We can select the geometry
-and, using boolean parameters, which attributes are included in the layer's
-table: only the attributes that make up the key, the subrogate key, inherited
-attributes.
 }
 \details{
-In case of inheriting attributes from other levels, in the table, these can
-have as a prefix the name of the level in uppercase.
-
 In case of inheriting attributes from other levels, in the table, these can
 have as a prefix the name of the level in uppercase.
 }
@@ -89,19 +59,8 @@ ll <- gd_us |>
                   only_key = TRUE,
                   surrogate_key = TRUE)
 
-ll <- gd_us |>
-  get_level_layer(level_name = "division",
-                  only_key = TRUE,
-                  surrogate_key = TRUE)
-
 }
 \seealso{
-Other information output functions: 
-\code{\link{get_higher_level_names}()},
-\code{\link{get_level_data}()},
-\code{\link{get_level_geometries}()},
-\code{\link{get_level_names}()}
-
 Other information output functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_data}()},

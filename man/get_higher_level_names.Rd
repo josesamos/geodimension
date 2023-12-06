@@ -5,7 +5,7 @@
 \alias{get_higher_level_names.geodimension}
 \title{Get higher level names}
 \usage{
-get_higher_level_names(gd, level_name = NULL, indirect_levels = FALSE)
+get_higher_level_names(gd, level_name, indirect_levels)
 
 \method{get_higher_level_names}{geodimension}(gd, level_name = NULL, indirect_levels = FALSE)
 }

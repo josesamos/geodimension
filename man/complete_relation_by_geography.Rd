@@ -65,7 +65,6 @@ gd <- gd |>
 }
 \seealso{
 Other level association functions: 
-\code{\link{check_related_levels}()},
 \code{\link{get_unrelated_instances}()},
 \code{\link{relate_levels}()}
 }
