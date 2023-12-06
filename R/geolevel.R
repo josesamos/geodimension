@@ -9,11 +9,15 @@
 #' A level can have two associated geometries (point or polygon). The geometry
 #' is obtained from the layer data.
 #'
+#' We can also define a level from a `tibble`, which does not have any associated
+#' geometry. The geometry will be obtained from the relationships between levels
+#' that we define or from layers related to this data.
+#'
 #' The name of the level is used later to reference it and relate it to other
 #' levels.
 #'
 #' @param name A string, level name.
-#' @param layer A `sf` object.
+#' @param layer A `tibble` or `sf` object.
 #' @param attributes A string vector, selected attributes.
 #' @param key A string vector, attributes that compose the key.
 #' @param snake_case A boolean, transform all names to snake_case.
@@ -37,12 +41,14 @@ geolevel <-
            key = NULL,
            snake_case = FALSE) {
     stopifnot("Missing geolevel name." = !is.null(name))
-    stopifnot("Layer does not include an `sf` object." = methods::is(layer, "sf"))
-    geometry <- get_geometry(layer)
-    if (!(geometry %in% c("polygon", "point"))) {
-      stop(sprintf('layer has unsupported geometry: %s.', geometry[1]))
+    if (methods::is(layer, "sf")) {
+      geometry <- get_geometry(layer)
+      if (!(geometry %in% c("polygon", "point"))) {
+        stop(sprintf('layer has unsupported geometry: %s.', geometry[1]))
+      }
+    } else {
+      geometry <- NULL
     }
-
     if (snake_case) {
       name <- snakecase::to_snake_case(name)
       if (!is.null(attributes)) {
@@ -54,12 +60,16 @@ geolevel <-
       names(layer) <- snakecase::to_snake_case(names(layer))
     }
 
-    data <- tibble::tibble((sf::st_drop_geometry(layer)))
+    if (!is.null(geometry)) {
+      data <- tibble::tibble((sf::st_drop_geometry(layer)))
+    } else {
+      data <- layer
+    }
     attributes <- validate_names(names(data), attributes, 'attribute')
 
     stopifnot("The key is missing." = !is.null(key))
-    key <- validate_names(names(data), key)
-    attributes <- unique(c(key, attributes), 'attribute')
+    key <- validate_names(names(data), key, 'attribute')
+    attributes <- unique(c(key, attributes))
 
     data <- data |>
       dplyr::select(tidyselect::all_of(attributes)) |>
@@ -73,19 +83,24 @@ geolevel <-
 
     stopifnot("The key is invalid." = nrow(data) == nrow(data_key))
 
-    layer <- layer |>
-      dplyr::select(tidyselect::all_of(key)) |>
-      dplyr::group_by_at(key) |>
-      dplyr::summarize(.groups = "drop")
+    if (!is.null(geometry)) {
+      layer <- layer |>
+        dplyr::select(tidyselect::all_of(key)) |>
+        dplyr::group_by_at(key) |>
+        dplyr::summarize(.groups = "drop")
 
-    # only instances with geometry
-    layer <- layer[!is.na(sf::st_dimension(layer)),]
+      # only instances with geometry
+      layer <- layer[!is.na(sf::st_dimension(layer)),]
+      geo <- list(geometry = layer)
+    } else {
+      geo <- list()
+    }
 
     geolevel <- list(name = name,
                      key = key,
                      snake_case = snake_case,
                      data = data,
-                     geometry = list(geometry = layer))
+                     geometry = geo)
     names(geolevel$geometry) <- geometry
 
     structure(
