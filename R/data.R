@@ -1,13 +1,12 @@
-#' `gd_us`
+
+#' `us_division`
 #'
-#' `geodimension` obtained from vector layers over USA.
+#' Data for US Divisions.
 #'
-#' It includes the levels city, county, state, region, division and nation.
-#'
-#' @format A `geodimension`.
+#' @format A `tibble` object.
 #' @source
 #'   \url{https://www.census.gov}
-"gd_us"
+"us_division"
 
 #' `layer_us_place`
 #'
@@ -26,33 +25,6 @@
 #' @source
 #'   \url{https://www.census.gov}
 "layer_us_county"
-
-#' `layer_us_division`
-#'
-#' Polygon geometry layer, with data for US Divisions.
-#'
-#' @format A `sf` object.
-#' @source
-#'   \url{https://www.census.gov}
-"layer_us_division"
-
-#' `layer_us_nation`
-#'
-#' Polygon geometry layer, with data for US Nation.
-#'
-#' @format A `sf` object.
-#' @source
-#'   \url{https://www.census.gov}
-"layer_us_nation"
-
-#' `layer_us_region`
-#'
-#' Polygon geometry layer, with data for US Regions.
-#'
-#' @format A `sf` object.
-#' @source
-#'   \url{https://www.census.gov}
-"layer_us_region"
 
 #' `layer_us_state`
 #'
@@ -89,15 +61,6 @@
 #' @source
 #'   \url{https://centrodedescargas.cnig.es/CentroDescargas/}
 "layer_es_municipality"
-
-#' `layer_es_nation`
-#'
-#' Polygon geometry layer, with data for the Nation of Spain.
-#'
-#' @format A `sf` object.
-#' @source
-#'   \url{https://centrodedescargas.cnig.es/CentroDescargas/}
-"layer_es_nation"
 
 #' `layer_es_province`
 #'
