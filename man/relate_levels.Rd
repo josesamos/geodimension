@@ -75,10 +75,15 @@ gd <-
                level = region) |>
   add_level(division)
 
-gd <- gd |>
+gd_1 <- gd |>
   relate_levels(lower_level_name = "division",
                 upper_level_name = "region",
                 by_geography = TRUE)
+
+gd_2 <- gd |>
+  relate_levels(lower_level_name = "division",
+                lower_level_attributes = "REGION",
+                upper_level_name = "region")
 
 }
 \seealso{

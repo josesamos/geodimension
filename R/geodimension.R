@@ -146,10 +146,15 @@ add_level.geodimension <- function(gd,
 #'                level = region) |>
 #'   add_level(division)
 #'
-#' gd <- gd |>
+#' gd_1 <- gd |>
 #'   relate_levels(lower_level_name = "division",
 #'                 upper_level_name = "region",
 #'                 by_geography = TRUE)
+#'
+#' gd_2 <- gd |>
+#'   relate_levels(lower_level_name = "division",
+#'                 lower_level_attributes = "REGION",
+#'                 upper_level_name = "region")
 #'
 #' @export
 relate_levels <- function(gd,
@@ -176,6 +181,7 @@ relate_levels.geodimension <- function(gd,
     validate_names(names(gd$geolevel), lower_level_name, 'lower level')
   upper_level_name <-
     validate_names(names(gd$geolevel), upper_level_name, 'upper level')
+  stopifnot("Upper level has more instances than lower level." = nrow(gd$geolevel[[upper_level_name]]$data) <= nrow(gd$geolevel[[lower_level_name]]$data))
   if (!is.null(upper_level_key)) {
     upper_level_key <-
       validate_names(names(gd$geolevel[[upper_level_name]]$data),
@@ -301,3 +307,88 @@ check_related_levels.geodimension <- function(gd,
     dplyr::inner_join(lower, by = lower_level_attributes)
   lower
 }
+
+
+
+#' Complete relation by geography
+#'
+#' Two levels can be related by attributes or by geography (if the upper level
+#' has polygon-type geometry). Once related, if there are unrelated instances,
+#' we can try to relate those instances using this function, which considers
+#' alternative geographic relationships.
+#'
+#' It does not necessarily succeed trying to relate instances.
+#'
+#' @param gd A `geodimension` object.
+#' @param lower_level_name A string, name of the lower level.
+#' @param upper_level_name A string, name of the upper lever.
+#'
+#' @return A `geodimension` object.
+#'
+#' @family level association functions
+#'
+#' @examples
+#'
+#' region <-
+#'   geolevel(name = "region",
+#'            layer = layer_us_region,
+#'            key = "geoid")
+#'
+#' division <-
+#'   geolevel(name = "division",
+#'            layer = layer_us_division,
+#'            key = "geoid")
+#'
+#' gd <-
+#'   geodimension(name = "gd_us",
+#'                level = region) |>
+#'   add_level(division)
+#'
+#' gd <- gd |>
+#'   relate_levels(lower_level_name = "division",
+#'                 lower_level_attributes = "REGION",
+#'                 upper_level_name = "region")
+#'
+#' gd <- gd |>
+#'   complete_relation_by_geography(lower_level_name = "division",
+#'                                  upper_level_name = "region")
+#'
+#' @export
+complete_relation_by_geography <- function(gd,
+                                           lower_level_name = NULL,
+                                           upper_level_name = NULL) {
+  UseMethod("complete_relation_by_geography")
+}
+
+
+#' @rdname complete_relation_by_geography
+#' @export
+complete_relation_by_geography.geodimension <- function(gd,
+                                                        lower_level_name = NULL,
+                                                        upper_level_name = NULL) {
+  t <- check_related_levels.geodimension(gd, lower_level_name, upper_level_name)
+  if (nrow(t) > 0) {
+    gd$geolevel[[lower_level_name]]$data <- gd$geolevel[[lower_level_name]]$data |>
+      dplyr::setdiff(t)
+    lower_level_attributes <- gd$relation[[lower_level_name]][[upper_level_name]]$lower_fk
+    upper_level_key <- gd$relation[[lower_level_name]][[upper_level_name]]$upper_pk
+    stopifnot("The upper level must include polygon geometry." = "polygon" %in% names(gd$geolevel[[upper_level_name]]$geometry))
+    lower_geom <- names(gd$geolevel[[lower_level_name]]$geometry)
+    if (!("point" %in% lower_geom)) {
+      gd$geolevel[[lower_level_name]] <- complete_point_geometry(gd$geolevel[[lower_level_name]])
+    }
+    layer <- gd$geolevel[[lower_level_name]]$geometry[["point"]]
+    res <- sf::st_join(layer, gd$geolevel[[upper_level_name]]$geometry[["polygon"]], join = sf::st_within) |>
+      sf::st_drop_geometry()
+    names(res) <- c(gd$geolevel[[lower_level_name]]$key, lower_level_attributes)
+    att <- names(t)
+    t <- t[, setdiff(att, lower_level_attributes)]
+    t <- t |>
+      dplyr::left_join(res, by = gd$geolevel[[lower_level_name]]$key)
+    t <- t[, att]
+    gd$geolevel[[lower_level_name]]$data <- gd$geolevel[[lower_level_name]]$data |>
+      dplyr::union_all(t)
+  }
+  gd
+}
+

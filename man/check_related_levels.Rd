@@ -44,6 +44,10 @@ gd <- gd |>
                 upper_level_name = "region",
                 by_geography = TRUE)
 
+t <- gd |>
+  check_related_levels(lower_level_name = "division",
+                       upper_level_name = "region")
+
 }
 \seealso{
 Other level association functions: 
