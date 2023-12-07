@@ -15,7 +15,7 @@ geolevel(
 \arguments{
 \item{name}{A string, level name.}
 
-\item{layer}{A \code{sf} object.}
+\item{layer}{A \code{tibble} or \code{sf} object.}
 
 \item{attributes}{A string vector, selected attributes.}
 
@@ -35,6 +35,10 @@ indicated.
 \details{
 A level can have two associated geometries (point or polygon). The geometry
 is obtained from the layer data.
+
+We can also define a level from a \code{tibble}, which does not have any associated
+geometry. The geometry will be obtained from the relationships between levels
+that we define or from layers related to this data.
 
 The name of the level is used later to reference it and relate it to other
 levels.
