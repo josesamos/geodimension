@@ -14,6 +14,6 @@ A \code{tibble} object.
 us_division
 }
 \description{
-Data for US Divisions.
+US Divisions and Regions (code and name).
 }
 \keyword{datasets}

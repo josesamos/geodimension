@@ -21,7 +21,7 @@ It will only be valid if one of the three geometries is interpreted: \emph{point
 \emph{line} or \emph{polygon}.
 }
 \examples{
-geometry <- get_geometry(layer_us_region)
+geometry <- get_geometry(layer_us_county)
 
 }
 \seealso{

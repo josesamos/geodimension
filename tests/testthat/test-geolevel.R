@@ -1,92 +1,98 @@
 test_that("geolevel()", {
-  region <-
-    geolevel(name = "region",
-             layer = layer_us_region,
-             key = "geoid")
+  state <-
+    geolevel(name = "state",
+             layer = layer_us_state,
+             key = "GEOID")
 
   expect_equal(
-    names(region),
+    names(state),
     c("name", "key", "snake_case", "data", "geometry")
   )
   expect_equal(
-    names(region$data),
-    c("geoid", "regionce", "AWATER", "affgeoid", "name", "lsad",
-      "REGION", "ALAND")
+    names(state$data),
+    c("GEOID", "DIVISION", "REGION", "STATEFP", "STUSPS", "STATENS",
+      "NAME", "Shape_Length", "Shape_Area", "ALAND", "AWATER", "INTPTLAT",
+      "INTPTLON")
   )
-  expect_equal(names(region$geometry$polygon),
-               c("geoid", "geom"))
-  expect_equal(nrow(region$data),
-               5)
-  expect_equal(nrow(region$geometry$polygon),
-               5)
+  expect_equal(names(state$geometry$polygon),
+               c("GEOID", "geom"))
+  expect_equal(nrow(state$data),
+               52)
+  expect_equal(nrow(state$geometry$polygon),
+               52)
 })
 
+
 test_that("geolevel()", {
-  region <-
-    geolevel(name = "region",
-             layer = layer_us_region,
+  state <-
+    geolevel(name = "state",
+             layer = layer_us_state,
              key = "geoid",
              snake_case = TRUE)
 
   expect_equal(
-    names(region),
+    names(state),
     c("name", "key", "snake_case", "data", "geometry")
   )
   expect_equal(
-    names(region$data),
-    c("geoid", "regionce", "awater", "affgeoid", "name", "lsad",
-      "region", "aland")
+    names(state$data),
+    c("geoid", "division", "region", "statefp", "stusps", "statens",
+      "name", "shape_length", "shape_area", "aland", "awater", "intptlat",
+      "intptlon")
   )
-  expect_equal(names(region$geometry$polygon),
+  expect_equal(names(state$geometry$polygon),
                c("geoid", "geom"))
-  expect_equal(nrow(region$data),
-               5)
-  expect_equal(nrow(region$geometry$polygon),
-               5)
+  expect_equal(nrow(state$data),
+               52)
+  expect_equal(nrow(state$geometry$polygon),
+               52)
 })
 
+
+
 test_that("geolevel()", {
-  region <-
-    geolevel(name = "region",
-             layer = layer_us_region,
+  state <-
+    geolevel(name = "state",
+             layer = layer_us_state,
              attributes = "NAME",
              key = "GEOID",
              snake_case = TRUE)
 
   expect_equal(
-    names(region),
+    names(state),
     c("name", "key", "snake_case", "data", "geometry")
   )
   expect_equal(
-    names(region$data),
+    names(state$data),
     c("geoid", "name")
   )
-  expect_equal(names(region$geometry$polygon),
+  expect_equal(names(state$geometry$polygon),
                c("geoid", "geom"))
-  expect_equal(nrow(region$data),
-               5)
-  expect_equal(nrow(region$geometry$polygon),
-               5)
+  expect_equal(nrow(state$data),
+               52)
+  expect_equal(nrow(state$geometry$polygon),
+               52)
 })
 
 
 test_that("snake_case_geolevel()", {
-  region <-
-    geolevel(name = "region",
-             layer = layer_us_region,
-             key = "geoid")
-  region <- snake_case_geolevel(region)
+  state <-
+    geolevel(name = "state",
+             layer = layer_us_state,
+             key = "GEOID")
+  state <- snake_case_geolevel(state)
 
   expect_equal(
-    region$snake_case,
+    state$snake_case,
     TRUE
   )
   expect_equal(
-    names(region$data),
-    c("geoid", "regionce", "awater", "affgeoid", "name", "lsad",
-      "region", "aland")
+    names(state$data),
+    c("geoid", "division", "region", "statefp", "stusps", "statens",
+      "name", "shape_length", "shape_area", "aland", "awater", "intptlat",
+      "intptlon")
   )
-  expect_equal(names(region$geometry$polygon),
+  expect_equal(names(state$geometry$polygon),
                c("geoid", "geom"))
 })
 
@@ -110,9 +116,9 @@ test_that("add_geometry()", {
   )
   expect_equal(
     names(state$data),
-    c("geoid", "funcstat", "intptlat", "lsad", "stusps", "shape_area",
-      "awater", "statens", "statefp", "mtfcc", "aland", "division",
-      "name", "region", "intptlon", "shape_length", "geoid_data")
+    c("geoid", "division", "region", "statefp", "stusps", "statens",
+      "name", "shape_length", "shape_area", "aland", "awater", "intptlat",
+      "intptlon")
   )
   expect_equal(names(state$geometry$polygon),
                c("geoid", "geom"))
@@ -148,9 +154,9 @@ test_that("add_geometry() and get_empty_geometry_instances()", {
   )
   expect_equal(
     names(state$data),
-    c("geoid", "funcstat", "intptlat", "lsad", "stusps", "shape_area",
-      "awater", "statens", "statefp", "mtfcc", "aland", "division",
-      "name", "region", "intptlon", "shape_length", "geoid_data")
+    c("geoid", "division", "region", "statefp", "stusps", "statens",
+      "name", "shape_length", "shape_area", "aland", "awater", "intptlat",
+      "intptlon")
   )
   expect_equal(names(state$geometry$polygon),
                c("geoid", "geom"))
@@ -164,9 +170,9 @@ test_that("add_geometry() and get_empty_geometry_instances()", {
                52)
 
   expect_equal(names(res),
-               c("geoid", "funcstat", "intptlat", "lsad", "stusps", "shape_area",
-                 "awater", "statens", "statefp", "mtfcc", "aland", "division",
-                 "name", "region", "intptlon", "shape_length", "geoid_data"))
+               c("geoid", "division", "region", "statefp", "stusps", "statens",
+                 "name", "shape_length", "shape_area", "aland", "awater", "intptlat",
+                 "intptlon"))
 
   expect_equal(nrow(res),
                0)

@@ -29,9 +29,9 @@ considers the layer's CRS by default and, if it is not a layer, it considers
 4326 CRS (WGS84).
 }
 \examples{
-us_state_point <-
-  coordinates_to_geometry(layer_us_state,
-                          lon_lat = c("intptlon", "intptlat"))
+us_county_point <-
+  coordinates_to_geometry(layer_us_county,
+                          lon_lat = c("INTPTLON", "INTPTLAT"))
 
 }
 \seealso{

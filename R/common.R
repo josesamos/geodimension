@@ -15,10 +15,11 @@
 #' @family level definition functions
 #'
 #' @examples
-#' geometry <- get_geometry(layer_us_region)
+#' geometry <- get_geometry(layer_us_county)
 #'
 #' @export
 get_geometry <- function(layer) {
+  layer <- sf::st_as_sf(layer)
   geo <- unique(as.character(sf::st_geometry_type(layer, by_geometry = TRUE)))
   if (length(intersect(geo, c("CIRCULARSTRING", "CURVEPOLYGON", "MULTIPOLYGON", "TRIANGLE", "POLYGON"))) > 0) {
     return("polygon")
@@ -47,7 +48,7 @@ get_geometry <- function(layer) {
 #' @family level definition functions
 #'
 #' @examples
-#' is_key <- check_key(layer_us_region, key = c("name"))
+#' is_key <- check_key(layer_us_county, key = c("STATEFP", "NAME"))
 #'
 #' @export
 check_key <- function(table, key = NULL) {
@@ -55,8 +56,7 @@ check_key <- function(table, key = NULL) {
     table <- tibble::tibble((sf::st_drop_geometry(table)))
   }
   stopifnot("The attributes that make up the key need to be indicated." = !is.null(key))
-  key <- unique(key)
-  stopifnot("The attributes that make up the key must be included in the table." = key %in% names(table))
+  key <- validate_names(names(table), key, 'attribute')
 
   table_key <- table |>
     dplyr::select(tidyselect::all_of(key)) |>
@@ -90,9 +90,9 @@ check_key <- function(table, key = NULL) {
 #' @family level definition functions
 #'
 #' @examples
-#' us_state_point <-
-#'   coordinates_to_geometry(layer_us_state,
-#'                           lon_lat = c("intptlon", "intptlat"))
+#' us_county_point <-
+#'   coordinates_to_geometry(layer_us_county,
+#'                           lon_lat = c("INTPTLON", "INTPTLAT"))
 #'
 #' @export
 coordinates_to_geometry <- function(table, lon_lat = c("intptlon", "intptlat"), crs = NULL) {

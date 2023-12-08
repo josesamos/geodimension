@@ -85,10 +85,12 @@ geolevel <-
 
     if (!is.null(geometry)) {
       layer <- layer |>
-        dplyr::select(tidyselect::all_of(key)) |>
-        dplyr::group_by_at(key) |>
-        dplyr::summarize(.groups = "drop")
-
+        dplyr::select(tidyselect::all_of(key))
+      if (nrow(layer) > nrow(data_key)) {
+        layer <- layer |>
+          dplyr::group_by_at(key) |>
+          dplyr::summarize(.groups = "drop")
+      }
       # only instances with geometry
       layer <- layer[!is.na(sf::st_dimension(layer)),]
       geo <- list(geometry = layer)

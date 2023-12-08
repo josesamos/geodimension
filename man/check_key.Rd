@@ -21,7 +21,7 @@ Check if the specified set of attributes can be the key of the table.
 The table can be a data table or a vector layer.
 }
 \examples{
-is_key <- check_key(layer_us_region, key = c("name"))
+is_key <- check_key(layer_us_county, key = c("STATEFP", "NAME"))
 
 }
 \seealso{

@@ -1,7 +1,7 @@
 
 #' `us_division`
 #'
-#' Data for US Divisions.
+#' US Divisions and Regions (code and name).
 #'
 #' @format A `tibble` object.
 #' @source
