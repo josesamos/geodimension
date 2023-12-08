@@ -27,9 +27,10 @@
 #' @family geolevel definition functions
 #'
 #' @examples
-#' region <-
-#'   geolevel(name = "region",
-#'            layer = layer_us_region,
+#'
+#' state <-
+#'   geolevel(name = "state",
+#'            layer = layer_us_state,
 #'            key = "geoid",
 #'            snake_case = TRUE)
 #'
@@ -132,6 +133,7 @@ geolevel <-
 #' @family geolevel definition functions
 #'
 #' @examples
+#'
 #' us_state_point <-
 #'   coordinates_to_geometry(layer_us_state,
 #'                           lon_lat = c("intptlon", "intptlat"))
@@ -182,9 +184,18 @@ add_geometry.geolevel <- function(gl,
   layer_key <- validate_names(names(layer), layer_key, 'attribute')
 
   layer <- layer |>
-    dplyr::select(tidyselect::all_of(layer_key)) |>
+    dplyr::select(tidyselect::all_of(layer_key))
+
+  layer_key_data <- sf::st_drop_geometry(layer) |>
     dplyr::group_by_at(layer_key) |>
     dplyr::summarize(.groups = "drop")
+
+  if (nrow(layer_key_data) < nrow(layer)) {
+    layer <- layer |>
+      dplyr::group_by_at(layer_key) |>
+      dplyr::summarize(.groups = "drop")
+  }
+
   # only the layer_key and geometry
   names_layer <- names(layer)
   names(layer) <- c(level_key, names_layer[length(names_layer)])
@@ -330,4 +341,67 @@ complete_point_geometry.geolevel <- function(gl) {
     gl$geometry[["point"]] <- layer
   }
   gl
+}
+
+
+#' Get level layer
+#'
+#' Get a geographic layer associated with a level. We can select the geometry
+#' and, using boolean parameters, which attributes are included in the layer's
+#' table: only the attributes that make up the key, the subrogate key, inherited
+#' attributes.
+#'
+#' In case of inheriting attributes from other levels, in the table, these can
+#' have as a prefix the name of the level.
+#'
+#' @param gd A `geolevel` or `geodimension` object.
+#' @param level_name A string.
+#' @param geometry A string.
+#' @param only_key A boolean.
+#' @param inherited A boolean.
+#' @param add_prefix A boolean.
+#'
+#' @return A `sf` object.
+#'
+#' @family information output functions
+#'
+#' @examples
+#'
+#' state <-
+#'   geolevel(name = "state",
+#'            layer = layer_us_state,
+#'            key = "GEOID")
+#'
+#' state_ll <- state |>
+#'   get_level_layer("polygon")
+#'
+#' @export
+get_level_layer <- function(gd,
+                            level_name,
+                            geometry,
+                            only_key,
+                            inherited,
+                            add_prefix) UseMethod("get_level_layer")
+
+#' @rdname get_level_layer
+#'
+#' @export
+get_level_layer.geolevel <- function(gd,
+                                     level_name = NULL,
+                                     geometry = NULL,
+                                     only_key = FALSE,
+                                     inherited = FALSE,
+                                     add_prefix = TRUE) {
+  if (is.null(geometry)) {
+    geometry <- names(gd$geometry)[1]
+  } else {
+    stopifnot("The selected geometry is not defined for the level." = geometry %in% names(gd$geometry))
+  }
+  layer <- gd$geometry[[geometry]]
+  if (!only_key) {
+    layer <- gd$data |>
+      dplyr::left_join(layer, by = gd$key) |>
+      sf::st_as_sf()
+  }
+  layer
 }

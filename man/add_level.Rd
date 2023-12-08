@@ -21,24 +21,6 @@ A \code{geodimension}.
 Once a level is part of the dimension, it can then be related to other levels
 of the dimension.
 }
-\examples{
-region <-
-  geolevel(name = "region",
-           layer = layer_us_region,
-           key = "geoid")
-
-division <-
-  geolevel(name = "division",
-           layer = layer_us_division,
-           key = "geoid")
-
-gd <-
-  geodimension(name = "gd_us",
-               level = region,
-               snake_case = TRUE) |>
-  add_level(division)
-
-}
 \seealso{
 Other geodimension definition functions: 
 \code{\link{geodimension}()}

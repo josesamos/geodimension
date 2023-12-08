@@ -228,3 +228,40 @@ test_that("complete_point_geometry()", {
   expect_equal(nrow(state$geometry$point),
                52)
 })
+
+
+test_that("get_level_layer()", {
+  state <-
+    geolevel(name = "state",
+             layer = layer_us_state,
+             key = "geoid",
+             snake_case = TRUE) |>
+    complete_point_geometry()
+
+  state_1 <- state |>
+    get_level_layer("polygon")
+
+  state_2 <- state |>
+    get_level_layer("point", only_key = TRUE)
+
+  expect_equal(class(state_1),
+               c("sf", "tbl_df", "tbl", "data.frame"))
+
+  expect_equal(class(state_2),
+               c("sf", "data.frame"))
+
+  expect_equal(names(state_1),
+               c("geoid", "division", "region", "statefp", "stusps", "statens",
+                 "name", "shape_length", "shape_area", "aland", "awater", "intptlat",
+                 "intptlon", "geom"))
+
+  expect_equal(names(state_2),
+               c("geoid", "geom"))
+
+  expect_equal(nrow(state_1),
+               52)
+
+  expect_equal(nrow(state_2),
+               52)
+
+})

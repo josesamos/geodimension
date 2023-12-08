@@ -32,6 +32,7 @@ using the level and layer keys.
 If none is indicated, by default the key defined in the level is considered.
 }
 \examples{
+
 us_state_point <-
   coordinates_to_geometry(layer_us_state,
                           lon_lat = c("intptlon", "intptlat"))

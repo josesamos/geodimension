@@ -21,18 +21,6 @@ A \code{geodimension} object is created. A \code{geodimension} allows us to rela
 levels. In addition to the name of the \code{geodimension} , a \code{level} has to be
 given.
 }
-\examples{
-region <-
-  geolevel(name = "region",
-           layer = layer_us_region,
-           key = "geoid")
-
-gd <-
-  geodimension(name = "gd_us",
-               level = region,
-               snake_case = TRUE)
-
-}
 \seealso{
 Other geodimension definition functions: 
 \code{\link{add_level}()}
