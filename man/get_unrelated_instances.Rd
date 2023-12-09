@@ -3,7 +3,7 @@
 \name{get_unrelated_instances}
 \alias{get_unrelated_instances}
 \alias{get_unrelated_instances.geodimension}
-\title{Check related levels in a dimension}
+\title{Get unrelated instances}
 \usage{
 get_unrelated_instances(gd, lower_level_name, upper_level_name)
 

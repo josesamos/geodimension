@@ -59,6 +59,44 @@ level, according to the established relationship. If lower level attribute names
 are not provided, they will be generated from the upper level key names, adding
 a prefix.
 }
+\examples{
+
+place <-
+  geolevel(name = "place",
+           layer = layer_us_place,
+           attributes = c("STATEFP", "county_geoid", "NAME", "type"),
+           key = "GEOID")
+
+county <-
+  geolevel(
+    name = "county",
+    layer = layer_us_county,
+    attributes = c("STATEFP", "NAME", "type"),
+    key = "GEOID"
+  ) |>
+  add_geometry(coordinates_to_geometry(layer_us_county,
+                                       lon_lat = c("INTPTLON", "INTPTLAT")))
+
+gd_us <-
+  geodimension(name = "gd_us",
+               level = place) |>
+  add_level(level = county)
+
+gd_us <- gd_us |>
+  relate_levels(
+    lower_level_name = "place",
+    lower_level_attributes = "county_geoid",
+    upper_level_name = "county"
+  )
+
+gd_us_2 <- gd_us |>
+  relate_levels(
+    lower_level_name = "place",
+    upper_level_name = "county",
+    by_geography = TRUE
+  )
+
+}
 \seealso{
 Other level association functions: 
 \code{\link{complete_relation_by_geography}()},

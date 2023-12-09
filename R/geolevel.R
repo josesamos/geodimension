@@ -51,14 +51,10 @@ geolevel <-
       geometry <- NULL
     }
     if (snake_case) {
-      name <- snakecase::to_snake_case(name)
-      if (!is.null(attributes)) {
-        attributes <- snakecase::to_snake_case(attributes)
-      }
-      if (!is.null(key)) {
-        key <- snakecase::to_snake_case(key)
-      }
-      names(layer) <- snakecase::to_snake_case(names(layer))
+      name <- my_to_snake_case(name)
+      attributes <- my_to_snake_case(attributes)
+      key <- my_to_snake_case(key)
+      names(layer) <- my_to_snake_case(names(layer))
     }
 
     if (!is.null(geometry)) {
@@ -165,7 +161,7 @@ add_geometry.geolevel <- function(gl,
     level_key <- gl$key
   } else {
     if (gl$snake_case) {
-      level_key <- snakecase::to_snake_case(level_key)
+      level_key <- my_to_snake_case(level_key)
     }
     level_key <- validate_names(names(gl$data), level_key, 'attribute')
     stopifnot("`level_key` is not a key of the level." = nrow(gl$data) == nrow(unique(gl$data[, level_key])))
@@ -174,12 +170,12 @@ add_geometry.geolevel <- function(gl,
     layer_key <- level_key
   } else {
     if (gl$snake_case) {
-      layer_key <- snakecase::to_snake_case(layer_key)
+      layer_key <- my_to_snake_case(layer_key)
     }
     stopifnot("Keys are not the same length." = length(unique(layer_key)) == length(level_key))
   }
   if (gl$snake_case) {
-    names(layer) <- snakecase::to_snake_case(names(layer))
+    names(layer) <- my_to_snake_case(names(layer))
   }
   layer_key <- validate_names(names(layer), layer_key, 'attribute')
 
@@ -224,12 +220,12 @@ add_geometry.geolevel <- function(gl,
 #'
 #' @keywords internal
 snake_case_geolevel <- function(gl) {
-  gl$name <- snakecase::to_snake_case(gl$name)
-  gl$key <- snakecase::to_snake_case(gl$key)
+  gl$name <- my_to_snake_case(gl$name)
+  gl$key <- my_to_snake_case(gl$key)
   gl$snake_case <- TRUE
-  names(gl$data) <- snakecase::to_snake_case(names(gl$data))
+  names(gl$data) <- my_to_snake_case(names(gl$data))
   for (i in names(gl$geometry)) {
-    names(gl$geometry[[i]]) <- snakecase::to_snake_case(names(gl$geometry[[i]]))
+    names(gl$geometry[[i]]) <- my_to_snake_case(names(gl$geometry[[i]]))
   }
   gl
 }
@@ -348,11 +344,9 @@ complete_point_geometry.geolevel <- function(gl) {
 #'
 #' Get a geographic layer associated with a level. We can select the geometry
 #' and, using boolean parameters, which attributes are included in the layer's
-#' table: only the attributes that make up the key, the subrogate key, inherited
-#' attributes.
-#'
-#' In case of inheriting attributes from other levels, in the table, these can
-#' have as a prefix the name of the level.
+#' table: only the attributes that make up the key and, if applied to a geodimension,
+#' inherited attributes to which the prefix of the level where they are defined
+#' can be added.
 #'
 #' @param gd A `geolevel` or `geodimension` object.
 #' @param level_name A string.

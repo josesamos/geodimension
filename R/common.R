@@ -76,9 +76,7 @@ check_key <- function(table, key = NULL) {
 #'
 #' If we start from a geographic layer, it initially transforms it into a table.
 #'
-#' The CRS of the new layer is indicated. If a CRS is not indicated, it
-#' considers the layer's CRS by default and, if it is not a layer, it considers
-#' 4326 CRS (WGS84).
+#' The CRS of the new layer is indicated. By default, it considers 4326 (WGS84).
 #'
 #' @param table A `tibble` object.
 #' @param lon_lat A vector, name of longitude and latitude attributes.
@@ -95,11 +93,8 @@ check_key <- function(table, key = NULL) {
 #'                           lon_lat = c("INTPTLON", "INTPTLAT"))
 #'
 #' @export
-coordinates_to_geometry <- function(table, lon_lat = c("intptlon", "intptlat"), crs = NULL) {
+coordinates_to_geometry <- function(table, lon_lat = c("intptlon", "intptlat"), crs = 4326) {
   if ("sf" %in% class(table)) {
-    if (is.null(crs)) {
-      crs <- sf::st_crs(table)
-    }
     table <- tibble::tibble((sf::st_drop_geometry(table)))
   }
   lon_lat <- unique(lon_lat)
@@ -149,4 +144,19 @@ validate_names <- function(defined_names, names, concept = 'name', repeated = FA
     }
   }
   names
+}
+
+
+#' To snake case
+#'
+#' @param str A string.
+#'
+#' @return A vector of strings.
+#'
+#' @keywords internal
+my_to_snake_case <- function(str) {
+  if (!is.null(str)) {
+    str <- snakecase::to_snake_case(str)
+  }
+  str
 }

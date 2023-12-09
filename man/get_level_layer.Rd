@@ -45,12 +45,9 @@ A \code{sf} object.
 \description{
 Get a geographic layer associated with a level. We can select the geometry
 and, using boolean parameters, which attributes are included in the layer's
-table: only the attributes that make up the key, the subrogate key, inherited
-attributes.
-}
-\details{
-In case of inheriting attributes from other levels, in the table, these can
-have as a prefix the name of the level.
+table: only the attributes that make up the key and, if applied to a geodimension,
+inherited attributes to which the prefix of the level where they are defined
+can be added.
 }
 \examples{
 

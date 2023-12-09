@@ -19,7 +19,7 @@ URL: https://josesamos.github.io/geodimension/,
     https://github.com/josesamos/geodimension
 BugReports: https://github.com/josesamos/geodimension/issues
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5.0)
 Imports: 
     dplyr,
     methods,

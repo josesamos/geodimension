@@ -31,6 +31,41 @@
 #'
 #' @examples
 #'
+#' place <-
+#'   geolevel(name = "place",
+#'            layer = layer_us_place,
+#'            attributes = c("STATEFP", "county_geoid", "NAME", "type"),
+#'            key = "GEOID")
+#'
+#' county <-
+#'   geolevel(
+#'     name = "county",
+#'     layer = layer_us_county,
+#'     attributes = c("STATEFP", "NAME", "type"),
+#'     key = "GEOID"
+#'   ) |>
+#'   add_geometry(coordinates_to_geometry(layer_us_county,
+#'                                        lon_lat = c("INTPTLON", "INTPTLAT")))
+#'
+#' gd_us <-
+#'   geodimension(name = "gd_us",
+#'                level = place) |>
+#'   add_level(level = county)
+#'
+#' gd_us <- gd_us |>
+#'   relate_levels(
+#'     lower_level_name = "place",
+#'     lower_level_attributes = "county_geoid",
+#'     upper_level_name = "county"
+#'   )
+#'
+#' gd_us_2 <- gd_us |>
+#'   relate_levels(
+#'     lower_level_name = "place",
+#'     upper_level_name = "county",
+#'     by_geography = TRUE
+#'   )
+#'
 #' @export
 relate_levels <- function(gd,
                           lower_level_name,
@@ -51,6 +86,12 @@ relate_levels.geodimension <- function(gd,
                                        by_geography = FALSE) {
   stopifnot("Missing lower level name." = !is.null(lower_level_name))
   stopifnot("Missing upper level name." = !is.null(upper_level_name))
+  if (gd$snake_case) {
+    lower_level_name <- my_to_snake_case(lower_level_name)
+    lower_level_attributes <- my_to_snake_case(lower_level_attributes)
+    upper_level_name <- my_to_snake_case(upper_level_name)
+    upper_level_key <- my_to_snake_case(upper_level_key)
+  }
   lower_level_name <-
     validate_names(names(gd$geolevel), lower_level_name, 'lower level')
   upper_level_name <-
@@ -131,7 +172,7 @@ relate_levels.geodimension <- function(gd,
 }
 
 
-#' Check related levels in a dimension
+#' Get unrelated instances
 #'
 #' Given two previously related levels of a dimension, it obtains the instances
 #' of the lower level that have not been related to the upper level.
@@ -160,6 +201,10 @@ get_unrelated_instances.geodimension <- function(gd,
                                                  upper_level_name = NULL) {
   stopifnot("Missing lower level name." = !is.null(lower_level_name))
   stopifnot("Missing upper level name." = !is.null(upper_level_name))
+  if (gd$snake_case) {
+    lower_level_name <- my_to_snake_case(lower_level_name)
+    upper_level_name <- my_to_snake_case(upper_level_name)
+  }
   lower_level_attributes <-
     gd$relation[[lower_level_name]][[upper_level_name]]$lower_fk
   upper_level_key <-
@@ -210,6 +255,10 @@ complete_relation_by_geography <- function(gd,
 complete_relation_by_geography.geodimension <- function(gd,
                                                         lower_level_name = NULL,
                                                         upper_level_name = NULL) {
+  if (gd$snake_case) {
+    lower_level_name <- my_to_snake_case(lower_level_name)
+    upper_level_name <- my_to_snake_case(upper_level_name)
+  }
   t <-
     get_unrelated_instances.geodimension(gd, lower_level_name, upper_level_name)
   if (nrow(t) > 0) {
@@ -279,6 +328,9 @@ get_higher_level_names.geodimension <- function(gd,
                                                 level_name = NULL,
                                                 indirect_levels = FALSE) {
   stopifnot("Missing level name." = !is.null(level_name))
+  if (gd$snake_case) {
+    level_name <- my_to_snake_case(level_name)
+  }
   level_name <-
     validate_names(names(gd$geolevel), level_name, 'level')
   res <- names(gd$relation[[level_name]])
@@ -290,4 +342,3 @@ get_higher_level_names.geodimension <- function(gd,
   }
   res
 }
-

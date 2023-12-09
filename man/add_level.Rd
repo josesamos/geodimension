@@ -21,6 +21,30 @@ A \code{geodimension}.
 Once a level is part of the dimension, it can then be related to other levels
 of the dimension.
 }
+\examples{
+
+place <-
+  geolevel(name = "place",
+           layer = layer_us_place,
+           attributes = c("STATEFP", "county_geoid", "NAME", "type"),
+           key = "GEOID")
+
+county <-
+  geolevel(
+    name = "county",
+    layer = layer_us_county,
+    attributes = c("STATEFP", "NAME", "type"),
+    key = "GEOID"
+  ) |>
+  add_geometry(coordinates_to_geometry(layer_us_county,
+                                       lon_lat = c("INTPTLON", "INTPTLAT")))
+
+gd_us <-
+  geodimension(name = "gd_us",
+               level = place) |>
+  add_level(level = county)
+
+}
 \seealso{
 Other geodimension definition functions: 
 \code{\link{geodimension}()}

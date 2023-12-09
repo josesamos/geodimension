@@ -4,7 +4,7 @@
 \alias{coordinates_to_geometry}
 \title{Transform coordinates to point geometry}
 \usage{
-coordinates_to_geometry(table, lon_lat = c("intptlon", "intptlat"), crs = NULL)
+coordinates_to_geometry(table, lon_lat = c("intptlon", "intptlat"), crs = 4326)
 }
 \arguments{
 \item{table}{A \code{tibble} object.}
@@ -24,9 +24,7 @@ returns a layer of points.
 \details{
 If we start from a geographic layer, it initially transforms it into a table.
 
-The CRS of the new layer is indicated. If a CRS is not indicated, it
-considers the layer's CRS by default and, if it is not a layer, it considers
-4326 CRS (WGS84).
+The CRS of the new layer is indicated. By default, it considers 4326 (WGS84).
 }
 \examples{
 us_county_point <-

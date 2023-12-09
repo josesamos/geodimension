@@ -22,6 +22,31 @@ A \code{geodimension}.
 Transform the CRS of all the layers included in the dimension to the one
 indicated.
 }
+\examples{
+
+place <-
+  geolevel(name = "place",
+           layer = layer_us_place,
+           attributes = c("STATEFP", "county_geoid", "NAME", "type"),
+           key = "GEOID")
+
+county <-
+  geolevel(
+    name = "county",
+    layer = layer_us_county,
+    attributes = c("STATEFP", "NAME", "type"),
+    key = "GEOID"
+  ) |>
+  add_geometry(coordinates_to_geometry(layer_us_county,
+                                       lon_lat = c("INTPTLON", "INTPTLAT")))
+
+gd_us <-
+  geodimension(name = "gd_us",
+               level = place) |>
+  add_level(level = county) |>
+  transform_crs(crs = 3857)
+
+}
 \seealso{
 Other configuration functions: 
 \code{\link{select_levels}()}

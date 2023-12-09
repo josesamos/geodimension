@@ -31,7 +31,7 @@ geodimension <-
     stopifnot("Missing geodimension name." = !is.null(name))
     stopifnot("level does not include geolevel object." = methods::is(level, "geolevel"))
     if (snake_case) {
-      name <- snakecase::to_snake_case(name)
+      name <- my_to_snake_case(name)
       level <- snake_case_geolevel(level)
     }
     geolevel <- list()
@@ -119,6 +119,28 @@ add_level.geodimension <- function(gd,
 #' @family configuration functions
 #'
 #' @examples
+#'
+#' place <-
+#'   geolevel(name = "place",
+#'            layer = layer_us_place,
+#'            attributes = c("STATEFP", "county_geoid", "NAME", "type"),
+#'            key = "GEOID")
+#'
+#' county <-
+#'   geolevel(
+#'     name = "county",
+#'     layer = layer_us_county,
+#'     attributes = c("STATEFP", "NAME", "type"),
+#'     key = "GEOID"
+#'   ) |>
+#'   add_geometry(coordinates_to_geometry(layer_us_county,
+#'                                        lon_lat = c("INTPTLON", "INTPTLAT")))
+#'
+#' gd_us <-
+#'   geodimension(name = "gd_us",
+#'                level = place) |>
+#'   add_level(level = county) |>
+#'   transform_crs(crs = 3857)
 #'
 #' @export
 transform_crs <- function(gd,
