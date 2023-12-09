@@ -154,8 +154,12 @@ test_that("add_geometry() and get_empty_geometry_instances()", {
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
+<<<<<<< HEAD
              key = "geoid",
              snake_case = TRUE) |>
+=======
+             key = c("geoid")) |>
+>>>>>>> master
     add_geometry(layer = us_state_point)
 
   res <- state |> get_empty_geometry_instances(geometry = "point")
