@@ -24,6 +24,15 @@ Get the names of levels included in the \code{geodimension} that are related to 
 given level and are upper levels. We can get only the direct levels or the
 levels reached by passing through other levels.
 }
+\examples{
+
+ln_1 <- gd_us |>
+  get_higher_level_names(level_name = "place")
+
+ln_2 <- gd_us |>
+  get_higher_level_names(level_name = "place", indirect_levels = TRUE)
+
+}
 \seealso{
 Other information output functions: 
 \code{\link{get_level_data}()},

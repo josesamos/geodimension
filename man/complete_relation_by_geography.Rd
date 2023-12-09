@@ -36,6 +36,45 @@ alternative geographic relationships.
 \details{
 It does not necessarily succeed trying to relate instances.
 }
+\examples{
+
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+
+place <-
+  geolevel(name = "place",
+           layer = layer_us_place,
+           attributes = c("STATEFP", "county_geoid", "NAME", "type"),
+           key = "GEOID")
+
+county <-
+  geolevel(
+    name = "county",
+    layer = layer_us_county,
+    attributes = c("STATEFP", "NAME", "type"),
+    key = "GEOID"
+  ) |>
+  add_geometry(coordinates_to_geometry(layer_us_county,
+                                       lon_lat = c("INTPTLON", "INTPTLAT")))
+
+gd <-
+  geodimension(name = "gd_us",
+               level = place) |>
+  add_level(level = county)
+
+gd <- gd |>
+  relate_levels(
+    lower_level_name = "place",
+    lower_level_attributes = "county_geoid",
+    upper_level_name = "county"
+  ) |>
+  complete_relation_by_geography(
+    lower_level_name = "place",
+    upper_level_name = "county"
+  )
+
+}
 \seealso{
 Other level association functions: 
 \code{\link{get_unrelated_instances}()},

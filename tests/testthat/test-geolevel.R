@@ -1,4 +1,6 @@
 test_that("geolevel()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
@@ -24,6 +26,8 @@ test_that("geolevel()", {
 
 
 test_that("geolevel()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
@@ -51,6 +55,8 @@ test_that("geolevel()", {
 
 
 test_that("geolevel()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
@@ -76,6 +82,8 @@ test_that("geolevel()", {
 
 
 test_that("snake_case_geolevel()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
@@ -98,6 +106,8 @@ test_that("snake_case_geolevel()", {
 
 
 test_that("add_geometry()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   us_state_point <-
     coordinates_to_geometry(layer_us_state,
                             lon_lat = c("intptlon", "intptlat"))
@@ -136,6 +146,8 @@ test_that("add_geometry()", {
 
 
 test_that("add_geometry() and get_empty_geometry_instances()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   us_state_point <-
     coordinates_to_geometry(layer_us_state,
                             lon_lat = c("intptlon", "intptlat"))
@@ -179,6 +191,8 @@ test_that("add_geometry() and get_empty_geometry_instances()", {
 })
 
 test_that("complete_point_geometry()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
@@ -194,6 +208,8 @@ test_that("complete_point_geometry()", {
 })
 
 test_that("complete_point_geometry()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
@@ -211,6 +227,8 @@ test_that("complete_point_geometry()", {
 })
 
 test_that("complete_point_geometry()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   state <-
     geolevel(name = "state",
              layer = layer_us_state,
@@ -231,6 +249,8 @@ test_that("complete_point_geometry()", {
 
 
 test_that("get_level_layer()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
   state <-
     geolevel(name = "state",
              layer = layer_us_state,

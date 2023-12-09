@@ -51,6 +51,9 @@ can be added.
 }
 \examples{
 
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
@@ -58,6 +61,12 @@ state <-
 
 state_ll <- state |>
   get_level_layer("polygon")
+
+
+ld <- gd_us |>
+  get_level_layer(level_name = "county",
+                  geometry = "polygon",
+                  inherited = TRUE)
 
 }
 \seealso{

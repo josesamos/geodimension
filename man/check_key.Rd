@@ -21,6 +21,10 @@ Check if the specified set of attributes can be the key of the table.
 The table can be a data table or a vector layer.
 }
 \examples{
+
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+
 is_key <- check_key(layer_us_county, key = c("STATEFP", "NAME"))
 
 }

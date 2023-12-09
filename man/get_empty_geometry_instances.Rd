@@ -22,6 +22,10 @@ Get the instances of the data table that do not have associated geometry for
 the specified geometry type.
 }
 \examples{
+
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+
 us_state_point <-
   coordinates_to_geometry(layer_us_state,
                           lon_lat = c("intptlon", "intptlat"))

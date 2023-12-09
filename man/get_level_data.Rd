@@ -31,6 +31,13 @@ or also those that it inherits from other higher levels with which it is related
 In case of inheriting attributes from other levels, in the table, these can
 have as a prefix the name of the level.
 }
+\examples{
+
+ld <- gd_us |>
+  get_level_data(level_name = "county",
+                 inherited = TRUE)
+
+}
 \seealso{
 Other information output functions: 
 \code{\link{get_higher_level_names}()},

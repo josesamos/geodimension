@@ -1,4 +1,9 @@
 test_that("geodimension()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+  layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+
   place <-
     geolevel(name = "place",
              layer = layer_us_place,
@@ -36,6 +41,11 @@ test_that("geodimension()", {
 
 
 test_that("add_level() and transform_crs()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+  layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+
   place <-
     geolevel(name = "place",
              layer = layer_us_place,

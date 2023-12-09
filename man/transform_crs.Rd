@@ -24,6 +24,10 @@ indicated.
 }
 \examples{
 
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+
 place <-
   geolevel(name = "place",
            layer = layer_us_place,

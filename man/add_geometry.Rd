@@ -33,6 +33,9 @@ If none is indicated, by default the key defined in the level is considered.
 }
 \examples{
 
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+
 us_state_point <-
   coordinates_to_geometry(layer_us_state,
                           lon_lat = c("intptlon", "intptlat"))

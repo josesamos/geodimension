@@ -61,6 +61,10 @@ a prefix.
 }
 \examples{
 
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+
 place <-
   geolevel(name = "place",
            layer = layer_us_place,
@@ -77,19 +81,19 @@ county <-
   add_geometry(coordinates_to_geometry(layer_us_county,
                                        lon_lat = c("INTPTLON", "INTPTLAT")))
 
-gd_us <-
+gd <-
   geodimension(name = "gd_us",
                level = place) |>
   add_level(level = county)
 
-gd_us <- gd_us |>
+gd <- gd |>
   relate_levels(
     lower_level_name = "place",
     lower_level_attributes = "county_geoid",
     upper_level_name = "county"
   )
 
-gd_us_2 <- gd_us |>
+gd_2 <- gd |>
   relate_levels(
     lower_level_name = "place",
     upper_level_name = "county",

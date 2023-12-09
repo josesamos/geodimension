@@ -21,6 +21,12 @@ A \code{geodimension} object.
 Select a subset of the levels of the dimension so that the rest of the levels
 no longer belong to it.
 }
+\examples{
+
+gd_us_2 <- gd_us |>
+  select_levels(level_names = c("state", "county", "place", "region"))
+
+}
 \seealso{
 Other configuration functions: 
 \code{\link{transform_crs}()}

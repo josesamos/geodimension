@@ -7,9 +7,6 @@
 \format{
 A \code{tibble} object.
 }
-\source{
-\url{https://www.census.gov}
-}
 \usage{
 us_division
 }

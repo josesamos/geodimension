@@ -23,6 +23,9 @@ given.
 }
 \examples{
 
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+
 place <-
   geolevel(name = "place",
            layer = layer_us_place,

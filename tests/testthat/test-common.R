@@ -42,7 +42,11 @@ test_that("validate_names()", {
 })
 
 
-test_that("get_geometry()", {
+test_that("get_geometry() and check_key()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+  layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+
   expect_equal(
     get_geometry(layer_us_place),
     "point")
@@ -51,10 +55,6 @@ test_that("get_geometry()", {
     get_geometry(layer_us_county),
     "polygon")
 
-})
-
-
-test_that("check_key()", {
   expect_equal(
     check_key(layer_us_county, key = c("STATEFP", "NAME")),
     FALSE)
@@ -67,6 +67,10 @@ test_that("check_key()", {
 
 
 test_that("coordinates_to_geometry()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+
   us_state_point <-
     coordinates_to_geometry(layer_us_state)
 

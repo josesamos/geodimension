@@ -20,6 +20,12 @@ A vector of names.
 \description{
 Gets the geometry types defined for a given level.
 }
+\examples{
+
+lg <- gd_us |>
+  get_level_geometries(level_name = "state")
+
+}
 \seealso{
 Other information output functions: 
 \code{\link{get_higher_level_names}()},

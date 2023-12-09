@@ -27,6 +27,10 @@ If we start from a geographic layer, it initially transforms it into a table.
 The CRS of the new layer is indicated. By default, it considers 4326 (WGS84).
 }
 \examples{
+
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+
 us_county_point <-
   coordinates_to_geometry(layer_us_county,
                           lon_lat = c("INTPTLON", "INTPTLAT"))

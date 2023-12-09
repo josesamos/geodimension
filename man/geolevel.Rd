@@ -45,6 +45,9 @@ levels.
 }
 \examples{
 
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+
 state <-
   geolevel(name = "state",
            layer = layer_us_state,

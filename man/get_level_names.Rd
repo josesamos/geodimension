@@ -18,6 +18,12 @@ A vector of names.
 \description{
 Get the names of levels included in the \code{geodimension}.
 }
+\examples{
+
+ln <- gd_us |>
+  get_level_names()
+
+}
 \seealso{
 Other information output functions: 
 \code{\link{get_higher_level_names}()},

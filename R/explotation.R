@@ -13,13 +13,14 @@
 #'
 #' @examples
 #'
+#' lg <- gd_us |>
+#'   get_level_geometries(level_name = "state")
 #'
 #' @export
 get_level_geometries <- function(gd,
                                  level_name) {
   UseMethod("get_level_geometries")
 }
-
 
 #' @rdname get_level_geometries
 #' @export
@@ -45,12 +46,13 @@ get_level_geometries.geodimension <- function(gd,
 #'
 #' @examples
 #'
+#' ln <- gd_us |>
+#'   get_level_names()
 #'
 #' @export
 get_level_names <- function(gd) {
   UseMethod("get_level_names")
 }
-
 
 #' @rdname get_level_names
 #' @export
@@ -73,6 +75,8 @@ get_level_names.geodimension <- function(gd) {
 #'
 #' @examples
 #'
+#' gd_us_2 <- gd_us |>
+#'   select_levels(level_names = c("state", "county", "place", "region"))
 #'
 #' @export
 select_levels <- function(gd, level_names = NULL) {
@@ -103,6 +107,7 @@ select_levels.geodimension <- function(gd, level_names = NULL) {
 }
 
 
+
 #' Get level data
 #'
 #' Get the data table of a given level.
@@ -124,6 +129,9 @@ select_levels.geodimension <- function(gd, level_names = NULL) {
 #'
 #' @examples
 #'
+#' ld <- gd_us |>
+#'   get_level_data(level_name = "county",
+#'                  inherited = TRUE)
 #'
 #' @export
 get_level_data <- function(gd,
@@ -132,7 +140,6 @@ get_level_data <- function(gd,
                            add_prefix) {
   UseMethod("get_level_data")
 }
-
 
 #' @rdname get_level_data
 #' @export
@@ -193,3 +200,59 @@ get_level_layer.geodimension <- function(gd,
   layer
 }
 
+
+
+#' Get level data with latitude and longitude
+#'
+#' Get the data table of a given level with latitude and longitude.
+#'
+#' It allows selecting whether we want only the data defined locally in the level
+#' or also those that it inherits from other higher levels with which it is related.
+#'
+#' In case of inheriting attributes from other levels, in the table, these can
+#' have as a prefix the name of the level.
+#'
+#' Additionally, we indicate the names of the fields where longitude and latitude
+#' will be stored, as well as the crs that is used, if it is not WGS84.
+#'
+#' @param gd A `geodimension` object.
+#' @param level_name A string.
+#' @param inherited A boolean.
+#' @param add_prefix A boolean.
+#' @param lon_lat A vector, name of longitude and latitude attributes.
+#' @param crs A coordinate reference system: integer with the EPSG code, or
+#'   character with proj4string.
+#'
+#' @return A `tibble` object.
+#'
+#' @family information output functions
+#'
+#' @examples
+#'
+#' ld <- gd_us |>
+#'   get_level_data_geo(level_name = "county",
+#'                  inherited = TRUE)
+#'
+#' @export
+get_level_data_geo <- function(gd,
+                           level_name,
+                           inherited,
+                           add_prefix,
+                           lon_lat,
+                           crs) {
+  UseMethod("get_level_data_geo")
+}
+
+#' @rdname get_level_data_geo
+#' @export
+get_level_data_geo.geodimension <- function(gd,
+                                            level_name = NULL,
+                                            inherited = FALSE,
+                                            add_prefix = TRUE,
+                                            lon_lat = c("intptlon", "intptlat"),
+                                            crs = 4326) {
+  data <- get_level_data_geo(gd, level_name, inherited, add_prefix)
+
+
+  data
+}

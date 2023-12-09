@@ -28,6 +28,9 @@
 #'
 #' @examples
 #'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+#'
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
@@ -129,6 +132,9 @@ geolevel <-
 #' @family geolevel definition functions
 #'
 #' @examples
+#'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
 #'
 #' us_state_point <-
 #'   coordinates_to_geometry(layer_us_state,
@@ -245,6 +251,10 @@ snake_case_geolevel <- function(gl) {
 #' @family geolevel definition functions
 #'
 #' @examples
+#'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+#'
 #' us_state_point <-
 #'   coordinates_to_geometry(layer_us_state,
 #'                           lon_lat = c("intptlon", "intptlat"))
@@ -299,6 +309,10 @@ get_empty_geometry_instances.geolevel <- function(gl, geometry = NULL) {
 #' @family geolevel definition functions
 #'
 #' @examples
+#'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+#'
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
@@ -361,6 +375,9 @@ complete_point_geometry.geolevel <- function(gl) {
 #'
 #' @examples
 #'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+#'
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
@@ -368,6 +385,12 @@ complete_point_geometry.geolevel <- function(gl) {
 #'
 #' state_ll <- state |>
 #'   get_level_layer("polygon")
+#'
+#'
+#' ld <- gd_us |>
+#'   get_level_layer(level_name = "county",
+#'                   geometry = "polygon",
+#'                   inherited = TRUE)
 #'
 #' @export
 get_level_layer <- function(gd,

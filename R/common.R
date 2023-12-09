@@ -15,6 +15,10 @@
 #' @family level definition functions
 #'
 #' @examples
+#'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#'
 #' geometry <- get_geometry(layer_us_county)
 #'
 #' @export
@@ -48,6 +52,10 @@ get_geometry <- function(layer) {
 #' @family level definition functions
 #'
 #' @examples
+#'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#'
 #' is_key <- check_key(layer_us_county, key = c("STATEFP", "NAME"))
 #'
 #' @export
@@ -88,6 +96,10 @@ check_key <- function(table, key = NULL) {
 #' @family level definition functions
 #'
 #' @examples
+#'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#'
 #' us_county_point <-
 #'   coordinates_to_geometry(layer_us_county,
 #'                           lon_lat = c("INTPTLON", "INTPTLAT"))
