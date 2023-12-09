@@ -1,0 +1,67 @@
+---
+title: "geodimension: Definition of Geographic Dimensions"
+author: "Jose Samos (jsamos@ugr.es)"
+date: "2020-11-26"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{geodimension: Definition of Geographic Dimensions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+The *multidimensional data model* was defined with the aim of supporting data analysis. In multidimensional systems, data is structured in facts and dimensions[^1]. The *geographic dimension* plays a fundamental role in multidimensional systems. Apart from the analysis possibilities it offers, like any other dimension, it is very interesting to have the possibility of representing the reports obtained from multidimensional systems, using their geographic dimensions on a map, or performing spatial analysis on them. This functionality is supported by packages [`rolap`](https://cran.r-project.org/package=rolap) and [`geomultistar`](https://cran.r-project.org/package=geomultistar).
+
+[^1]: Basic concepts of dimensional modelling and star schemas are presented in [`rolap`](https://CRAN.R-project.org/package=rolap) vignettes.
+
+To define a geographic dimension in a star schema, we need a table with attributes corresponding to the levels of the dimension. Additionally, we will also need one or more geographic layers to represent the data using this dimension. We can obtain this data from available vector layers of geographic information. In simple cases, one layer is enough. We often need several layers related to each other. The relationships can be defined by common attribute values or can be inferred from the respective geographic information.
+
+The main objective of this package is to support the definition of geographic dimensions from layers of geographic information that can be used in multidimensional systems. In particular, through packages [`rolap`](https://cran.r-project.org/package=rolap) and [`geomultistar`](https://cran.r-project.org/package=geomultistar).
+
+The rest of this document is structured as follows: First, an illustrative example of how the package works is developed. Then, the document ends with conclusions.
+
+
+# An illustrative example
+
+Suppose we have a multidimensional design on US data and the geographic dimension is defined at the *place* level. For each place we have its name and the code of the state in which it is located. It would be interesting to have other levels of detail in this dimension to be able to perform *roll-up* operations.
+
+With this objective, we look for layers of geographic information. In [United States Census Bureau](https://www.census.gov) we find layers at various levels of detail, including *place*, *county* and *state*. Furthermore we find the relationships in table form between *division*, *region* and *country*. We have obtained them and we have stored[^2] them in `layer_us_place`, `layer_us_county`, `layer_us_state` and `us_division`, respectively.
+
+[^2]: To take up less space in the package, its geometry has also been simplified.
+
+The layers and the table are related to each other. In some cases they have attributes in common, in others, although there is a relationship, it may not be explicitly defined. We can use `geodimension` to support the definition of these relationships. Once defined, it will also offer us support to exploit them and obtain information from them.
+
+Thus, three phases can be distinguished:
+
+- Definition of levels.
+
+- Definition of relationships.
+
+- Obtaining information.
+
+## Definition of levels
+
+In the package, each conceptual level of the geographical dimension is called `geolevel`. To define a `geolevel`, we need a layer and the set of attributes that make up the layer's key (which uniquely identify each of its instances).
+
+We can previously check if a set of attributes form a key of the layer using the `check_key` function.
+
+```{r message=FALSE}
+library(geodimension)
+
+```
+
+# Conclusions
+
+The geographic dimension is very relevant for multidimensional systems. We can enrich a basic geographic dimension through information available in vector layers, generally, we will need several layers.
+
+Relationships between layers can be established through attributes or through the geographic relationships between their instances. The definition of these relationships can be systematized and is in part what is intended in this package.
+
+Additionally, once a `geodimension` has been defined, with the support of this package, we can easily obtain the attribute table with all the attributes of the levels that we want (if we need it), and also the layers with associated geographic information.
