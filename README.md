@@ -67,7 +67,3 @@ higher organization levels: *region*, *division* and also *nation*. We
 have obtained geographic layers for each of these levels:
 `layer_us_state`, `layer_us_region` and `layer_us_division`. From each
 layer, we define a `geolevel`.
-
-``` r
-library(geodimension)
-```
