@@ -1,4 +1,5 @@
 # geodimension (development version)
+* New functions `set_level_data()` and `get_level_data_geo()`.
 * Add parameter `snake_case` to `geolevel()` and `geodimension()` functions.
 * Delete parameter `use_intermediate_projected_crs` from function `complete_point_geometry()`.
 * Delete parameter `surrogate_key` from function `get_level_layer()`.

@@ -108,3 +108,96 @@ test_that("get_level_layer()", {
   )
 
 })
+
+
+
+test_that("get_level_data_geo()", {
+  ld_1 <- gd_us |>
+    get_level_data_geo(level_name = "county")
+
+  ld_2 <- gd_us |>
+    get_level_data_geo(level_name = "county",
+                   inherited = TRUE)
+
+  expect_equal(nrow(ld_1),
+               nrow(ld_2))
+
+  expect_equal(names(ld_1),
+               c("geoid", "statefp", "name", "type", "intptlon", "intptlat"))
+
+  expect_equal(
+    names(ld_2),
+    c(
+      "geoid",
+      "statefp",
+      "name",
+      "type",
+      "state_division",
+      "state_region",
+      "state_stusps",
+      "state_name",
+      "state_division_country",
+      "state_division_region_code",
+      "state_division_division_name",
+      "state_division_region_country",
+      "state_division_region_region_name",
+      "intptlon",
+      "intptlat"
+    )
+  )
+
+})
+
+
+
+
+test_that("get_level_data_geo()", {
+  ld <- gd_us |>
+    get_level_data(level_name = "county",
+                   inherited = TRUE)
+
+  gd_us_2 <- gd_us |>
+    set_level_data(level_name = "county",
+                   data = ld)
+
+  ld_2 <- gd_us_2 |>
+    get_level_data(level_name = "county")
+
+
+  expect_equal(ld,
+               ld_2)
+
+  expect_equal({
+    res <- tryCatch({
+      ld_1 <- gd_us |>
+        get_level_data(level_name = "county")
+      ld_1$statefp <- NULL
+      gd_us <- gd_us |>
+        set_level_data(level_name = "county",
+                       data = ld_1)
+    },
+    error = function(e)
+      1
+    )
+    res
+  },
+  1)
+
+  expect_equal({
+    res <- tryCatch({
+      ld_1 <- gd_us |>
+        get_level_data(level_name = "county")
+      ld_1$geoid <- NULL
+      gd_us <- gd_us |>
+        set_level_data(level_name = "county",
+                       data = ld_1)
+    },
+    error = function(e)
+      1
+    )
+    res
+  },
+  1)
+
+
+})

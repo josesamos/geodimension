@@ -41,8 +41,10 @@ ld <- gd_us |>
 \seealso{
 Other information output functions: 
 \code{\link{get_higher_level_names}()},
+\code{\link{get_level_data_geo}()},
 \code{\link{get_level_geometries}()},
 \code{\link{get_level_layer.geodimension}()},
-\code{\link{get_level_names}()}
+\code{\link{get_level_names}()},
+\code{\link{set_level_data}()}
 }
 \concept{information output functions}
