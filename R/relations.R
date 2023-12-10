@@ -27,7 +27,8 @@
 #'
 #' @return A `geodimension`.
 #'
-#' @family level association functions
+#' @family relationship between geolevels
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
 #'
 #' @examples
 #'
@@ -187,7 +188,8 @@ relate_levels.geodimension <- function(gd,
 #'
 #' @return A `tibble`, unrelated lower level instances.
 #'
-#' @family level association functions
+#' @family relationship between geolevels
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
 #'
 #' @examples
 #'
@@ -279,7 +281,8 @@ get_unrelated_instances.geodimension <- function(gd,
 #'
 #' @return A `geodimension` object.
 #'
-#' @family level association functions
+#' @family relationship between geolevels
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
 #'
 #' @examples
 #'
@@ -372,53 +375,52 @@ complete_relation_by_geography.geodimension <- function(gd,
 }
 
 
-#' Get higher level names
+#' Select levels
 #'
-#' Get the names of levels included in the `geodimension` that are related to the
-#' given level and are upper levels. We can get only the direct levels or the
-#' levels reached by passing through other levels.
+#' Select a subset of the levels of the dimension so that the rest of the levels
+#' no longer belong to it.
 #'
 #' @param gd A `geodimension` object.
-#' @param level_name A string.
-#' @param indirect_levels A boolean.
+#' @param level_names A vector of names.
 #'
-#' @return A vector of names.
+#' @return A `geodimension` object.
 #'
-#' @family information output functions
+#' @family relationship between geolevels
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
 #'
 #' @examples
 #'
-#' ln_1 <- gd_us |>
-#'   get_higher_level_names(level_name = "place")
-#'
-#' ln_2 <- gd_us |>
-#'   get_higher_level_names(level_name = "place", indirect_levels = TRUE)
+#' gd_us_2 <- gd_us |>
+#'   select_levels(level_names = c("state", "county", "place", "region"))
 #'
 #' @export
-get_higher_level_names <- function(gd,
-                                   level_name,
-                                   indirect_levels) {
-  UseMethod("get_higher_level_names")
+select_levels <- function(gd, level_names = NULL) {
+  UseMethod("select_levels")
 }
 
-
-#' @rdname get_higher_level_names
+#' @rdname select_levels
 #' @export
-get_higher_level_names.geodimension <- function(gd,
-                                                level_name = NULL,
-                                                indirect_levels = FALSE) {
-  stopifnot("Missing level name." = !is.null(level_name))
+select_levels.geodimension <- function(gd, level_names = NULL) {
+
+  stopifnot("Missing level names." = !is.null(level_names))
   if (gd$snake_case) {
-    level_name <- my_to_snake_case(level_name)
+    level_names <- my_to_snake_case(level_names)
   }
-  level_name <-
-    validate_names(names(gd$geolevel), level_name, 'level')
-  res <- names(gd$relation[[level_name]])
-  if (indirect_levels) {
-    for (l in res) {
-      r <- get_higher_level_names(gd, level_name = l, indirect_levels)
-      res <- union(res, r)
+  level_names <-
+    validate_names(names(gd$geolevel), level_names, 'level')
+  delete <- setdiff(names(gd$geolevel), level_names)
+  for (l in delete) {
+    gd$geolevel[[l]] <- NULL
+    gd$relation[[l]] <- NULL
+  }
+  for (r in names(gd$relation)) {
+    for (l in delete) {
+      gd$relation[[r]][[l]] <- NULL
+    }
+    if (length(gd$relation[[r]]) == 0) {
+      gd$relation[[r]] <- NULL
     }
   }
-  res
+  gd
 }
+

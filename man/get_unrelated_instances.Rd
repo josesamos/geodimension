@@ -65,8 +65,11 @@ ui <- gd |>
 
 }
 \seealso{
-Other level association functions: 
+\code{\link{geodimension}}, \code{\link{geolevel}}
+
+Other relationship between geolevels: 
 \code{\link{complete_relation_by_geography}()},
-\code{\link{relate_levels}()}
+\code{\link{relate_levels}()},
+\code{\link{select_levels}()}
 }
-\concept{level association functions}
+\concept{relationship between geolevels}

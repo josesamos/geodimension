@@ -1,4 +1,56 @@
 
+#' Get higher level names
+#'
+#' Get the names of levels included in the `geodimension` that are related to the
+#' given level and are upper levels. We can get only the direct levels or the
+#' levels reached by passing through other levels.
+#'
+#' @param gd A `geodimension` object.
+#' @param level_name A string.
+#' @param indirect_levels A boolean.
+#'
+#' @return A vector of names.
+#'
+#' @family information gathering functions
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
+#'
+#' @examples
+#'
+#' ln_1 <- gd_us |>
+#'   get_higher_level_names(level_name = "place")
+#'
+#' ln_2 <- gd_us |>
+#'   get_higher_level_names(level_name = "place", indirect_levels = TRUE)
+#'
+#' @export
+get_higher_level_names <- function(gd,
+                                   level_name,
+                                   indirect_levels) {
+  UseMethod("get_higher_level_names")
+}
+
+
+#' @rdname get_higher_level_names
+#' @export
+get_higher_level_names.geodimension <- function(gd,
+                                                level_name = NULL,
+                                                indirect_levels = FALSE) {
+  stopifnot("Missing level name." = !is.null(level_name))
+  if (gd$snake_case) {
+    level_name <- my_to_snake_case(level_name)
+  }
+  level_name <-
+    validate_names(names(gd$geolevel), level_name, 'level')
+  res <- names(gd$relation[[level_name]])
+  if (indirect_levels) {
+    for (l in res) {
+      r <- get_higher_level_names(gd, level_name = l, indirect_levels)
+      res <- union(res, r)
+    }
+  }
+  res
+}
+
 
 #' Get level geometries
 #'
@@ -9,7 +61,8 @@
 #'
 #' @return A vector of names.
 #'
-#' @family information output functions
+#' @family information gathering functions
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
 #'
 #' @examples
 #'
@@ -45,7 +98,8 @@ get_level_geometries.geodimension <- function(gd,
 #'
 #' @return A vector of names.
 #'
-#' @family information output functions
+#' @family information gathering functions
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
 #'
 #' @examples
 #'
@@ -61,55 +115,6 @@ get_level_names <- function(gd) {
 #' @export
 get_level_names.geodimension <- function(gd) {
   sort(names(gd$geolevel))
-}
-
-
-#' Select levels
-#'
-#' Select a subset of the levels of the dimension so that the rest of the levels
-#' no longer belong to it.
-#'
-#' @param gd A `geodimension` object.
-#' @param level_names A vector of names.
-#'
-#' @return A `geodimension` object.
-#'
-#' @family configuration functions
-#'
-#' @examples
-#'
-#' gd_us_2 <- gd_us |>
-#'   select_levels(level_names = c("state", "county", "place", "region"))
-#'
-#' @export
-select_levels <- function(gd, level_names = NULL) {
-  UseMethod("select_levels")
-}
-
-#' @rdname select_levels
-#' @export
-select_levels.geodimension <- function(gd, level_names = NULL) {
-
-  stopifnot("Missing level names." = !is.null(level_names))
-  if (gd$snake_case) {
-    level_names <- my_to_snake_case(level_names)
-  }
-  level_names <-
-    validate_names(names(gd$geolevel), level_names, 'level')
-  delete <- setdiff(names(gd$geolevel), level_names)
-  for (l in delete) {
-    gd$geolevel[[l]] <- NULL
-    gd$relation[[l]] <- NULL
-  }
-  for (r in names(gd$relation)) {
-    for (l in delete) {
-      gd$relation[[r]][[l]] <- NULL
-    }
-    if (length(gd$relation[[r]]) == 0) {
-      gd$relation[[r]] <- NULL
-    }
-  }
-  gd
 }
 
 
@@ -131,7 +136,8 @@ select_levels.geodimension <- function(gd, level_names = NULL) {
 #'
 #' @return A `tibble` object.
 #'
-#' @family information output functions
+#' @family information gathering functions
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
 #'
 #' @examples
 #'
@@ -180,66 +186,52 @@ get_level_data.geodimension <- function(gd,
 }
 
 
-
-#' Set level data
+#' Get level layer
 #'
-#' Set the data table of a given level.
+#' Get a geographic layer associated with a level. We can select the geometry
+#' and, using boolean parameters, which attributes are included in the layer's
+#' table: only the attributes that make up the key and, if applied to a geodimension,
+#' inherited attributes to which the prefix of the level where they are defined
+#' can be added.
 #'
-#' We can get the table, filter or transform the data and redefine the level table.
-#'
-#' It is checked that the attributes that have been used in the relationships
-#' remain in the table.
-#'
-#' @param gd A `geodimension` object.
+#' @param gd A `geolevel` or `geodimension` object.
 #' @param level_name A string.
-#' @param data A `tibble` object.
+#' @param geometry A string.
+#' @param only_key A boolean.
+#' @param inherited A boolean.
+#' @param add_prefix A boolean.
 #'
-#' @return A `geodimension` object.
+#' @return A `sf` object.
 #'
-#' @family information output functions
+#' @family information gathering functions
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
 #'
 #' @examples
 #'
-#' ld <- gd_us |>
-#'   get_level_data(level_name = "county",
-#'                  inherited = TRUE)
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
 #'
-#' gd_us <- gd_us |>
-#'   set_level_data(level_name = "county",
-#'                  data = ld)
+#' state <-
+#'   geolevel(name = "state",
+#'            layer = layer_us_state,
+#'            key = "GEOID")
+#'
+#' state_ll <- state |>
+#'   get_level_layer("polygon")
+#'
+#'
+#' county_ll <- gd_us |>
+#'   get_level_layer(level_name = "county",
+#'                   geometry = "polygon",
+#'                   inherited = TRUE)
 #'
 #' @export
-set_level_data <- function(gd,
-                           level_name,
-                           data) {
-  UseMethod("set_level_data")
-}
-
-#' @rdname set_level_data
-#' @export
-set_level_data.geodimension <- function(gd,
-                                        level_name = NULL,
-                                        data = NULL) {
-  stopifnot("Missing level name." = !is.null(level_name))
-  if (gd$snake_case) {
-    level_name <- my_to_snake_case(level_name)
-    names(data) <- my_to_snake_case(names(data))
-  }
-  level_name <- validate_names(names(gd$geolevel), level_name, 'level')
-  gd$geolevel[[level_name]]$data <- data
-
-  attributes <- names(data)
-  validate_names(attributes, gd$geolevel[[level_name]]$key, 'key')
-  for (l in names(gd$relation[[level_name]])) {
-    validate_names(attributes, gd$relation[[level_name]][[l]]$lower_fk, 'attribute')
-  }
-  for (l in names(gd$relation)) {
-    validate_names(attributes, gd$relation[[l]][[level_name]]$upper_pk, 'attribute')
-  }
-  gd
-}
-
-
+get_level_layer <- function(gd,
+                            level_name,
+                            geometry,
+                            only_key,
+                            inherited,
+                            add_prefix) UseMethod("get_level_layer")
 
 #' @rdname get_level_layer
 #'
@@ -298,7 +290,8 @@ get_level_layer.geodimension <- function(gd,
 #'
 #' @return A `tibble` object.
 #'
-#' @family information output functions
+#' @family information gathering functions
+#' @seealso \code{\link{geodimension}}, \code{\link{geolevel}}
 #'
 #' @examples
 #'

@@ -42,9 +42,14 @@ empty_geometry_instances <- state |>
 
 }
 \seealso{
+\code{\link{geodimension}}, \code{\link{relate_levels}}
+
 Other geolevel definition functions: 
 \code{\link{add_geometry}()},
+\code{\link{check_key}()},
 \code{\link{complete_point_geometry}()},
-\code{\link{geolevel}()}
+\code{\link{coordinates_to_geometry}()},
+\code{\link{geolevel}()},
+\code{\link{get_geometry}()}
 }
 \concept{geolevel definition functions}

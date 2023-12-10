@@ -12,6 +12,7 @@
 #' @return A `geodimension` object.
 #'
 #' @family geodimension definition functions
+#' @seealso \code{\link{geolevel}}, \code{\link{relate_levels}}, \code{\link{get_level_layer}}
 #'
 #' @examples
 #'
@@ -64,6 +65,7 @@ geodimension <-
 #' @return A `geodimension`.
 #'
 #' @family geodimension definition functions
+#' @seealso \code{\link{geolevel}}, \code{\link{relate_levels}}, \code{\link{get_level_layer}}
 #'
 #' @examples
 #'
@@ -111,6 +113,65 @@ add_level.geodimension <- function(gd,
 }
 
 
+#' Set level data
+#'
+#' Set the data table of a given level.
+#'
+#' We can get the table, filter or transform the data and redefine the level table.
+#'
+#' It is checked that the attributes that have been used in the relationships
+#' remain in the table.
+#'
+#' @param gd A `geodimension` object.
+#' @param level_name A string.
+#' @param data A `tibble` object.
+#'
+#' @return A `geodimension` object.
+#'
+#' @family geodimension definition functions
+#' @seealso \code{\link{geolevel}}, \code{\link{get_level_data}}
+#'
+#' @examples
+#'
+#' ld <- gd_us |>
+#'   get_level_data(level_name = "county",
+#'                  inherited = TRUE)
+#'
+#' gd_us <- gd_us |>
+#'   set_level_data(level_name = "county",
+#'                  data = ld)
+#'
+#' @export
+set_level_data <- function(gd,
+                           level_name,
+                           data) {
+  UseMethod("set_level_data")
+}
+
+#' @rdname set_level_data
+#' @export
+set_level_data.geodimension <- function(gd,
+                                        level_name = NULL,
+                                        data = NULL) {
+  stopifnot("Missing level name." = !is.null(level_name))
+  if (gd$snake_case) {
+    level_name <- my_to_snake_case(level_name)
+    names(data) <- my_to_snake_case(names(data))
+  }
+  level_name <- validate_names(names(gd$geolevel), level_name, 'level')
+  gd$geolevel[[level_name]]$data <- data
+
+  attributes <- names(data)
+  validate_names(attributes, gd$geolevel[[level_name]]$key, 'key')
+  for (l in names(gd$relation[[level_name]])) {
+    validate_names(attributes, gd$relation[[level_name]][[l]]$lower_fk, 'attribute')
+  }
+  for (l in names(gd$relation)) {
+    validate_names(attributes, gd$relation[[l]][[level_name]]$upper_pk, 'attribute')
+  }
+  gd
+}
+
 
 #' Transform CRS
 #'
@@ -123,7 +184,8 @@ add_level.geodimension <- function(gd,
 #'
 #' @return A `geodimension`.
 #'
-#' @family configuration functions
+#' @family geodimension definition functions
+#' @seealso \code{\link{geolevel}}, \code{\link{relate_levels}}, \code{\link{get_level_layer}}
 #'
 #' @examples
 #'

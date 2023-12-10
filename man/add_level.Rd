@@ -50,7 +50,11 @@ gd_us <-
 
 }
 \seealso{
+\code{\link{geolevel}}, \code{\link{relate_levels}}, \code{\link{get_level_layer}}
+
 Other geodimension definition functions: 
-\code{\link{geodimension}()}
+\code{\link{geodimension}()},
+\code{\link{set_level_data}()},
+\code{\link{transform_crs}()}
 }
 \concept{geodimension definition functions}

@@ -37,9 +37,14 @@ state <-
 
 }
 \seealso{
+\code{\link{geodimension}}, \code{\link{relate_levels}}
+
 Other geolevel definition functions: 
 \code{\link{add_geometry}()},
+\code{\link{check_key}()},
+\code{\link{coordinates_to_geometry}()},
 \code{\link{geolevel}()},
-\code{\link{get_empty_geometry_instances}()}
+\code{\link{get_empty_geometry_instances}()},
+\code{\link{get_geometry}()}
 }
 \concept{geolevel definition functions}

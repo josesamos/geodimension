@@ -52,7 +52,11 @@ gd_us <-
 
 }
 \seealso{
-Other configuration functions: 
-\code{\link{select_levels}()}
+\code{\link{geolevel}}, \code{\link{relate_levels}}, \code{\link{get_level_layer}}
+
+Other geodimension definition functions: 
+\code{\link{add_level}()},
+\code{\link{geodimension}()},
+\code{\link{set_level_data}()}
 }
-\concept{configuration functions}
+\concept{geodimension definition functions}

@@ -25,12 +25,13 @@ ln <- gd_us |>
 
 }
 \seealso{
-Other information output functions: 
+\code{\link{geodimension}}, \code{\link{geolevel}}
+
+Other information gathering functions: 
 \code{\link{get_higher_level_names}()},
 \code{\link{get_level_data_geo}()},
 \code{\link{get_level_data}()},
 \code{\link{get_level_geometries}()},
-\code{\link{get_level_layer.geodimension}()},
-\code{\link{set_level_data}()}
+\code{\link{get_level_layer}()}
 }
-\concept{information output functions}
+\concept{information gathering functions}

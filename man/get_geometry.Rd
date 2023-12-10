@@ -29,8 +29,12 @@ geometry <- get_geometry(layer_us_county)
 
 }
 \seealso{
-Other level definition functions: 
+Other geolevel definition functions: 
+\code{\link{add_geometry}()},
 \code{\link{check_key}()},
-\code{\link{coordinates_to_geometry}()}
+\code{\link{complete_point_geometry}()},
+\code{\link{coordinates_to_geometry}()},
+\code{\link{geolevel}()},
+\code{\link{get_empty_geometry_instances}()}
 }
-\concept{level definition functions}
+\concept{geolevel definition functions}

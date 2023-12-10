@@ -12,7 +12,7 @@
 #'
 #' @return A string.
 #'
-#' @family level definition functions
+#' @family geolevel definition functions
 #'
 #' @examples
 #'
@@ -49,7 +49,7 @@ get_geometry <- function(layer) {
 #'
 #' @return A boolean.
 #'
-#' @family level definition functions
+#' @family geolevel definition functions
 #'
 #' @examples
 #'
@@ -93,7 +93,7 @@ check_key <- function(table, key = NULL) {
 #'
 #' @return A `sf` object.
 #'
-#' @family level definition functions
+#' @family geolevel definition functions
 #'
 #' @examples
 #'

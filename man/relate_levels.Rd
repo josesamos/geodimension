@@ -102,8 +102,11 @@ gd_2 <- gd |>
 
 }
 \seealso{
-Other level association functions: 
+\code{\link{geodimension}}, \code{\link{geolevel}}
+
+Other relationship between geolevels: 
 \code{\link{complete_relation_by_geography}()},
-\code{\link{get_unrelated_instances}()}
+\code{\link{get_unrelated_instances}()},
+\code{\link{select_levels}()}
 }
-\concept{level association functions}
+\concept{relationship between geolevels}

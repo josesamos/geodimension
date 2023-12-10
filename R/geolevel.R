@@ -25,6 +25,7 @@
 #' @return A `geolevel` object.
 #'
 #' @family geolevel definition functions
+#' @seealso \code{\link{geodimension}}, \code{\link{relate_levels}}
 #'
 #' @examples
 #'
@@ -130,6 +131,7 @@ geolevel <-
 #' @return A `geolevel`.
 #'
 #' @family geolevel definition functions
+#' @seealso \code{\link{geodimension}}, \code{\link{relate_levels}}
 #'
 #' @examples
 #'
@@ -249,6 +251,7 @@ snake_case_geolevel <- function(gl) {
 #' @return A `tibble`.
 #'
 #' @family geolevel definition functions
+#' @seealso \code{\link{geodimension}}, \code{\link{relate_levels}}
 #'
 #' @examples
 #'
@@ -307,6 +310,7 @@ get_empty_geometry_instances.geolevel <- function(gl, geometry = NULL) {
 #' @return A `geolevel` object.
 #'
 #' @family geolevel definition functions
+#' @seealso \code{\link{geodimension}}, \code{\link{relate_levels}}
 #'
 #' @examples
 #'
@@ -354,51 +358,6 @@ complete_point_geometry.geolevel <- function(gl) {
 }
 
 
-#' Get level layer
-#'
-#' Get a geographic layer associated with a level. We can select the geometry
-#' and, using boolean parameters, which attributes are included in the layer's
-#' table: only the attributes that make up the key and, if applied to a geodimension,
-#' inherited attributes to which the prefix of the level where they are defined
-#' can be added.
-#'
-#' @param gd A `geolevel` or `geodimension` object.
-#' @param level_name A string.
-#' @param geometry A string.
-#' @param only_key A boolean.
-#' @param inherited A boolean.
-#' @param add_prefix A boolean.
-#'
-#' @return A `sf` object.
-#'
-#' @family information output functions
-#'
-#' @examples
-#'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
-#'
-#' state <-
-#'   geolevel(name = "state",
-#'            layer = layer_us_state,
-#'            key = "GEOID")
-#'
-#' state_ll <- state |>
-#'   get_level_layer("polygon")
-#'
-#'
-#' ld <- gd_us |>
-#'   get_level_layer(level_name = "county",
-#'                   geometry = "polygon",
-#'                   inherited = TRUE)
-#'
-#' @export
-get_level_layer <- function(gd,
-                            level_name,
-                            geometry,
-                            only_key,
-                            inherited,
-                            add_prefix) UseMethod("get_level_layer")
 
 #' @rdname get_level_layer
 #'
