@@ -196,3 +196,148 @@ expect_equal(ln_2,
 
 })
 
+
+test_that("select_levels()", {
+  gd_us_2 <- gd_us |>
+    select_levels(level_names = c("state", "county", "place", "region"))
+
+  expect_equal(names(gd_us_2$geolevel),
+               c("place", "county", "state", "region"))
+
+  expect_equal(gd_us_2$relation,
+               list(
+                 place = list(county = list(
+                   lower_fk = "county_geoid", upper_pk = "geoid"
+                 )),
+                 county = list(state = list(
+                   lower_fk = "statefp", upper_pk = "statefp"
+                 )),
+                 state = list(
+                   region = list(lower_fk = "fk_region_code",
+                                 upper_pk = "region_code")
+                 )
+               ))
+
+})
+
+
+test_that("select_levels()", {
+  gd_us_2 <- gd_us |>
+    select_levels(level_names = c("state", "place", "region"))
+
+  expect_equal(names(gd_us_2$geolevel),
+               c("place", "state", "region"))
+
+  expect_equal(gd_us_2$relation,
+               list(
+                 state = list(
+                   region = list(lower_fk = "fk_region_code",
+                                 upper_pk = "region_code")
+                 ),
+                 place = list(state = list(
+                   lower_fk = "fk_statefp",
+                   upper_pk = "statefp"
+                 ))
+               ))
+
+})
+
+test_that("select_levels()", {
+  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+
+  layer_us_state$country <- "USA"
+
+  state <-
+    geolevel(
+      name = "state",
+      layer = layer_us_state,
+      attributes = c("DIVISION", "REGION", "STATEFP", "STUSPS", "NAME", "country"),
+      key = "STATEFP"
+    ) |>
+    add_geometry(coordinates_to_geometry(layer_us_state,
+                                         lon_lat = c("INTPTLON", "INTPTLAT")))
+
+  division <-
+    geolevel(
+      name = "division",
+      layer = us_division,
+      attributes = c("country", "region_code", "division_name"),
+      key = c("division_code", "country")
+    ) |>
+    add_geometry(layer = layer_us_state,
+                 layer_key = c("DIVISION", "country")) |>
+    complete_point_geometry()
+
+  region <-
+    geolevel(
+      name = "region",
+      layer = us_division,
+      attributes = c("country", "region_name"),
+      key = c("region_code", "country")
+    ) |>
+    add_geometry(layer = layer_us_state,
+                 layer_key = c("REGION", "country")) |>
+    complete_point_geometry()
+
+  country <-
+    geolevel(
+      name = "country",
+      layer = get_level_layer(region),
+      attributes = "country",
+      key = "country"
+    ) |>
+    complete_point_geometry()
+
+  gd <-
+    geodimension(name = "gd_us",
+                 level = state,
+                 snake_case = TRUE) |>
+    add_level(level = division) |>
+    add_level(level = region) |>
+    add_level(level = country)
+
+  gd <- gd |>
+    relate_levels(
+      lower_level_name = "state",
+      lower_level_attributes = c("DIVISION", "country"),
+      upper_level_name = "division"
+    )
+  gd <- gd |>
+    relate_levels(
+      lower_level_name = "division",
+      lower_level_attributes = c("region_code", "country"),
+      upper_level_name = "region"
+    )
+  gd <- gd |>
+    relate_levels(
+      lower_level_name = "region",
+      lower_level_attributes = "country",
+      upper_level_name = "country"
+    )
+
+  gd_2 <- gd |>
+    select_levels(level_names = c("state", "region"))
+
+
+  expect_equal(gd_2$relation,
+               list(state = list(region = list(
+                 lower_fk = c("fk_region_code",
+                              "fk_region_country"),
+                 upper_pk = c("region_code", "country")
+               ))))
+
+  expect_equal(
+    names(gd_2$geolevel$state$data),
+    c(
+      "statefp",
+      "division",
+      "region",
+      "stusps",
+      "name",
+      "country",
+      "fk_region_code",
+      "fk_region_country"
+    )
+  )
+})

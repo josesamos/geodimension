@@ -14,29 +14,6 @@ test_that("get_level_names()", {
 
 })
 
-test_that("select_levels()", {
-  gd_us_2 <- gd_us |>
-    select_levels(level_names = c("state", "county", "place", "region"))
-
-  expect_equal(names(gd_us_2$geolevel),
-               c("place", "county", "state", "region"))
-
-  expect_equal(gd_us_2$relation,
-               list(
-                 place = list(county = list(
-                   lower_fk = "county_geoid", upper_pk = "geoid"
-                 )),
-                 county = list(state = list(
-                   lower_fk = "statefp", upper_pk = "statefp"
-                 )),
-                 state = list(
-                   region = list(lower_fk = "fk_region_region_code",
-                                 upper_pk = "region_code")
-                 )
-               ))
-
-})
-
 
 test_that("get_level_data()", {
   ld_1 <- gd_us |>

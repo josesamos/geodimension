@@ -119,6 +119,18 @@ relate_levels.geodimension <- function(gd,
     if (is.null(lower_level_attributes)) {
       lower_level_attributes <-
         paste0("fk_", upper_level_name, "_", upper_level_key)
+      lower_level_attributes <-
+        gsub(
+          paste0(upper_level_name, '_', upper_level_name, '_'),
+          paste0(upper_level_name, '_'),
+          lower_level_attributes
+        )
+      lower_level_attributes <-
+        gsub(
+          paste0(upper_level_name, '_', upper_level_name),
+          upper_level_name,
+          lower_level_attributes
+        )
     }
     for (a in lower_level_attributes) {
       stopifnot("The lower level attributes already exist." = !(a %in% names(gd$geolevel[[lower_level_name]]$data)))
@@ -166,7 +178,7 @@ relate_levels.geodimension <- function(gd,
   data <- gd$geolevel[[upper_level_name]]$data[, upper_level_key]
   names(data) <- lower_level_attributes
   data <-
-    gd$geolevel[[lower_level_name]]$data[, c(gd$geolevel[[lower_level_name]]$key, lower_level_attributes)] |>
+    gd$geolevel[[lower_level_name]]$data[, unique(c(gd$geolevel[[lower_level_name]]$key, lower_level_attributes))] |>
     dplyr::inner_join(data, by = lower_level_attributes)
   if (nrow(data) != nrow(gd$geolevel[[lower_level_name]]$data)) {
     warning(
@@ -478,6 +490,8 @@ define_relationship <- function(gd, gdp, l, h) {
   data <- data[, att]
   lkey <- gdp$geolevel[[l]]$key
   hkey <- paste0("fk_", h, '_', gdp$geolevel[[h]]$key)
+  hkey <- gsub(paste0(h, '_', h, '_'), paste0(h, '_'), hkey)
+  hkey <- gsub(paste0(h, '_', h), h, hkey)
   names(data) <- c(lkey, hkey)
 
   gd$geolevel[[l]]$data <- gd$geolevel[[l]]$data |>
