@@ -33,9 +33,25 @@ The rest of this document is structured as follows: First, an illustrative examp
 
 Suppose we have a multidimensional design on US data and the geographic dimension is defined at the *place* level. For each place we have its name and the code of the state in which it is located. It would be interesting to have other levels of detail in this dimension to be able to perform *roll-up* operations.
 
-With this objective, we look for layers of geographic information. In [United States Census Bureau](https://www.census.gov) we find layers at various levels of detail, including *place*, *county* and *state*. Furthermore we find the relationships in table form between *division*, *region* and *country*. We have obtained them and we have stored[^2] them in `layer_us_place`, `layer_us_county`, `layer_us_state` and `us_division`, respectively.
+With this objective, we look for layers of geographic information. In [United States Census Bureau](https://www.census.gov) we find layers at various levels of detail, including *place*, *county* and *state*. Furthermore we find the relationships in table form between *division*, *region* and *country*. We have obtained and stored them in *GeoPackage* `us_layers.gpkg` layers[^2] and the variable `us_division`, respectively.
 
 [^2]: To take up less space in the package, its geometry has also been simplified.
+
+```{r}
+library(geodimension)
+
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+```
+
+The content of variable `us_division` is shown below.
+
+```{r, results = "asis", echo = FALSE}
+pander::pandoc.table(geodimension::us_division, split.table = Inf)
+```
+
 
 The layers and the table are related to each other. In some cases they have attributes in common, in others, although there is a relationship, it may not be explicitly defined. We can use `geodimension` to support the definition of these relationships. Once defined, it will also offer us support to exploit them and obtain information from them.
 
@@ -56,7 +72,274 @@ We can previously check if a set of attributes form a key of the layer using the
 ```{r message=FALSE}
 library(geodimension)
 
+names(layer_us_place)
+
+check_key(layer_us_place, key = c("NAME", "STATEFP"))
+
+check_key(layer_us_place, key = c("GEOID"))
 ```
+
+We might expect the place name (`NAME`) and state code (`STATEFP`) to be sufficient to identify a place, however, they are not. We check that the `GEOID` field is a valid key, therefore, it will be the one we use to define the `geolevel`.
+
+We can check the geometry that is considered for the definition of the level by means of the `get_geometry` function (it simplifies the types into three: *point* and *polygon*). In addition, we give each level a name to be able to refer to it, as shown below.
+
+```{r}
+get_geometry(layer_us_place)
+
+place <-
+  geolevel(name = "place",
+           layer = layer_us_place,
+           key = "GEOID")
+```
+
+For `county` it is the same as for `place`, the name and the code of the state do not compose a valid key. In this case, the geometry is polygon. Additionally, a layer with another geometry can be associated using the `add_geometry` function or, in the case of point-type geometry, it can be generated from the polygon layer using the `complete_point_geometry` function, as is done below.
+
+```{r message=FALSE, warning=FALSE}
+get_geometry(layer_us_county)
+
+county <-
+  geolevel(name = "county",
+           layer = layer_us_county,
+           key = c("GEOID")) |>
+  complete_point_geometry()
+```
+
+In the same way, the checks are made and the rest of the levels are defined. Although all the layers are of the polygon type, we generate the point layers only for those that we think may be needed.
+
+In some cases, latitude and longitude are stored as fields in the attribute table, from which we can generate a layer of points using the `coordinates_to_geometry` function. We can later associate that layer to the corresponding level using the `add_geometry` function mentioned above.
+
+Below is only the definition of the levels.
+
+```{r message=FALSE, warning=FALSE}
+us_state_point <-
+  coordinates_to_geometry(layer_us_state,
+                          lon_lat = c("intptlon", "intptlat"))
+
+state <-
+  geolevel(name = "state",
+           layer = layer_us_state,
+           key = c("STATEFP")) |>
+  add_geometry(layer = us_state_point)
+
+division <-
+  geolevel(
+    name = "division",
+    layer = us_division,
+    attributes = c("country", "region_code", "division_name"),
+    key = "division_code"
+  ) |>
+  add_geometry(layer = layer_us_state,
+               layer_key = "DIVISION")
+
+region <-
+  geolevel(
+    name = "region",
+    layer = us_division,
+    attributes = c("country", "region_name"),
+    key = "region_code"
+  ) |>
+  add_geometry(layer = layer_us_state,
+               layer_key = "REGION")
+
+country <-
+  geolevel(
+    name = "country",
+    layer = get_level_layer(region),
+    attributes = "country",
+    key = "country"
+  )
+```
+
+Once the levels are defined, then we will define the dimension and the relationships between the levels.
+
+## Definition of relationships
+
+To define a `geodimension`, we give it a name and start from any `geolevel`. Next, we add the rest of the `geolevels` in any order.
+
+```{r}
+gd <-
+  geodimension(name = "gd_us",
+               level = region) |>
+  add_level(division) |>
+  add_level(state) |>
+  add_level(country) |>
+  add_level(place) |>
+  add_level(county)
+```
+
+Next, we can define the relationships that we want to consider between the levels. In a relationship there are two parts, the *lower level* and the *upper level*. To define the relationships, the following points must be taken into account:
+
+- There are no restrictions on the relationships you define, as long as the relationship can be established.
+
+- It is only necessary to define direct relationships (from them, indirect ones are derived).
+
+- Relationships can be defined using attributes with common values between the levels or through geographic relationships between their instances.
+
+- If we want to reference the upper level through attributes, these must form a valid key for the level (it does not necessarily have to be the key that was indicated when defining it, this is used by default).
+
+- Currently, to define a relationship using geographic properties, the upper level must be of type polygon.
+
+The relationships between *state*, *region*, *division* and *country* are defined below.
+
+```{r message=FALSE, warning=FALSE}
+gd <- gd |>
+  relate_levels(
+    lower_level_name = "state",
+    lower_level_attributes = "DIVISION",
+    upper_level_name = "division"
+  ) |>
+  relate_levels(
+    lower_level_name = "division",
+    upper_level_name = "region",
+    by_geography = TRUE
+  ) |>
+  relate_levels(
+    lower_level_name = "region",
+    lower_level_attributes = "country",
+    upper_level_name = "country"
+  )
+```
+
+The relationship between *state* and *division* is defined by a *state* attribute that matches the *division* key. 
+
+The relationship between *division* and *region* is defined by geographic relationship because they do not have any attributes in common.
+
+Finally, as *country* has only one instance, it relates directly to all instances of the indicated level (in this case, *region*), no additional relationship is required.
+
+In addition to these relationships there is a clear relationship between *place* and *state* and also between *county* and *state*. In both cases it can be defined by attributes.
+
+```{r}
+gd <- gd |>
+  relate_levels(
+    lower_level_name = "place",
+    lower_level_attributes = "county_geoid",
+    upper_level_name = "county"
+  ) |>
+  relate_levels(
+    lower_level_name = "county",
+    lower_level_attributes = "STATEFP",
+    upper_level_name = "state"
+  )
+```
+
+The relationship between *place* and *county* is a bit fuzzy (at least for me), it depends on the state, the place and also the county. In any case, if we are interested in establishing a relationship, we could define it between *place* and *state* using the geographical properties of the levels, since county includes polygon-type geometry.
+
+```{r message=FALSE, warning=FALSE}
+gd <- gd |>
+  relate_levels(lower_level_name = "place",
+                upper_level_name = "county",
+                by_geography = TRUE)
+```
+
+We can check if all the instances have been related using the following function:
+
+```{r}
+nrow(
+  gd |> get_unrelated_instances(lower_level_name = "place",
+                                upper_level_name = "county")
+)
+```
+
+Since there are no unrelated instances, each place has been linked to the county whose boundaries contain it.
+
+If we did a similar check for each defined relation, we would observe that all the instances of the lower levels have been related to those of the higher levels, except for the following:
+
+```{r}
+nrow(
+  gd |> get_unrelated_instances(lower_level_name = "state",
+                                upper_level_name = "division")
+)
+```
+
+If we look at the content:
+
+```{r, results = "asis", echo = FALSE}
+t <-gd |> 
+  get_unrelated_instances(lower_level_name = "state",
+                          upper_level_name = "division")
+pander::pandoc.table(t, split.table = Inf)
+```
+
+The region or division code does not correspond to any of the existing ones. If we want to relate all the instances of *state* to the *country* level, we must define the relationship explicitly (there are other solutions but we will not consider them here, in any case they can be generated from this one).
+
+```{r }
+gd <- gd |>
+  relate_levels(
+    lower_level_name = "county",
+    lower_level_attributes = "STATEFP",
+    upper_level_name = "state"
+  )
+```
+
+With these operations we have defined a `geodimension`.
+
+## Obtaining information
+
+From a `geodimension` we can obtain information in table or layer format, to define a geographic dimension in a star schema. We can also define new versions of the dimension.
+
+We can consult the levels of the `geodimension` using the following function:
+
+```{r }
+gd |>
+  get_level_names()
+```
+
+A new geodimension is defined by selecting a subset of levels, which we want to take into account when obtaining information, or to define new dimensions.
+
+```{r }
+gds <- gd |>
+  select_levels(level_names = c("state", "division", "region", "country"))
+
+gds |>
+  get_level_names()
+```
+
+From any level of the `geodimension`, a data table can be obtained that includes only the data of the level or all the data inherited from higher levels. For each level you can indicate whether or not a prefix is added to identify the origin of the fields. By default it is added, as you can see below.
+
+```{r}
+ld <- gd |>
+  get_level_data(level_name = "division")
+names(ld)
+
+ld <- gd |>
+  get_level_data(level_name = "division",
+                 inherited = TRUE)
+names(ld)
+
+```
+
+Previously, if we need it, we can obtain the name of the levels from which a level will inherit attributes.
+
+```{r}
+gd |>
+  get_higher_level_names(level_name = "state",
+                         indirect_levels = TRUE)
+
+ld <- gd |>
+  get_level_data(level_name = "state",
+                 inherited = TRUE)
+names(ld)
+
+```
+
+
+For a level we can obtain the available geometries and a layer with the attribute configuration we want and the selected geometry.
+
+
+```{r, fig.width=7, fig.height=2.5}
+gd |>
+  get_level_geometries(level_name = "state")
+
+ll <- gd |>
+  get_level_layer(level_name = "state",
+                  geometry = "polygon",
+                  only_key = TRUE)
+
+plot(sf::st_shift_longitude(ll))
+```
+
+In addition to these functions, the package offers the possibility to change the CRS of all the layers of a geodimension using the `transform_crs` function.
+
 
 # Conclusions
 
