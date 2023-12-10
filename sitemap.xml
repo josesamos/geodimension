@@ -31,9 +31,6 @@
     <loc>https://josesamos.github.io/geodimension/reference/add_level.html</loc>
   </url>
   <url>
-    <loc>https://josesamos.github.io/geodimension/reference/calculate_inherited_relationships.html</loc>
-  </url>
-  <url>
     <loc>https://josesamos.github.io/geodimension/reference/check_key.html</loc>
   </url>
   <url>
@@ -67,6 +64,9 @@
     <loc>https://josesamos.github.io/geodimension/reference/get_level_data.html</loc>
   </url>
   <url>
+    <loc>https://josesamos.github.io/geodimension/reference/get_level_data_geo.html</loc>
+  </url>
+  <url>
     <loc>https://josesamos.github.io/geodimension/reference/get_level_geometries.html</loc>
   </url>
   <url>
@@ -82,22 +82,7 @@
     <loc>https://josesamos.github.io/geodimension/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://josesamos.github.io/geodimension/reference/layer_us_city.html</loc>
-  </url>
-  <url>
-    <loc>https://josesamos.github.io/geodimension/reference/layer_us_county.html</loc>
-  </url>
-  <url>
-    <loc>https://josesamos.github.io/geodimension/reference/layer_us_division.html</loc>
-  </url>
-  <url>
-    <loc>https://josesamos.github.io/geodimension/reference/layer_us_nation.html</loc>
-  </url>
-  <url>
-    <loc>https://josesamos.github.io/geodimension/reference/layer_us_region.html</loc>
-  </url>
-  <url>
-    <loc>https://josesamos.github.io/geodimension/reference/layer_us_state.html</loc>
+    <loc>https://josesamos.github.io/geodimension/reference/my_to_snake_case.html</loc>
   </url>
   <url>
     <loc>https://josesamos.github.io/geodimension/reference/relate_levels.html</loc>
@@ -106,12 +91,18 @@
     <loc>https://josesamos.github.io/geodimension/reference/select_levels.html</loc>
   </url>
   <url>
-    <loc>https://josesamos.github.io/geodimension/reference/surrogate_key_name.html</loc>
+    <loc>https://josesamos.github.io/geodimension/reference/set_level_data.html</loc>
+  </url>
+  <url>
+    <loc>https://josesamos.github.io/geodimension/reference/snake_case_geolevel.html</loc>
   </url>
   <url>
     <loc>https://josesamos.github.io/geodimension/reference/transform_crs.html</loc>
   </url>
   <url>
-    <loc>https://josesamos.github.io/geodimension/reference/validate_attributes.html</loc>
+    <loc>https://josesamos.github.io/geodimension/reference/us_division.html</loc>
+  </url>
+  <url>
+    <loc>https://josesamos.github.io/geodimension/reference/validate_names.html</loc>
   </url>
 </urlset>

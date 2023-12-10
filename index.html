@@ -94,9 +94,9 @@
 </div>
 <!-- badges: start -->
 
-<p>The <em>geographic dimension</em> plays a fundamental role in multidimensional systems. To define a geographic dimension in a star schema, we need a table with attributes corresponding to the levels of the dimension. Additionally, we will also need one or more geographic layers to represent the data using this dimension.</p>
-<p>We can obtain this data from available vector layers of geographic information. In simple cases, one layer is enough; but we often need several layers related to each other. The relationships can be defined by common attribute values or can be inferred from the respective geographic information.</p>
-<p>The goal of <code>geodimension</code> is to support the definition of geographic dimensions from layers of geographic information that can be used in multidimensional systems. In particular, through package <a href="https://cran.r-project.org/package=geomultistar" class="external-link"><code>geomultistar</code></a> they can be used directly.</p>
+<p>The <em>geographic dimension</em> plays a fundamental role in multidimensional systems. To define a geographic dimension in a multidimensional star schema, we need a table with attributes corresponding to the levels of the dimension. Additionally, we will also need one or more geographic layers to represent the data using this dimension.</p>
+<p>We can obtain this data from available vector layers of geographic information. In simple cases, one layer is enough. We often need several layers related to each other. The relationships can be defined by common attribute values or can be inferred from the respective geographic information.</p>
+<p>The goal of <code>geodimension</code> is to support the definition of geographic dimensions from layers of geographic information that can be used in multidimensional systems. In particular, through packages <a href="https://cran.r-project.org/package=rolap" class="external-link"><code>rolap</code></a> and <a href="https://cran.r-project.org/package=geomultistar" class="external-link"><code>geomultistar</code></a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -111,110 +111,257 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>This is a basic example which shows you how to generate a <code>geodimension</code> from several vector layers of geographic information. It also shows how to use it.</p>
-<p>Suppose that, for the US, we want to define a geographic dimension at the <em>state</em> level but also include the information at the predefined higher organization levels: <em>region</em>, <em>division</em> and also <em>nation</em>. We have obtained geographic layers for each of these levels: <code>layer_us_state</code>, <code>layer_us_region</code>, <code>layer_us_division</code> and <code>layer_us_nation</code>. From each layer, we define a <code>geolevel</code>.</p>
+<p>This is a basic example which shows you how to generate a <code>geodimension</code> from tables and vector layers of geographic information. It also shows how to use it.</p>
+<p>Suppose that, for the US, we want to define a geographic dimension at the <em>state</em> level but also include the information at the predefined higher organization levels: <em>division</em>, <em>region</em> and <em>country</em>, available in the package in the <code>us_division</code> variable, shown below.</p>
+<table class="table">
+<colgroup>
+<col width="21%">
+<col width="28%">
+<col width="18%">
+<col width="18%">
+<col width="12%">
+</colgroup>
+<thead><tr class="header">
+<th align="center">division_code</th>
+<th align="center">division_name</th>
+<th align="center">region_code</th>
+<th align="center">region_name</th>
+<th align="center">country</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">New England</td>
+<td align="center">1</td>
+<td align="center">Northeast</td>
+<td align="center">USA</td>
+</tr>
+<tr class="even">
+<td align="center">2</td>
+<td align="center">Middle Atlantic</td>
+<td align="center">1</td>
+<td align="center">Northeast</td>
+<td align="center">USA</td>
+</tr>
+<tr class="odd">
+<td align="center">3</td>
+<td align="center">East North Central</td>
+<td align="center">2</td>
+<td align="center">Midwest</td>
+<td align="center">USA</td>
+</tr>
+<tr class="even">
+<td align="center">4</td>
+<td align="center">West North Central</td>
+<td align="center">2</td>
+<td align="center">Midwest</td>
+<td align="center">USA</td>
+</tr>
+<tr class="odd">
+<td align="center">5</td>
+<td align="center">South Atlantic</td>
+<td align="center">3</td>
+<td align="center">South</td>
+<td align="center">USA</td>
+</tr>
+<tr class="even">
+<td align="center">6</td>
+<td align="center">East South Central</td>
+<td align="center">3</td>
+<td align="center">South</td>
+<td align="center">USA</td>
+</tr>
+<tr class="odd">
+<td align="center">7</td>
+<td align="center">West South Central</td>
+<td align="center">3</td>
+<td align="center">South</td>
+<td align="center">USA</td>
+</tr>
+<tr class="even">
+<td align="center">8</td>
+<td align="center">Mountain</td>
+<td align="center">4</td>
+<td align="center">West</td>
+<td align="center">USA</td>
+</tr>
+<tr class="odd">
+<td align="center">9</td>
+<td align="center">Pacific</td>
+<td align="center">4</td>
+<td align="center">West</td>
+<td align="center">USA</td>
+</tr>
+<tr class="even">
+<td align="center">0</td>
+<td align="center">Puerto Rico</td>
+<td align="center">9</td>
+<td align="center">Puerto Rico</td>
+<td align="center">USA</td>
+</tr>
+</tbody>
+</table>
+<p>We will get a geographic layer for <em>state</em> level (<code>layer_us_state</code>).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://josesamos.github.io/geodimension/">geodimension</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">state</span> <span class="op">&lt;-</span></span>
+<span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"us_layers.gpkg"</span>, package <span class="op">=</span> <span class="st">"geodimension"</span><span class="op">)</span></span>
+<span><span class="va">layer_us_state</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">file</span>, layer <span class="op">=</span> <span class="st">"state"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_shift_longitude.html" class="external-link">st_shift_longitude</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">layer_us_state</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
+<p>From it we can define all the levels. From each layer, we define a <code>geolevel</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">state</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="reference/geolevel.html">geolevel</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"state"</span>,</span>
 <span>           layer <span class="op">=</span> <span class="va">layer_us_state</span>,</span>
-<span>           key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geoid"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/complete_point_geometry.html">complete_point_geometry</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">region</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="reference/geolevel.html">geolevel</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"region"</span>,</span>
-<span>           layer <span class="op">=</span> <span class="va">layer_us_region</span>,</span>
-<span>           key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geoid"</span><span class="op">)</span><span class="op">)</span></span>
+<span>           key <span class="op">=</span> <span class="st">"GEOID"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">division</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="reference/geolevel.html">geolevel</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"division"</span>,</span>
-<span>           layer <span class="op">=</span> <span class="va">layer_us_division</span>,</span>
-<span>           key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geoid"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="reference/geolevel.html">geolevel</a></span><span class="op">(</span></span>
+<span>    name <span class="op">=</span> <span class="st">"division"</span>,</span>
+<span>    layer <span class="op">=</span> <span class="va">us_division</span>,</span>
+<span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"country"</span>, <span class="st">"region_code"</span>, <span class="st">"division_name"</span><span class="op">)</span>,</span>
+<span>    key <span class="op">=</span> <span class="st">"division_code"</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/add_geometry.html">add_geometry</a></span><span class="op">(</span>layer <span class="op">=</span> <span class="va">layer_us_state</span>,</span>
+<span>               layer_key <span class="op">=</span> <span class="st">"DIVISION"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">nation</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="reference/geolevel.html">geolevel</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"nation"</span>,</span>
-<span>           layer <span class="op">=</span> <span class="va">layer_us_nation</span>,</span>
-<span>           key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geoid"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">region</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="reference/geolevel.html">geolevel</a></span><span class="op">(</span></span>
+<span>    name <span class="op">=</span> <span class="st">"region"</span>,</span>
+<span>    layer <span class="op">=</span> <span class="va">us_division</span>,</span>
+<span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"country"</span>, <span class="st">"region_name"</span><span class="op">)</span>,</span>
+<span>    key <span class="op">=</span> <span class="st">"region_code"</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/add_geometry.html">add_geometry</a></span><span class="op">(</span>layer <span class="op">=</span> <span class="va">layer_us_state</span>,</span>
+<span>               layer_key <span class="op">=</span> <span class="st">"REGION"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">country</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="reference/geolevel.html">geolevel</a></span><span class="op">(</span></span>
+<span>    name <span class="op">=</span> <span class="st">"country"</span>,</span>
+<span>    layer <span class="op">=</span> <span class="fu"><a href="reference/get_level_layer.html">get_level_layer</a></span><span class="op">(</span><span class="va">region</span><span class="op">)</span>,</span>
+<span>    attributes <span class="op">=</span> <span class="st">"country"</span>,</span>
+<span>    key <span class="op">=</span> <span class="st">"country"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p>We define a <code>geodimension</code> that includes all the levels in which we are interested.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gd</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="reference/geodimension.html">geodimension</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"gd_us"</span>,</span>
-<span>               level <span class="op">=</span> <span class="va">region</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/add_level.html">add_level</a></span><span class="op">(</span><span class="va">division</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/add_level.html">add_level</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/add_level.html">add_level</a></span><span class="op">(</span><span class="va">nation</span><span class="op">)</span></span></code></pre></div>
+<span>               level <span class="op">=</span> <span class="va">state</span>,</span>
+<span>               snake_case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/add_level.html">add_level</a></span><span class="op">(</span>level <span class="op">=</span> <span class="va">division</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/add_level.html">add_level</a></span><span class="op">(</span>level <span class="op">=</span> <span class="va">region</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/add_level.html">add_level</a></span><span class="op">(</span>level <span class="op">=</span> <span class="va">country</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we define the relationships that exist between the levels: some based on common attributes, others on geographic relationships between their instances.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gd</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/relate_levels.html">relate_levels</a></span><span class="op">(</span>lower_level_name <span class="op">=</span> <span class="st">"state"</span>,</span>
-<span>                lower_level_attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"division"</span><span class="op">)</span>,</span>
-<span>                upper_level_name <span class="op">=</span> <span class="st">"division"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/relate_levels.html">relate_levels</a></span><span class="op">(</span>lower_level_name <span class="op">=</span> <span class="st">"division"</span>,</span>
-<span>                upper_level_name <span class="op">=</span> <span class="st">"region"</span>,</span>
-<span>                by_geography <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/relate_levels.html">relate_levels</a></span><span class="op">(</span>lower_level_name <span class="op">=</span> <span class="st">"region"</span>,</span>
-<span>                upper_level_name <span class="op">=</span> <span class="st">"nation"</span>,</span>
-<span>                by_geography <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>There are no restrictions on the relationships you define, as long as the relationship can be established.</p>
-<p>With these operations we have defined a <code>geodimension</code>. From it we can obtain the data table to define a dimension in a star schema or the layer or layers associated with that table at the level we need.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gd</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/relate_levels.html">relate_levels</a></span><span class="op">(</span></span>
+<span>    lower_level_name <span class="op">=</span> <span class="st">"state"</span>,</span>
+<span>    lower_level_attributes <span class="op">=</span> <span class="st">"DIVISION"</span>,</span>
+<span>    upper_level_name <span class="op">=</span> <span class="st">"division"</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/relate_levels.html">relate_levels</a></span><span class="op">(</span></span>
+<span>    lower_level_name <span class="op">=</span> <span class="st">"division"</span>,</span>
+<span>    upper_level_name <span class="op">=</span> <span class="st">"region"</span>,</span>
+<span>    by_geography <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/relate_levels.html">relate_levels</a></span><span class="op">(</span></span>
+<span>    lower_level_name <span class="op">=</span> <span class="st">"region"</span>,</span>
+<span>    lower_level_attributes <span class="op">=</span> <span class="st">"country"</span>,</span>
+<span>    upper_level_name <span class="op">=</span> <span class="st">"country"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p>There are no restrictions on the relationships we define, as long as the relationship can be established.</p>
+<p>With these operations we have defined a <code>geodimension</code>. From it we can obtain a data table to define a dimension in a star schema or the layer or layers associated with that table at the level we need.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ld</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"division"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ld</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "division_key" "geoid"        "divisionce"   "affgeoid"     "name"        </span></span>
-<span><span class="co">#&gt; [6] "lsad"         "aland"        "awater"</span></span>
+<span><span class="co">#&gt; [1] "division_code"         "country"               "region_code"          </span></span>
+<span><span class="co">#&gt; [4] "division_name"         "fk_region_region_code"</span></span>
 <span></span>
 <span><span class="va">ld</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"division"</span>,</span>
 <span>                 inherited <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ld</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "division_key"      "geoid"             "divisionce"       </span></span>
-<span><span class="co">#&gt;  [4] "affgeoid"          "name"              "lsad"             </span></span>
-<span><span class="co">#&gt;  [7] "aland"             "awater"            "NATION_nation_key"</span></span>
-<span><span class="co">#&gt; [10] "NATION_geoid"      "NATION_affgeoid"   "NATION_name"      </span></span>
-<span><span class="co">#&gt; [13] "REGION_region_key" "REGION_geoid"      "REGION_regionce"  </span></span>
-<span><span class="co">#&gt; [16] "REGION_affgeoid"   "REGION_name"       "REGION_lsad"      </span></span>
-<span><span class="co">#&gt; [19] "REGION_aland"      "REGION_awater"</span></span>
+<span><span class="co">#&gt; [1] "division_code"         "country"               "region_code"          </span></span>
+<span><span class="co">#&gt; [4] "division_name"         "fk_region_region_code" "region_country"       </span></span>
+<span><span class="co">#&gt; [7] "region_region_name"</span></span>
 <span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/get_level_layer.html">get_level_layer</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"division"</span>,</span>
 <span>                 inherited <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "geoid"             "divisionce"        "affgeoid"         </span></span>
-<span><span class="co">#&gt;  [4] "name"              "lsad"              "aland"            </span></span>
-<span><span class="co">#&gt;  [7] "awater"            "NATION_nation_key" "NATION_geoid"     </span></span>
-<span><span class="co">#&gt; [10] "NATION_affgeoid"   "NATION_name"       "REGION_region_key"</span></span>
-<span><span class="co">#&gt; [13] "REGION_geoid"      "REGION_regionce"   "REGION_affgeoid"  </span></span>
-<span><span class="co">#&gt; [16] "REGION_name"       "REGION_lsad"       "REGION_aland"     </span></span>
-<span><span class="co">#&gt; [19] "REGION_awater"     "geom"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "division_code"         "country"               "region_code"          </span></span>
+<span><span class="co">#&gt; [4] "division_name"         "fk_region_region_code" "region_country"       </span></span>
+<span><span class="co">#&gt; [7] "region_region_name"    "geom"</span></span></code></pre></div>
 <p>If we need the data at another level of detail, we can obtain it in a similar way.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ld</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"state"</span>,</span>
+<span>  <span class="fu"><a href="reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"region"</span>,</span>
 <span>                 inherited <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ld</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "state_key"             "geoid"                 "region"               </span></span>
-<span><span class="co">#&gt;  [4] "division"              "statefp"               "statens"              </span></span>
-<span><span class="co">#&gt;  [7] "stusps"                "name"                  "lsad"                 </span></span>
-<span><span class="co">#&gt; [10] "mtfcc"                 "funcstat"              "aland"                </span></span>
-<span><span class="co">#&gt; [13] "awater"                "intptlat"              "intptlon"             </span></span>
-<span><span class="co">#&gt; [16] "shape_length"          "shape_area"            "geoid_data"           </span></span>
-<span><span class="co">#&gt; [19] "DIVISION_division_key" "DIVISION_geoid"        "DIVISION_divisionce"  </span></span>
-<span><span class="co">#&gt; [22] "DIVISION_affgeoid"     "DIVISION_name"         "DIVISION_lsad"        </span></span>
-<span><span class="co">#&gt; [25] "DIVISION_aland"        "DIVISION_awater"       "NATION_nation_key"    </span></span>
-<span><span class="co">#&gt; [28] "NATION_geoid"          "NATION_affgeoid"       "NATION_name"          </span></span>
-<span><span class="co">#&gt; [31] "REGION_region_key"     "REGION_geoid"          "REGION_regionce"      </span></span>
-<span><span class="co">#&gt; [34] "REGION_affgeoid"       "REGION_name"           "REGION_lsad"          </span></span>
-<span><span class="co">#&gt; [37] "REGION_aland"          "REGION_awater"</span></span>
+<span><span class="co">#&gt; [1] "region_code" "country"     "region_name"</span></span>
 <span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/get_level_layer.html">get_level_layer</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"state"</span>,</span>
+<span>  <span class="fu"><a href="reference/get_level_layer.html">get_level_layer</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"region"</span>,</span>
 <span>                  only_key <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_shift_longitude.html" class="external-link">st_shift_longitude</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-8-1.png" width="100%"></p>
 <p>In addition to these functions, the package offers other support functions to aid in the definition of levels (for example, to determine the key attributes of a layer), to relate instances of levels whose relationship is not immediately established, or to configure the <code>geodimension</code> to obtain a customized output.</p>
+<p>For example, we can obtain a table with level data and geographic data represented in the form of points, with longitude and latitude, to be included in other tools that use this format.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ld_geo</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/get_level_data_geo.html">get_level_data_geo</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"region"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">pander</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pander/man/pandoc.table.return.html" class="external-link">pandoc.table</a></span><span class="op">(</span><span class="va">ld_geo</span>, split.table <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="center">region_code</th>
+<th align="center">country</th>
+<th align="center">region_name</th>
+<th align="center">intptlon</th>
+<th align="center">intptlat</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">USA</td>
+<td align="center">Northeast</td>
+<td align="center">-74.79</td>
+<td align="center">43.27</td>
+</tr>
+<tr class="even">
+<td align="center">2</td>
+<td align="center">USA</td>
+<td align="center">Midwest</td>
+<td align="center">-93.19</td>
+<td align="center">43.21</td>
+</tr>
+<tr class="odd">
+<td align="center">3</td>
+<td align="center">USA</td>
+<td align="center">South</td>
+<td align="center">-91.29</td>
+<td align="center">32.9</td>
+</tr>
+<tr class="even">
+<td align="center">4</td>
+<td align="center">USA</td>
+<td align="center">West</td>
+<td align="center">-113.2</td>
+<td align="center">40.77</td>
+</tr>
+<tr class="odd">
+<td align="center">9</td>
+<td align="center">USA</td>
+<td align="center">Puerto Rico</td>
+<td align="center">-66.28</td>
+<td align="center">18.21</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
