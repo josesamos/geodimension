@@ -119,6 +119,18 @@ relate_levels.geodimension <- function(gd,
     if (is.null(lower_level_attributes)) {
       lower_level_attributes <-
         paste0("fk_", upper_level_name, "_", upper_level_key)
+      lower_level_attributes <-
+        gsub(
+          paste0(upper_level_name, '_', upper_level_name, '_'),
+          paste0(upper_level_name, '_'),
+          lower_level_attributes
+        )
+      lower_level_attributes <-
+        gsub(
+          paste0(upper_level_name, '_', upper_level_name),
+          upper_level_name,
+          lower_level_attributes
+        )
     }
     for (a in lower_level_attributes) {
       stopifnot("The lower level attributes already exist." = !(a %in% names(gd$geolevel[[lower_level_name]]$data)))
@@ -166,7 +178,7 @@ relate_levels.geodimension <- function(gd,
   data <- gd$geolevel[[upper_level_name]]$data[, upper_level_key]
   names(data) <- lower_level_attributes
   data <-
-    gd$geolevel[[lower_level_name]]$data[, c(gd$geolevel[[lower_level_name]]$key, lower_level_attributes)] |>
+    gd$geolevel[[lower_level_name]]$data[, unique(c(gd$geolevel[[lower_level_name]]$key, lower_level_attributes))] |>
     dplyr::inner_join(data, by = lower_level_attributes)
   if (nrow(data) != nrow(gd$geolevel[[lower_level_name]]$data)) {
     warning(
@@ -409,6 +421,7 @@ select_levels.geodimension <- function(gd, level_names = NULL) {
   level_names <-
     validate_names(names(gd$geolevel), level_names, 'level')
   delete <- setdiff(names(gd$geolevel), level_names)
+  gdp <- gd
   for (l in delete) {
     gd$geolevel[[l]] <- NULL
     gd$relation[[l]] <- NULL
@@ -421,6 +434,113 @@ select_levels.geodimension <- function(gd, level_names = NULL) {
       gd$relation[[r]] <- NULL
     }
   }
+  level_names <- sort_by_number_of_instances(gd, level_names)
+  # lost relationships
+  for (l in level_names) {
+    hlp <- get_higher_level_names(gdp, level_name = l, indirect_levels = TRUE)
+    hlp <- intersect(hlp, level_names)
+    hl <- get_higher_level_names(gd, level_name = l, indirect_levels = TRUE)
+    lr <- setdiff(hlp, hl)
+    while (length(lr) > 0) {
+      lr <- sort_by_number_of_instances(gd, lr, decreasing = TRUE)
+      gd <- define_relationship(gd, gdp, l, lr[1])
+      hl <- get_higher_level_names(gd, level_name = l, indirect_levels = TRUE)
+      lr <- setdiff(hlp, hl)
+    }
+  }
   gd
 }
 
+
+#' sort by number of instances
+#'
+#' @param gd A `geolevel` object.
+#' @param level_names A string vector.
+#' @param decreasing A boolean, decreasing order.
+#'
+#' @return A string vector.
+#'
+#' @keywords internal
+sort_by_number_of_instances <- function(gd, level_names, decreasing = FALSE) {
+  nr <- NULL
+  for (l in level_names) {
+    nr <- c(nr, nrow(gd$geolevel[[l]]$data))
+  }
+  names(nr) <- level_names
+  nr <- sort(nr, decreasing)
+  names(nr)
+}
+
+
+
+#' define relationship
+#'
+#' @param gd A `geolevel` object.
+#' @param gdp A `geolevel` object.
+#' @param l A string, name of the lower level.
+#' @param h A string, name of the upper lever.
+#'
+#' @return A `geolevel` object.
+#'
+#' @keywords internal
+define_relationship <- function(gd, gdp, l, h) {
+  data <- get_level_keys(gdp, level_name = l)
+  att <- names(data)
+  att <- att[startsWith(att, paste0(l, 'XXX')) | startsWith(att, paste0(h, 'XXX'))]
+  data <- data[, att]
+  lkey <- gdp$geolevel[[l]]$key
+  hkey <- paste0("fk_", h, '_', gdp$geolevel[[h]]$key)
+  hkey <- gsub(paste0(h, '_', h, '_'), paste0(h, '_'), hkey)
+  hkey <- gsub(paste0(h, '_', h), h, hkey)
+  names(data) <- c(lkey, hkey)
+
+  gd$geolevel[[l]]$data <- gd$geolevel[[l]]$data |>
+    dplyr::left_join(data, by = lkey)
+
+  gd <- gd |>
+    relate_levels(
+      lower_level_name = l,
+      lower_level_attributes = hkey,
+      upper_level_name = h
+    )
+  gd
+}
+
+
+#' get level keys
+#'
+#' Starting from a level, the keys of all the levels above it.
+#'
+#' @param gd A `geolevel` object.
+#' @param level_name A string, name of the level.
+#'
+#' @return A `tibble` object.
+#'
+#' @keywords internal
+get_level_keys <- function(gd, level_name = NULL) {
+  att <- gd$geolevel[[level_name]]$key
+  ln <- paste0(level_name, 'XXX', att)
+  data <- gd$geolevel[[level_name]]$data
+  res <- names(gd$relation[[level_name]])
+  for (l in res) {
+    lower_level_attributes <- gd$relation[[level_name]][[l]]$lower_fk
+    upper_level_key <- gd$relation[[level_name]][[l]]$upper_pk
+    att <- c(att, lower_level_attributes)
+    ln <- c(ln, paste0(l, 'XXX', upper_level_key))
+  }
+  data <- data[, att]
+  names(data) <- ln
+
+  for (l in res) {
+    upper_level_key <- gd$relation[[level_name]][[l]]$upper_pk
+    upper_level_key <- paste0(l, 'XXX', upper_level_key)
+
+    d <- get_level_keys(gd, level_name = l)
+    # in case of redundant relationships
+    unique_att <- c(upper_level_key, setdiff(names(d), names(data)))
+    d <- d[, unique_att]
+    data <- data |>
+      dplyr::left_join(d, by = upper_level_key)
+  }
+  data
+}

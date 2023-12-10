@@ -72,7 +72,9 @@ available in the package in the `us_division` variable, shown below.
 |       9       |      Pacific       |      4      |    West     |   USA   |
 |       0       |    Puerto Rico     |      9      | Puerto Rico |   USA   |
 
-We will get a geographic layer for *state* level (`layer_us_state`).
+In [United States Census Bureau](https://www.census.gov) we find layers
+at various levels of detail, including *state*. Weget a geographic layer
+for *state* level (`layer_us_state`).
 
 ``` r
 library(geodimension)
