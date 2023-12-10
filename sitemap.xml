@@ -43,6 +43,9 @@
     <loc>https://josesamos.github.io/geodimension/reference/coordinates_to_geometry.html</loc>
   </url>
   <url>
+    <loc>https://josesamos.github.io/geodimension/reference/define_relationship.html</loc>
+  </url>
+  <url>
     <loc>https://josesamos.github.io/geodimension/reference/gd_us.html</loc>
   </url>
   <url>
@@ -70,6 +73,9 @@
     <loc>https://josesamos.github.io/geodimension/reference/get_level_geometries.html</loc>
   </url>
   <url>
+    <loc>https://josesamos.github.io/geodimension/reference/get_level_keys.html</loc>
+  </url>
+  <url>
     <loc>https://josesamos.github.io/geodimension/reference/get_level_layer.html</loc>
   </url>
   <url>
@@ -95,6 +101,9 @@
   </url>
   <url>
     <loc>https://josesamos.github.io/geodimension/reference/snake_case_geolevel.html</loc>
+  </url>
+  <url>
+    <loc>https://josesamos.github.io/geodimension/reference/sort_by_number_of_instances.html</loc>
   </url>
   <url>
     <loc>https://josesamos.github.io/geodimension/reference/transform_crs.html</loc>
