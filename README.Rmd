@@ -54,7 +54,7 @@ Suppose that, for the US, we want to define a geographic dimension at the *state
 pander::pandoc.table(geodimension::us_division, split.table = Inf)
 ```
 
-We will get a geographic layer for *state* level (`layer_us_state`). 
+In [United States Census Bureau](https://www.census.gov) we find layers at various levels of detail, including *state*. Weget a geographic layer for *state* level (`layer_us_state`). 
 
 ```{r}
 library(geodimension)
