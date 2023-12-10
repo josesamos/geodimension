@@ -422,26 +422,41 @@ select_levels.geodimension <- function(gd, level_names = NULL) {
       gd$relation[[r]] <- NULL
     }
   }
-  # sort by number of instances of the table
+  level_names <- sort_by_number_of_instances(gd, level_names)
+  # lost relationships
+  for (l in level_names) {
+    hlp <- get_higher_level_names(gdp, level_name = l, indirect_levels = TRUE)
+    hlp <- intersect(hlp, level_names)
+    hl <- get_higher_level_names(gd, level_name = l, indirect_levels = TRUE)
+    lr <- setdiff(hlp, hl)
+    while (length(lr) > 0) {
+      lr <- sort_by_number_of_instances(gd, lr, decreasing = TRUE)
+      gd <- define_relationship(gd, gdp, l, lr[1])
+      hl <- get_higher_level_names(gd, level_name = l, indirect_levels = TRUE)
+      lr <- setdiff(hlp, hl)
+    }
+  }
+  gd
+}
+
+
+#' sort by number of instances
+#'
+#' @param gd A `geolevel` object.
+#' @param level_names A string vector.
+#' @param decreasing A boolean, decreasing order.
+#'
+#' @return A string vector.
+#'
+#' @keywords internal
+sort_by_number_of_instances <- function(gd, level_names, decreasing = FALSE) {
   nr <- NULL
   for (l in level_names) {
     nr <- c(nr, nrow(gd$geolevel[[l]]$data))
   }
   names(nr) <- level_names
-  nr <- sort(nr)
-  # lost relationships
-  for (l in names(nr)) {
-    hlp <- get_higher_level_names(gdp, level_name = l, indirect_levels = TRUE)
-    hlp <- intersect(hlp, level_names)
-    hl <- get_higher_level_names(gd, level_name = l, indirect_levels = TRUE)
-    lr <- setdiff(hlp, hl)
-    if (length(lr) > 0) {
-      for (h in lr) {
-        gd <- define_relationship(gd, gdp, l, h)
-      }
-    }
-  }
-  gd
+  nr <- sort(nr, decreasing)
+  names(nr)
 }
 
 

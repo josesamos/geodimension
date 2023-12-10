@@ -2,23 +2,23 @@
 % Please edit documentation in R/relations.R
 \name{define_relationship}
 \alias{define_relationship}
-\title{snake case geolevel}
+\title{define relationship}
 \usage{
-define_relationship(gl, gdp, l, h)
+define_relationship(gd, gdp, l, h)
 }
 \arguments{
-\item{gl}{A \code{geolevel} object.}
+\item{gd}{A \code{geolevel} object.}
+
+\item{gdp}{A \code{geolevel} object.}
 
 \item{l}{A string, name of the lower level.}
 
 \item{h}{A string, name of the upper lever.}
-
-\item{glp}{A \code{geolevel} object.}
 }
 \value{
 A \code{geolevel} object.
 }
 \description{
-snake case geolevel
+define relationship
 }
 \keyword{internal}

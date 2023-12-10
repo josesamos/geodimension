@@ -28,11 +28,14 @@ test_that("select_levels()", {
                  )),
                  county = list(state = list(
                    lower_fk = "statefp", upper_pk = "statefp"
-                 ))
+                 )),
+                 state = list(
+                   region = list(lower_fk = "fk_region_region_code",
+                                 upper_pk = "region_code")
+                 )
                ))
 
 })
-
 
 
 test_that("get_level_data()", {
