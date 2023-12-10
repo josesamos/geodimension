@@ -21,14 +21,20 @@ Check if the specified set of attributes can be the key of the table.
 The table can be a data table or a vector layer.
 }
 \examples{
-is_key <- check_key(layer_us_region, key = c("name"))
+
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+
+is_key <- check_key(layer_us_county, key = c("STATEFP", "NAME"))
 
 }
 \seealso{
-Other level definition functions: 
+Other geolevel definition functions: 
+\code{\link{add_geometry}()},
 \code{\link{complete_point_geometry}()},
 \code{\link{coordinates_to_geometry}()},
+\code{\link{geolevel}()},
 \code{\link{get_empty_geometry_instances}()},
 \code{\link{get_geometry}()}
 }
-\concept{level definition functions}
+\concept{geolevel definition functions}

@@ -4,12 +4,14 @@
 \alias{geodimension}
 \title{\code{geodimension} S3 class}
 \usage{
-geodimension(name = NULL, level = NULL)
+geodimension(name = NULL, level = NULL, snake_case = FALSE)
 }
 \arguments{
 \item{name}{A string, name of the dimension.}
 
 \item{level}{A \code{geolevel}.}
+
+\item{snake_case}{A boolean, transform all names to snake_case.}
 }
 \value{
 A \code{geodimension} object.
@@ -20,21 +22,25 @@ levels. In addition to the name of the \code{geodimension} , a \code{level} has 
 given.
 }
 \examples{
-region <-
-  geolevel(name = "region",
-           layer = layer_us_region,
-           key = c("geoid"))
 
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+
+place <-
+  geolevel(name = "place",
+           layer = layer_us_place,
+           key = "GEOID")
 gd <-
   geodimension(name = "gd_us",
-               level = region)
+               level = place)
 
 }
 \seealso{
-Other level association functions: 
+\code{\link{geolevel}}, \code{\link{relate_levels}}, \code{\link{get_level_layer}}
+
+Other geodimension definition functions: 
 \code{\link{add_level}()},
-\code{\link{complete_relation_by_geography}()},
-\code{\link{get_unrelated_instances}()},
-\code{\link{relate_levels}()}
+\code{\link{set_level_data}()},
+\code{\link{transform_crs}()}
 }
-\concept{level association functions}
+\concept{geodimension definition functions}

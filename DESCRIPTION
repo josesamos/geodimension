@@ -22,9 +22,7 @@ Depends:
     R (>= 2.10)
 Imports: 
     dplyr,
-    generics,
     methods,
-    rlang,
     sf,
     snakecase,
     tibble,
@@ -39,5 +37,6 @@ VignetteBuilder:
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
+LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3

@@ -4,43 +4,66 @@
 \alias{geolevel}
 \title{\code{geolevel} S3 class}
 \usage{
-geolevel(name = NULL, layer = NULL, attributes = NULL, key = NULL)
+geolevel(
+  name = NULL,
+  layer = NULL,
+  attributes = NULL,
+  key = NULL,
+  snake_case = FALSE
+)
 }
 \arguments{
 \item{name}{A string, level name.}
 
-\item{layer}{A \code{sf} object.}
+\item{layer}{A \code{tibble} or \code{sf} object.}
 
-\item{attributes}{A vector, selected attributes.}
+\item{attributes}{A string vector, selected attributes.}
 
-\item{key}{A vector, attributes that compose the key.}
+\item{key}{A string vector, attributes that compose the key.}
+
+\item{snake_case}{A boolean, transform all names to snake_case.}
 }
 \value{
 A \code{geolevel} object.
 }
 \description{
 A \code{geolevel} object is created from a given geographic layer. The attributes
-of the layer to be included in the level can be indicated, and the subset of
-these that make up the natural key. If no attribute is indicated, all are
-considered. In any case, the attributes that make up the key must be
+of the layer to be included in the level can be indicated; if no attribute is
+indicated, all are considered. The attributes that make up the key must be
 indicated.
 }
 \details{
-A level can have several associated geometries (point, polygon or line). The
-geometry is obtained from the layer data.
+A level can have two associated geometries (point or polygon). The geometry
+is obtained from the layer data.
+
+We can also define a level from a \code{tibble}, which does not have any associated
+geometry. The geometry will be obtained from the relationships between levels
+that we define or from layers related to this data.
 
 The name of the level is used later to reference it and relate it to other
 levels.
 }
 \examples{
-region <-
-  geolevel(name = "region",
-           layer = layer_us_region,
-           key = c("geoid"))
+
+file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+
+state <-
+  geolevel(name = "state",
+           layer = layer_us_state,
+           key = "geoid",
+           snake_case = TRUE)
 
 }
 \seealso{
+\code{\link{geodimension}}, \code{\link{relate_levels}}
+
 Other geolevel definition functions: 
-\code{\link{add_geometry}()}
+\code{\link{add_geometry}()},
+\code{\link{check_key}()},
+\code{\link{complete_point_geometry}()},
+\code{\link{coordinates_to_geometry}()},
+\code{\link{get_empty_geometry_instances}()},
+\code{\link{get_geometry}()}
 }
 \concept{geolevel definition functions}

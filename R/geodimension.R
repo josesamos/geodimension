@@ -7,72 +7,231 @@
 #'
 #' @param name A string, name of the dimension.
 #' @param level A `geolevel`.
+#' @param snake_case A boolean, transform all names to snake_case.
 #'
 #' @return A `geodimension` object.
 #'
-#' @family level association functions
+#' @family geodimension definition functions
+#' @seealso \code{\link{geolevel}}, \code{\link{relate_levels}}, \code{\link{get_level_layer}}
 #'
 #' @examples
-#' region <-
-#'   geolevel(name = "region",
-#'            layer = layer_us_region,
-#'            key = c("geoid"))
 #'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+#'
+#' place <-
+#'   geolevel(name = "place",
+#'            layer = layer_us_place,
+#'            key = "GEOID")
 #' gd <-
 #'   geodimension(name = "gd_us",
-#'                level = region)
+#'                level = place)
 #'
 #' @export
-geodimension <- function(name = NULL, level = NULL) {
+geodimension <-
+  function(name = NULL,
+           level = NULL,
+           snake_case = FALSE) {
+    stopifnot("Missing geodimension name." = !is.null(name))
+    stopifnot("level does not include geolevel object." = methods::is(level, "geolevel"))
+    if (snake_case) {
+      name <- my_to_snake_case(name)
+      level <- snake_case_geolevel(level)
+    }
     geolevel <- list()
-    geolevel[[attr(level, "name")]] <- level
-
+    geolevel[[level$name]] <- level
     relation <- list()
-    data <- level$data[1]
-    names(data) <- attr(level, "name")
-    relation[[attr(level, "name")]] <- data
 
-    geodimension <- list(geolevel = geolevel, relation = relation)
-
-    structure(
-      geodimension,
+    geodimension <- list(
       name = name,
-      class = "geodimension"
+      snake_case = snake_case,
+      geolevel = geolevel,
+      relation = relation
     )
+
+    structure(geodimension,
+              class = "geodimension")
   }
 
-# calculate inherited relationships ---------------------------------------
 
-#' calculate inherited relationships
+#' Add a level to a dimension
 #'
-#' Each level has explicitly defined relationships with other levels. For a
-#' given level, all the relationships with the levels of the dimension, direct
-#' and indirect, are obtained.
+#' Once a level is part of the dimension, it can then be related to other levels
+#' of the dimension.
 #'
 #' @param gd A `geodimension` object.
-#' @param level_name A string, name of the lower level.
+#' @param level A `geolevel`, level to add to the dimension.
 #'
-#' @keywords internal
-calculate_inherited_relationships <- function(gd,
-                                              level_name = NULL) {
-  stopifnot(level_name %in% names(gd$geolevel))
-  stopifnot(level_name %in% names(gd$relation))
+#' @return A `geodimension`.
+#'
+#' @family geodimension definition functions
+#' @seealso \code{\link{geolevel}}, \code{\link{relate_levels}}, \code{\link{get_level_layer}}
+#'
+#' @examples
+#'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#'
+#' place <-
+#'   geolevel(name = "place",
+#'            layer = layer_us_place,
+#'            attributes = c("STATEFP", "county_geoid", "NAME", "type"),
+#'            key = "GEOID")
+#'
+#' county <-
+#'   geolevel(
+#'     name = "county",
+#'     layer = layer_us_county,
+#'     attributes = c("STATEFP", "NAME", "type"),
+#'     key = "GEOID"
+#'   ) |>
+#'   add_geometry(coordinates_to_geometry(layer_us_county,
+#'                                        lon_lat = c("INTPTLON", "INTPTLAT")))
+#'
+#' gd_us <-
+#'   geodimension(name = "gd_us",
+#'                level = place) |>
+#'   add_level(level = county)
+#'
+#' @export
+add_level <- function(gd, level) {
+  UseMethod("add_level")
+}
 
-  upper_level_names <- names(gd$relation[[level_name]])[-1]
-  names_new <- upper_level_names
-  already_considered <- NULL
-  while (length(names_new) > 0) {
-    already_considered <- c(already_considered, names_new)
-    for (upper_level in names_new) {
-      rel_names <- names(gd$relation[[upper_level]])[-1]
-      rel_names <- generics::setdiff(rel_names, upper_level_names)
-      for (rel in rel_names) {
-        gd$relation[[level_name]] <- gd$relation[[level_name]] |>
-          dplyr::left_join(gd$relation[[upper_level]][, c(upper_level, rel)], by = upper_level)
-      }
-      upper_level_names <- names(gd$relation[[level_name]])[-1]
+#' @rdname add_level
+#' @export
+add_level.geodimension <- function(gd,
+                                   level = NULL) {
+  stopifnot("level does not include geolevel object." = methods::is(level, "geolevel"))
+  if (gd$snake_case) {
+    level <- snake_case_geolevel(level)
+  }
+  stopifnot("The level was already included in the dimension." = !(level$name %in% names(gd$geolevel)))
+  gd$geolevel[[level$name]] <- level
+  gd
+}
+
+
+#' Set level data
+#'
+#' Set the data table of a given level.
+#'
+#' We can get the table, filter or transform the data and redefine the level table.
+#'
+#' It is checked that the attributes that have been used in the relationships
+#' remain in the table.
+#'
+#' @param gd A `geodimension` object.
+#' @param level_name A string.
+#' @param data A `tibble` object.
+#'
+#' @return A `geodimension` object.
+#'
+#' @family geodimension definition functions
+#' @seealso \code{\link{geolevel}}, \code{\link{get_level_data}}
+#'
+#' @examples
+#'
+#' ld <- gd_us |>
+#'   get_level_data(level_name = "county",
+#'                  inherited = TRUE)
+#'
+#' gd_us <- gd_us |>
+#'   set_level_data(level_name = "county",
+#'                  data = ld)
+#'
+#' @export
+set_level_data <- function(gd,
+                           level_name,
+                           data) {
+  UseMethod("set_level_data")
+}
+
+#' @rdname set_level_data
+#' @export
+set_level_data.geodimension <- function(gd,
+                                        level_name = NULL,
+                                        data = NULL) {
+  stopifnot("Missing level name." = !is.null(level_name))
+  if (gd$snake_case) {
+    level_name <- my_to_snake_case(level_name)
+    names(data) <- my_to_snake_case(names(data))
+  }
+  level_name <- validate_names(names(gd$geolevel), level_name, 'level')
+  gd$geolevel[[level_name]]$data <- data
+
+  attributes <- names(data)
+  validate_names(attributes, gd$geolevel[[level_name]]$key, 'key')
+  for (l in names(gd$relation[[level_name]])) {
+    validate_names(attributes, gd$relation[[level_name]][[l]]$lower_fk, 'attribute')
+  }
+  for (l in names(gd$relation)) {
+    validate_names(attributes, gd$relation[[l]][[level_name]]$upper_pk, 'attribute')
+  }
+  gd
+}
+
+
+#' Transform CRS
+#'
+#' Transform the CRS of all the layers included in the dimension to the one
+#' indicated.
+#'
+#' @param gd A `geodimension` object.
+#' @param crs A coordinate reference system: integer with the EPSG code, or
+#'   character with proj4string.
+#'
+#' @return A `geodimension`.
+#'
+#' @family geodimension definition functions
+#' @seealso \code{\link{geolevel}}, \code{\link{relate_levels}}, \code{\link{get_level_layer}}
+#'
+#' @examples
+#'
+#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
+#' layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#'
+#' place <-
+#'   geolevel(name = "place",
+#'            layer = layer_us_place,
+#'            attributes = c("STATEFP", "county_geoid", "NAME", "type"),
+#'            key = "GEOID")
+#'
+#' county <-
+#'   geolevel(
+#'     name = "county",
+#'     layer = layer_us_county,
+#'     attributes = c("STATEFP", "NAME", "type"),
+#'     key = "GEOID"
+#'   ) |>
+#'   add_geometry(coordinates_to_geometry(layer_us_county,
+#'                                        lon_lat = c("INTPTLON", "INTPTLAT")))
+#'
+#' gd_us <-
+#'   geodimension(name = "gd_us",
+#'                level = place) |>
+#'   add_level(level = county) |>
+#'   transform_crs(crs = 3857)
+#'
+#' @export
+transform_crs <- function(gd,
+                          crs = NULL) {
+  UseMethod("transform_crs")
+}
+
+#' @rdname transform_crs
+#' @export
+transform_crs.geodimension <- function(gd,
+                                       crs = NULL) {
+  stopifnot("The crs is missing." = !is.null(crs))
+  for (layer in names(gd$geolevel)) {
+    for (geom in names(gd$geolevel[[layer]]$geometry)) {
+      gd$geolevel[[layer]]$geometry[[geom]] <-
+        gd$geolevel[[layer]]$geometry[[geom]] |>
+        sf::st_transform(crs = crs, use_gdal = FALSE)
     }
-    names_new <- generics::setdiff(upper_level_names, already_considered)
   }
   gd
 }
