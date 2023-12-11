@@ -478,9 +478,11 @@ following function:</p>
 <code class="sourceCode R"><span><span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/get_level_names.html">get_level_names</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "country"  "county"   "division" "place"    "region"   "state"</span></span></code></pre></div>
-<p>A new geodimension is defined by selecting a subset of levels, which
-we want to take into account when obtaining information, or to define
-new dimensions.</p>
+<p>A new <em>geodimension</em> is defined by selecting a subset of
+levels, which we want to take into account when obtaining information,
+or to define new dimensions. If necessary, relationships are generated
+between the selected levels: if there were indirect relationships
+defined between them that no longer exist when levels are deleted.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gds</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/select_levels.html">select_levels</a></span><span class="op">(</span>level_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"division"</span>, <span class="st">"region"</span>, <span class="st">"country"</span><span class="op">)</span><span class="op">)</span></span>
@@ -505,39 +507,44 @@ it is added, as we can see below.</p>
 <span>  <span class="fu"><a href="../reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"state"</span>,</span>
 <span>                 inherited <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ld</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "statefp"                     "division"                   </span></span>
-<span><span class="co">#&gt;  [3] "region"                      "geoid"                      </span></span>
-<span><span class="co">#&gt;  [5] "stusps"                      "statens"                    </span></span>
-<span><span class="co">#&gt;  [7] "name"                        "shape_length"               </span></span>
-<span><span class="co">#&gt;  [9] "shape_area"                  "aland"                      </span></span>
-<span><span class="co">#&gt; [11] "awater"                      "intptlat"                   </span></span>
-<span><span class="co">#&gt; [13] "intptlon"                    "division_country"           </span></span>
-<span><span class="co">#&gt; [15] "division_region_code"        "division_division_name"     </span></span>
-<span><span class="co">#&gt; [17] "division_region_country"     "division_region_region_name"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "statefp"              "state_division"       "state_region"        </span></span>
+<span><span class="co">#&gt;  [4] "state_geoid"          "state_stusps"         "statens"             </span></span>
+<span><span class="co">#&gt;  [7] "state_name"           "state_shape_length"   "state_shape_area"    </span></span>
+<span><span class="co">#&gt; [10] "state_aland"          "state_awater"         "state_intptlat"      </span></span>
+<span><span class="co">#&gt; [13] "state_intptlon"       "division_country"     "division_region_code"</span></span>
+<span><span class="co">#&gt; [16] "division_name"        "region_country"       "region_name"</span></span></code></pre></div>
 <p>Previously, if we need it, we can obtain the name of the levels from
 which a level will inherit attributes.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/get_higher_level_names.html">get_higher_level_names</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"state"</span>,</span>
 <span>                         indirect_levels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "division" "region"   "country"</span></span>
+<span><span class="co">#&gt; [1] "division" "region"   "country"</span></span></code></pre></div>
+<p>If we need only part of the data, for example, instead of all the
+places only the cities, we can get the table, modify it and set it again
+to modify the level.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ld_place</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"place"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ld_place</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 31909</span></span>
 <span></span>
-<span><span class="va">ld</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"state"</span>,</span>
-<span>                 inherited <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ld</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "statefp"                     "division"                   </span></span>
-<span><span class="co">#&gt;  [3] "region"                      "geoid"                      </span></span>
-<span><span class="co">#&gt;  [5] "stusps"                      "statens"                    </span></span>
-<span><span class="co">#&gt;  [7] "name"                        "shape_length"               </span></span>
-<span><span class="co">#&gt;  [9] "shape_area"                  "aland"                      </span></span>
-<span><span class="co">#&gt; [11] "awater"                      "intptlat"                   </span></span>
-<span><span class="co">#&gt; [13] "intptlon"                    "division_country"           </span></span>
-<span><span class="co">#&gt; [15] "division_region_code"        "division_division_name"     </span></span>
-<span><span class="co">#&gt; [17] "division_region_country"     "division_region_region_name"</span></span></code></pre></div>
+<span><span class="va">ld_place</span> <span class="op">&lt;-</span> <span class="va">ld_place</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">type</span> <span class="op">==</span> <span class="st">"city"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">gd</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/set_level_data.html">set_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"place"</span>,</span>
+<span>                 data <span class="op">=</span> <span class="va">ld_place</span><span class="op">)</span></span>
+<span><span class="va">ld_place_2</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"place"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ld_place_2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 10193</span></span></code></pre></div>
+<p>In this case we have only filtered it, we can also modify, delete or
+add attributes: it is checked that the key and foreign keys are still
+defined in the new table.</p>
 <p>For a level we can obtain the available geometries and a layer with
 the attribute configuration we want and the selected geometry.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/get_level_geometries.html">get_level_geometries</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"division"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "point"   "polygon"</span></span>
@@ -548,11 +555,11 @@ the attribute configuration we want and the selected geometry.</p>
 <span>                  only_key <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_shift_longitude.html" class="external-link">st_shift_longitude</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="geodimension_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
+<p><img src="geodimension_files/figure-html/unnamed-chunk-20-1.png" width="700"></p>
 <p>We can obtain a table with level data and geographic data represented
 in the form of points, with longitude and latitude, to be included in
 other tools that use this format.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ld_geo</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/get_level_data_geo.html">get_level_data_geo</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"division"</span><span class="op">)</span></span>
 <span></span>

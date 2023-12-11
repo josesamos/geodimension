@@ -31,6 +31,12 @@
     <loc>https://josesamos.github.io/geodimension/reference/add_level.html</loc>
   </url>
   <url>
+    <loc>https://josesamos.github.io/geodimension/reference/add_prefix.html</loc>
+  </url>
+  <url>
+    <loc>https://josesamos.github.io/geodimension/reference/all_attributes_character.html</loc>
+  </url>
+  <url>
     <loc>https://josesamos.github.io/geodimension/reference/check_key.html</loc>
   </url>
   <url>
@@ -44,6 +50,9 @@
   </url>
   <url>
     <loc>https://josesamos.github.io/geodimension/reference/define_relationship.html</loc>
+  </url>
+  <url>
+    <loc>https://josesamos.github.io/geodimension/reference/gd_es.html</loc>
   </url>
   <url>
     <loc>https://josesamos.github.io/geodimension/reference/gd_us.html</loc>

@@ -277,31 +277,33 @@
 <code class="sourceCode R"><span><span class="va">ld</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"division"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ld</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "division_code"         "country"               "region_code"          </span></span>
-<span><span class="co">#&gt; [4] "division_name"         "fk_region_region_code"</span></span>
+<span><span class="co">#&gt; [1] "division_code"  "country"        "region_code"    "division_name" </span></span>
+<span><span class="co">#&gt; [5] "fk_region_code"</span></span>
 <span></span>
 <span><span class="va">ld</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"division"</span>,</span>
 <span>                 inherited <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ld</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "division_code"         "country"               "region_code"          </span></span>
-<span><span class="co">#&gt; [4] "division_name"         "fk_region_region_code" "region_country"       </span></span>
-<span><span class="co">#&gt; [7] "region_region_name"</span></span>
+<span><span class="co">#&gt; [1] "division_code"           "division_country"       </span></span>
+<span><span class="co">#&gt; [3] "division_region_code"    "division_name"          </span></span>
+<span><span class="co">#&gt; [5] "division_fk_region_code" "region_country"         </span></span>
+<span><span class="co">#&gt; [7] "region_name"</span></span>
 <span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/get_level_layer.html">get_level_layer</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"division"</span>,</span>
 <span>                 inherited <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ll</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "division_code"         "country"               "region_code"          </span></span>
-<span><span class="co">#&gt; [4] "division_name"         "fk_region_region_code" "region_country"       </span></span>
-<span><span class="co">#&gt; [7] "region_region_name"    "geom"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "division_code"           "division_country"       </span></span>
+<span><span class="co">#&gt; [3] "division_region_code"    "division_name"          </span></span>
+<span><span class="co">#&gt; [5] "division_fk_region_code" "region_country"         </span></span>
+<span><span class="co">#&gt; [7] "region_name"             "geom"</span></span></code></pre></div>
 <p>If we need the data at another level of detail, we can obtain it in a similar way.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ld</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/get_level_data.html">get_level_data</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"region"</span>,</span>
 <span>                 inherited <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ld</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "region_code" "country"     "region_name"</span></span>
+<span><span class="co">#&gt; [1] "region_code"    "region_country" "region_name"</span></span>
 <span></span>
 <span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="va">gd</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/get_level_layer.html">get_level_layer</a></span><span class="op">(</span>level_name <span class="op">=</span> <span class="st">"region"</span>,</span>
