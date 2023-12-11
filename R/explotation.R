@@ -267,7 +267,7 @@ get_level_layer.geodimension <- function(gd,
     data <- gd |>
       get_level_data(level_name = level_name, inherited = inherited, add_prefix = add_prefix)
     if (inherited & add_prefix) {
-      key <- paste0(level_name, '_', gd$geolevel[[level_name]]$key)
+      key <- add_prefix(gd$geolevel[[level_name]]$key, level_name)
       names(layer) <- c(key, names(layer)[length(names(layer))])
     } else {
       key <- gd$geolevel[[level_name]]$key
@@ -347,7 +347,7 @@ get_level_data_geo.geodimension <- function(gd,
   }
   if (!is.null(layer)) {
     if (inherited & add_prefix) {
-      key <- paste0(level_name, '_', gd$geolevel[[level_name]]$key)
+      key <- add_prefix(gd$geolevel[[level_name]]$key, level_name)
       names(layer) <- c(key, names(layer)[length(names(layer))])
     } else {
       key <- gd$geolevel[[level_name]]$key
