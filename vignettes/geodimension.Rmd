@@ -294,12 +294,27 @@ Previously, if we need it, we can obtain the name of the levels from which a lev
 gd |>
   get_higher_level_names(level_name = "state",
                          indirect_levels = TRUE)
-
-ld <- gd |>
-  get_level_data(level_name = "state",
-                 inherited = TRUE)
-names(ld)
 ```
+
+If we need only part of the data, for example, instead of all the places only the cities, we can get the table, modify it and set it again to modify the level.
+
+```{r}
+ld_place <- gd |>
+  get_level_data(level_name = "place")
+nrow(ld_place)
+
+ld_place <- ld_place |>
+  dplyr::filter(type == "city")
+
+gd <- gd |>
+  set_level_data(level_name = "place",
+                 data = ld_place)
+ld_place_2 <- gd |>
+  get_level_data(level_name = "place")
+nrow(ld_place_2)
+```
+
+In this case we have only filtered it, we can also modify, delete or add attributes: it is checked that the key and foreign keys are still defined in the new table.
 
 For a level we can obtain the available geometries and a layer with the attribute configuration we want and the selected geometry.
 
