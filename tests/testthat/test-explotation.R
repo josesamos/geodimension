@@ -32,19 +32,19 @@ test_that("get_level_data()", {
   expect_equal(
     names(ld_2),
     c(
-      "geoid",
-      "statefp",
-      "name",
-      "type",
+      "county_geoid",
+      "county_statefp",
+      "county_name",
+      "county_type",
       "state_division",
       "state_region",
       "state_stusps",
       "state_name",
-      "state_division_country",
-      "state_division_region_code",
-      "state_division_division_name",
-      "state_division_region_country",
-      "state_division_region_region_name"
+      "division_country",
+      "division_region_code",
+      "division_name",
+      "region_country",
+      "region_name"
     )
   )
 
@@ -70,19 +70,19 @@ test_that("get_level_layer()", {
   expect_equal(
     names(ll_2),
     c(
-      "geoid",
-      "statefp",
-      "name",
-      "type",
+      "county_geoid",
+      "county_statefp",
+      "county_name",
+      "county_type",
       "state_division",
       "state_region",
       "state_stusps",
       "state_name",
-      "state_division_country",
-      "state_division_region_code",
-      "state_division_division_name",
-      "state_division_region_country",
-      "state_division_region_region_name",
+      "division_country",
+      "division_region_code",
+      "division_name",
+      "region_country",
+      "region_name",
       "geom"
     )
   )
@@ -108,27 +108,25 @@ test_that("get_level_data_geo()", {
   expect_equal(
     names(ld_2),
     c(
-      "geoid",
-      "statefp",
-      "name",
-      "type",
+      "county_geoid",
+      "county_statefp",
+      "county_name",
+      "county_type",
       "state_division",
       "state_region",
       "state_stusps",
       "state_name",
-      "state_division_country",
-      "state_division_region_code",
-      "state_division_division_name",
-      "state_division_region_country",
-      "state_division_region_region_name",
+      "division_country",
+      "division_region_code",
+      "division_name",
+      "region_country",
+      "region_name",
       "intptlon",
       "intptlat"
     )
   )
 
 })
-
-
 
 
 test_that("get_level_data_geo()", {

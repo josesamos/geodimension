@@ -167,6 +167,9 @@ get_level_data.geodimension <- function(gd,
     validate_names(names(gd$geolevel), level_name, 'level')
   data <- gd$geolevel[[level_name]]$data
   if (inherited) {
+    if (add_prefix) {
+      names(data) <- add_prefix(names(data), level_name)
+    }
     res <- names(gd$relation[[level_name]])
     for (l in res) {
       lower_level_attributes <-
@@ -175,8 +178,8 @@ get_level_data.geodimension <- function(gd,
         gd$relation[[level_name]][[l]]$upper_pk
       d <- get_level_data(gd, level_name = l, inherited, add_prefix)
       if (add_prefix) {
-        names(d) <- paste0(l, '_', names(d))
-        upper_level_key <- paste0(l, '_', upper_level_key)
+        lower_level_attributes <- add_prefix(lower_level_attributes, level_name)
+        upper_level_key <- add_prefix(upper_level_key, l)
       }
       data <- data |>
         dplyr::left_join(d, by = stats::setNames(upper_level_key, lower_level_attributes))
@@ -257,8 +260,14 @@ get_level_layer.geodimension <- function(gd,
   if (!only_key) {
     data <- gd |>
       get_level_data(level_name = level_name, inherited = inherited, add_prefix = add_prefix)
+    if (inherited & add_prefix) {
+      key <- paste0(level_name, '_', gd$geolevel[[level_name]]$key)
+      names(layer) <- c(key, names(layer)[length(names(layer))])
+    } else {
+      key <- gd$geolevel[[level_name]]$key
+    }
     layer <- data |>
-      dplyr::left_join(layer, by = gd$geolevel[[level_name]]$key) |>
+      dplyr::left_join(layer, by = key) |>
       sf::st_as_sf()
   }
   layer
@@ -331,8 +340,14 @@ get_level_data_geo.geodimension <- function(gd,
     layer <- gd$geolevel[[level_name]]$geometry$point
   }
   if (!is.null(layer)) {
+    if (inherited & add_prefix) {
+      key <- paste0(level_name, '_', gd$geolevel[[level_name]]$key)
+      names(layer) <- c(key, names(layer)[length(names(layer))])
+    } else {
+      key <- gd$geolevel[[level_name]]$key
+    }
     layer <- data |>
-      dplyr::left_join(layer, by = gd$geolevel[[level_name]]$key) |>
+      dplyr::left_join(layer, by = key) |>
       sf::st_as_sf() |>
       sf::st_transform(crs)
     data[, lon_lat] <-

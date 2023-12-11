@@ -172,3 +172,21 @@ my_to_snake_case <- function(str) {
   }
   str
 }
+
+
+#' Add prefix
+#'
+#' @param str A string.
+#' @param prefix A string.
+#'
+#' @return A string.
+#'
+#' @keywords internal
+add_prefix <- function(str, prefix) {
+  if (!is.null(str)) {
+    str <- paste0(prefix, '_', str)
+    str <- gsub(paste0(prefix, '_', prefix, '_'), paste0(prefix, '_'), str)
+    str <- gsub(paste0(prefix, '_', prefix), prefix, str)
+  }
+  str
+}

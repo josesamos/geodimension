@@ -160,15 +160,37 @@ set_level_data.geodimension <- function(gd,
   }
   level_name <- validate_names(names(gd$geolevel), level_name, 'level')
   gd$geolevel[[level_name]]$data <- data
-
   attributes <- names(data)
-  validate_names(attributes, gd$geolevel[[level_name]]$key, 'key')
+
+  to_validate <- gd$geolevel[[level_name]]$key
   for (l in names(gd$relation[[level_name]])) {
-    validate_names(attributes, gd$relation[[level_name]][[l]]$lower_fk, 'attribute')
+    to_validate <- c(to_validate, gd$relation[[level_name]][[l]]$lower_fk)
   }
   for (l in names(gd$relation)) {
-    validate_names(attributes, gd$relation[[l]][[level_name]]$upper_pk, 'attribute')
+    to_validate <- c(to_validate, gd$relation[[l]][[level_name]]$upper_pk)
   }
+  to_validate <- unique(to_validate)
+  to_validate_prefix <- add_prefix(to_validate, level_name)
+  with_prefix <- TRUE
+  for (v in to_validate_prefix) {
+    if (!(v %in% attributes)) {
+      with_prefix <- FALSE
+    }
+  }
+  if (with_prefix) {
+    gd$geolevel[[level_name]]$key <-
+      add_prefix(gd$geolevel[[level_name]]$key, level_name)
+    for (l in names(gd$relation[[level_name]])) {
+      gd$relation[[level_name]][[l]]$lower_fk <-
+        add_prefix(gd$relation[[level_name]][[l]]$lower_fk, level_name)
+    }
+    for (l in names(gd$relation)) {
+      gd$relation[[l]][[level_name]]$upper_pk <-
+        add_prefix(gd$relation[[l]][[level_name]]$upper_pk, level_name)
+    }
+    to_validate <- to_validate_prefix
+  }
+  validate_names(attributes, to_validate, 'attribute')
   gd
 }
 

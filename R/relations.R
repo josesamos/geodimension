@@ -117,20 +117,8 @@ relate_levels.geodimension <- function(gd,
   }
   if (by_geography) {
     if (is.null(lower_level_attributes)) {
-      lower_level_attributes <-
-        paste0("fk_", upper_level_name, "_", upper_level_key)
-      lower_level_attributes <-
-        gsub(
-          paste0(upper_level_name, '_', upper_level_name, '_'),
-          paste0(upper_level_name, '_'),
-          lower_level_attributes
-        )
-      lower_level_attributes <-
-        gsub(
-          paste0(upper_level_name, '_', upper_level_name),
-          upper_level_name,
-          lower_level_attributes
-        )
+      lower_level_attributes <- add_prefix(upper_level_key, upper_level_name)
+      lower_level_attributes <- paste0("fk_", lower_level_attributes)
     }
     for (a in lower_level_attributes) {
       stopifnot("The lower level attributes already exist." = !(a %in% names(gd$geolevel[[lower_level_name]]$data)))
@@ -489,9 +477,8 @@ define_relationship <- function(gd, gdp, l, h) {
   att <- att[startsWith(att, paste0(l, 'XXX')) | startsWith(att, paste0(h, 'XXX'))]
   data <- data[, att]
   lkey <- gdp$geolevel[[l]]$key
-  hkey <- paste0("fk_", h, '_', gdp$geolevel[[h]]$key)
-  hkey <- gsub(paste0(h, '_', h, '_'), paste0(h, '_'), hkey)
-  hkey <- gsub(paste0(h, '_', h), h, hkey)
+  hkey <- add_prefix(gdp$geolevel[[h]]$key, h)
+  hkey <- paste0("fk_", hkey)
   names(data) <- c(lkey, hkey)
 
   gd$geolevel[[l]]$data <- gd$geolevel[[l]]$data |>
