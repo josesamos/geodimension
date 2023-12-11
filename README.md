@@ -172,24 +172,26 @@ or layers associated with that table at the level we need.
 ld <- gd |>
   get_level_data(level_name = "division")
 names(ld)
-#> [1] "division_code"         "country"               "region_code"          
-#> [4] "division_name"         "fk_region_region_code"
+#> [1] "division_code"  "country"        "region_code"    "division_name" 
+#> [5] "fk_region_code"
 
 ld <- gd |>
   get_level_data(level_name = "division",
                  inherited = TRUE)
 names(ld)
-#> [1] "division_code"         "country"               "region_code"          
-#> [4] "division_name"         "fk_region_region_code" "region_country"       
-#> [7] "region_region_name"
+#> [1] "division_code"           "division_country"       
+#> [3] "division_region_code"    "division_name"          
+#> [5] "division_fk_region_code" "region_country"         
+#> [7] "region_name"
 
 ll <- gd |>
   get_level_layer(level_name = "division",
                  inherited = TRUE)
 names(ll)
-#> [1] "division_code"         "country"               "region_code"          
-#> [4] "division_name"         "fk_region_region_code" "region_country"       
-#> [7] "region_region_name"    "geom"
+#> [1] "division_code"           "division_country"       
+#> [3] "division_region_code"    "division_name"          
+#> [5] "division_fk_region_code" "region_country"         
+#> [7] "region_name"             "geom"
 ```
 
 If we need the data at another level of detail, we can obtain it in a
@@ -200,7 +202,7 @@ ld <- gd |>
   get_level_data(level_name = "region",
                  inherited = TRUE)
 names(ld)
-#> [1] "region_code" "country"     "region_name"
+#> [1] "region_code"    "region_country" "region_name"
 
 ll <- gd |>
   get_level_layer(level_name = "region",
