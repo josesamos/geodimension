@@ -181,8 +181,14 @@ get_level_data.geodimension <- function(gd,
         lower_level_attributes <- add_prefix(lower_level_attributes, level_name)
         upper_level_key <- add_prefix(upper_level_key, l)
       }
-      data <- data |>
-        dplyr::left_join(d, by = stats::setNames(upper_level_key, lower_level_attributes))
+      # avoid repeated attributes
+      nd <- setdiff(names(d), names(data))
+      if (length(nd) > 0) {
+        nd <- unique(c(nd, upper_level_key))
+        d <- d[, nd]
+        data <- data |>
+          dplyr::left_join(d, by = stats::setNames(upper_level_key, lower_level_attributes))
+      }
     }
   }
   data
