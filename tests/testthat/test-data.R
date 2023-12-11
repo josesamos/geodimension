@@ -243,14 +243,21 @@ test_that("data", {
       lower_level_attributes = "country",
       upper_level_name = "country"
     )
-  n <- gd_es |>
+
+  n_1 <- gd_es |>
     get_level_data(level_name = "nucleus",
                    inherited = TRUE)
+  n_2 <- gd_es |>
+    get_level_layer(level_name = "nucleus",
+                    inherited = TRUE)
+  n_3 <- gd_es |>
+    get_level_data_geo(level_name = "nucleus",
+                       inherited = TRUE)
 
   expect_equal(gd, gd_es)
 
   expect_equal(
-    names(n),
+    names(n_1),
     c(
       "nucleus_idpob",
       "nucleus_provincia",
@@ -276,4 +283,12 @@ test_that("data", {
       "autonomous_community_natcode"
     )
   )
+
+  expect_equal(names(n_2),
+               c(names(n_1),
+                 "geom"))
+
+  expect_equal(names(n_3),
+               c(names(n_1),
+                 "intptlon", "intptlat"))
 })

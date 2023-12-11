@@ -204,7 +204,9 @@ all_attributes_character <- function(instances) {
   n_row <- nrow(instances)
   attributes <- names(instances)
   # all attributes of type character
-  instances[, attributes] <- data.frame(lapply(instances[, attributes], as.character), stringsAsFactors = FALSE)
+  instances[, attributes] <-
+    data.frame(lapply(instances[, attributes, drop = FALSE], as.character),
+               stringsAsFactors = FALSE)
 
   if (n_row == 1) {
     instances <- tibble::as_tibble_row(instances)
@@ -213,5 +215,4 @@ all_attributes_character <- function(instances) {
   }
   instances
 }
-
 

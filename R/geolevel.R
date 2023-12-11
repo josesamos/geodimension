@@ -67,6 +67,9 @@ geolevel <-
       data <- layer
     }
     data <- all_attributes_character(data)
+    if (!is.null(geometry)) {
+      layer[, names(data)] <- data[, names(data)]
+    }
     attributes <- validate_names(names(data), attributes, 'attribute')
 
     stopifnot("The key is missing." = !is.null(key))
@@ -166,6 +169,12 @@ add_geometry.geolevel <- function(gl,
     stop(sprintf('`layer` has unsupported geometry: %s.', geometry[1]))
   }
   stopifnot("This geometry type is already defined for the layer." = !(geometry %in% names(gl$geometry)))
+
+  # all attributes character
+  data <- tibble::tibble((sf::st_drop_geometry(layer)))
+  data <- all_attributes_character(data)
+  layer[, names(data)] <- data[, names(data)]
+
   if (is.null(level_key)) {
     level_key <- gl$key
   } else {
