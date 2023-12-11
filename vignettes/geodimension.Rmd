@@ -264,7 +264,7 @@ gd |>
   get_level_names()
 ```
 
-A new geodimension is defined by selecting a subset of levels, which we want to take into account when obtaining information, or to define new dimensions.
+A new *geodimension* is defined by selecting a subset of levels, which we want to take into account when obtaining information, or to define new dimensions. If necessary, relationships are generated between the selected levels: if there were indirect relationships defined between them that no longer exist when levels are deleted.
 
 ```{r }
 gds <- gd |>
