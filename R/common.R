@@ -190,3 +190,28 @@ add_prefix <- function(str, prefix) {
   }
   str
 }
+
+
+
+#' All attributes are character
+#'
+#' @param instances A tibble.
+#'
+#' @return A tibble.
+#'
+#' @keywords internal
+all_attributes_character <- function(instances) {
+  n_row <- nrow(instances)
+  attributes <- names(instances)
+  # all attributes of type character
+  instances[, attributes] <- data.frame(lapply(instances[, attributes], as.character), stringsAsFactors = FALSE)
+
+  if (n_row == 1) {
+    instances <- tibble::as_tibble_row(instances)
+  } else {
+    instances <- tibble::as_tibble(instances)
+  }
+  instances
+}
+
+

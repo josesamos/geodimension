@@ -138,7 +138,9 @@ relate_levels.geodimension <- function(gd,
   stopifnot(
     "The inverse relationship between the levels is already defined." = !(lower_level_name %in% hln)
   )
-  gd$relation[[lower_level_name]] <- list()
+  if (is.null(gd$relation[[lower_level_name]])) {
+    gd$relation[[lower_level_name]] <- list()
+  }
   gd$relation[[lower_level_name]][[upper_level_name]] <-
     list(lower_fk = lower_level_attributes,
          upper_pk = upper_level_key)

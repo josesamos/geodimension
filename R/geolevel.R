@@ -66,6 +66,7 @@ geolevel <-
     } else {
       data <- layer
     }
+    data <- all_attributes_character(data)
     attributes <- validate_names(names(data), attributes, 'attribute')
 
     stopifnot("The key is missing." = !is.null(key))
