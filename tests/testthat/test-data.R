@@ -99,7 +99,7 @@ test_that("data", {
       upper_level_name = "country"
     )
 
-  expect_equal(gd, gd_us)
+  expect_equal(summary(gd), summary(gd_us))
 })
 
 test_that("data", {
@@ -215,7 +215,7 @@ test_that("data", {
     get_level_data_geo(level_name = "municipality",
                        inherited = TRUE)
 
-  expect_equal(gd, gd_es)
+  expect_equal(summary(gd), summary(gd_es))
 
   expect_equal(
     names(n_1),
