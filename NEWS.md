@@ -1,9 +1,12 @@
 # geodimension (development version)
-* New functions `set_level_data()` and `get_level_data_geo()`.
+* New datasets: level *place* instead of *city* in `gd_us` and  `gd_es`, *geodimension* for Spain.
+* Definition of geographic information layers as *GeoPackage* in external data.
+* New functions: `set_level_data()` and `get_level_data_geo()`.
 * Add parameter `snake_case` to `geolevel()` and `geodimension()` functions.
 * Delete parameter `use_intermediate_projected_crs` from function `complete_point_geometry()`.
 * Delete parameter `surrogate_key` from function `get_level_layer()`.
 * Include detailed error messages.
+* New tests.
 
 # geodimension 1.0.2
 * Fix test problem.

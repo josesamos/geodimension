@@ -98,6 +98,7 @@ geolevel <-
       }
       # only instances with geometry
       layer <- layer[!is.na(sf::st_dimension(layer)),]
+      layer <- sf::st_make_valid(layer)
       geo <- list(geometry = layer)
     } else {
       geo <- list()
@@ -222,6 +223,12 @@ add_geometry.geolevel <- function(gl,
 
   # only instances with geometry
   layer <- layer[!is.na(sf::st_dimension(layer)),]
+
+  if (length(gl$geometry) > 0) {
+    layer <- layer |>
+      sf::st_transform(sf::st_crs(gl$geometry[[1]]))
+  }
+  layer <- sf::st_make_valid(layer)
 
   gl$geometry[[geometry]] <- layer
   gl
