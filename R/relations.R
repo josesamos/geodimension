@@ -154,9 +154,11 @@ relate_levels.geodimension <- function(gd,
       gd$geolevel[[lower_level_name]] <-
         complete_point_geometry(gd$geolevel[[lower_level_name]])
     }
-    layer <- gd$geolevel[[lower_level_name]]$geometry[["point"]]
+    layer <- sf::st_transform(gd$geolevel[[lower_level_name]]$geometry[["point"]], 3857)
+    polygon <- sf::st_transform(gd$geolevel[[upper_level_name]]$geometry[["polygon"]], 3857)
+    sf::st_agr(polygon) = "constant"
     res <-
-      sf::st_join(layer, gd$geolevel[[upper_level_name]]$geometry[["polygon"]], join = sf::st_within) |>
+      sf::st_join(layer, polygon, join = sf::st_within) |>
       sf::st_drop_geometry()
     names(res) <-
       c(gd$geolevel[[lower_level_name]]$key, lower_level_attributes)

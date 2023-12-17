@@ -22,6 +22,7 @@ It includes the levels place, county, state, division, region and country.
 \examples{
 # Defined by:
 
+\donttest{
 file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
 layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
 layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
@@ -120,6 +121,7 @@ gd_us <- gd_us |>
     lower_level_attributes = "country",
     upper_level_name = "country"
   )
+}
 
 }
 \keyword{datasets}

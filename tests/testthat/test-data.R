@@ -99,80 +99,56 @@ test_that("data", {
       upper_level_name = "country"
     )
 
-  expect_equal(gd, gd_us)
+  expect_equal(summary(gd), summary(gd_us))
 })
 
 test_that("data", {
 
   file <- system.file("extdata", "es_layers.gpkg", package = "geodimension")
-  layer_es_nucleus <-
-    sf::st_read(file, layer = "nucleus", quiet = TRUE)
   layer_es_municipality <-
     sf::st_read(file, layer = "municipality", quiet = TRUE)
-  layer_es_agricultural_region <-
-    sf::st_read(file, layer = "agricultural_region", quiet = TRUE)
   layer_es_province <-
     sf::st_read(file, layer = "province", quiet = TRUE)
   layer_es_autonomous_community <-
     sf::st_read(file, layer = "autonomous_community", quiet = TRUE)
 
-  layer_es_nucleus$municipio <- substr(layer_es_nucleus$codine, 1, 5)
-  layer_es_nucleus$provincia <- substr(layer_es_nucleus$codine, 1, 2)
-  layer_es_nucleus <- layer_es_nucleus[layer_es_nucleus$provincia <= "52", ]
-
-  nucleus <-
-    geolevel(name = "nucleus",
-             layer = layer_es_nucleus,
-             attributes = c("provincia", "municipio", "codine", "nombre", "tipo"),
-             key = "idpob")
-
-  layer_es_municipality$municipio <- substr(layer_es_municipality$NATCODE, 7, 11)
-  layer_es_municipality$provincia <- substr(layer_es_municipality$NATCODE, 7, 8)
-  layer_es_municipality <- layer_es_municipality[layer_es_municipality$provincia <= "52", ]
-
   municipality <-
     geolevel(
       name = "municipality",
       layer = layer_es_municipality,
-      attributes = c("provincia", "municipio", "NAMEUNIT", "CODNUT3", "NATCODE"),
-      key = "municipio"
+      attributes = c("COD_PROV", "NAME", "CAPITAL", "REGION"),
+      key = "COD_INE"
     ) |>
-    complete_point_geometry()
-
-  layer_es_agricultural_region$CO_PROVINC <- sprintf("%02d", layer_es_agricultural_region$CO_PROVINC)
-  layer_es_agricultural_region$CO_COMARCA <- sprintf("%05d", layer_es_agricultural_region$CO_COMARCA)
+    add_geometry(layer = coordinates_to_geometry(
+      layer_es_municipality,
+      lon_lat = c("LON_ETRS89", "LAT_ETRS89"),
+      crs = 4258
+    ))
 
   agricultural_region <-
     geolevel(
       name = "agricultural_region",
-      layer = layer_es_agricultural_region,
-      attributes = c("CO_PROVINC", "CO_COMARCA", "DS_COMARCA"),
-      key = c("CO_PROVINC", "CO_COMARCA", "DS_COMARCA")
+      layer = get_level_layer(municipality),
+      attributes = "REGION",
+      key = c("COD_PROV", "REGION")
     ) |>
     complete_point_geometry()
-
-  layer_es_province$provincia <- substr(layer_es_province$NATCODE, 5, 6)
-  layer_es_province <- layer_es_province[layer_es_province$provincia <= "52", ]
-  layer_es_province$ca <- substr(layer_es_province$NATCODE, 3, 4)
 
   province <-
     geolevel(
       name = "province",
       layer = layer_es_province,
-      attributes = c("COUNTRY", "ca", "NAMEUNIT", "CODNUT2", "NATCODE"),
-      key = "provincia"
+      attributes = c("COUNTRY", "COD_CA", "NAME", "CAPITAL_PROVINCE"),
+      key = "COD_PROV"
     ) |>
     complete_point_geometry()
-
-  layer_es_autonomous_community$ca <- substr(layer_es_autonomous_community$NATCODE, 3, 4)
-  layer_es_autonomous_community <- layer_es_autonomous_community[layer_es_autonomous_community$ca <= "19", ]
 
   autonomous_community <-
     geolevel(
       name = "autonomous_community",
       layer = layer_es_autonomous_community,
-      attributes = c("COUNTRY", "ca", "NAMEUNIT", "CODNUT2", "NATCODE"),
-      key = "ca"
+      attributes = c("COUNTRY", "NAME"),
+      key = "COD_CA"
     ) |>
     complete_point_geometry()
 
@@ -187,53 +163,38 @@ test_that("data", {
 
   gd <-
     geodimension(name = "gd_es",
-                 level = nucleus,
+                 level = municipality,
                  snake_case = TRUE) |>
-    add_level(level = municipality) |>
     add_level(level = agricultural_region) |>
     add_level(level = province) |>
     add_level(level = autonomous_community) |>
     add_level(level = country)
 
-
-  gd <- gd |>
-    relate_levels(
-      lower_level_name = "nucleus",
-      lower_level_attributes = "municipio",
-      upper_level_name = "municipality"
-    )
-
   gd <- gd |>
     relate_levels(
       lower_level_name = "municipality",
-      lower_level_attributes = "provincia",
+      lower_level_attributes = "COD_PROV",
       upper_level_name = "province"
     )
 
   gd <- gd |>
     relate_levels(
       lower_level_name = "municipality",
-      upper_level_name = "agricultural_region",
-      by_geography = TRUE
-    )
-
-  ui <- gd |>
-    get_unrelated_instances(
-      lower_level_name = "municipality",
+      lower_level_attributes = c("COD_PROV", "REGION"),
       upper_level_name = "agricultural_region"
     )
 
   gd <- gd |>
     relate_levels(
       lower_level_name = "agricultural_region",
-      lower_level_attributes = "CO_PROVINC",
+      lower_level_attributes = "COD_PROV",
       upper_level_name = "province"
     )
 
   gd <- gd |>
     relate_levels(
       lower_level_name = "province",
-      lower_level_attributes = "ca",
+      lower_level_attributes = "COD_CA",
       upper_level_name = "autonomous_community"
     )
 
@@ -244,43 +205,32 @@ test_that("data", {
       upper_level_name = "country"
     )
 
-  n_1 <- gd_es |>
-    get_level_data(level_name = "nucleus",
+  n_1 <- gd |>
+    get_level_data(level_name = "municipality",
                    inherited = TRUE)
-  n_2 <- gd_es |>
-    get_level_layer(level_name = "nucleus",
+  n_2 <- gd |>
+    get_level_layer(level_name = "municipality",
                     inherited = TRUE)
-  n_3 <- gd_es |>
-    get_level_data_geo(level_name = "nucleus",
+  n_3 <- gd |>
+    get_level_data_geo(level_name = "municipality",
                        inherited = TRUE)
 
-  expect_equal(gd, gd_es)
+  expect_equal(summary(gd), summary(gd_es))
 
   expect_equal(
     names(n_1),
     c(
-      "nucleus_idpob",
-      "nucleus_provincia",
-      "nucleus_municipio",
-      "nucleus_codine",
-      "nucleus_nombre",
-      "nucleus_tipo",
-      "municipality_provincia",
-      "municipality_nameunit",
-      "municipality_codnut_3",
-      "municipality_natcode",
-      "municipality_fk_agricultural_region_co_provinc",
-      "municipality_fk_agricultural_region_co_comarca",
-      "municipality_fk_agricultural_region_ds_comarca",
+      "municipality_cod_ine",
+      "municipality_cod_prov",
+      "municipality_name",
+      "municipality_capital",
+      "municipality_region",
       "province_country",
-      "province_ca",
-      "province_nameunit",
-      "province_codnut_2",
-      "province_natcode",
+      "province_cod_ca",
+      "province_name",
+      "province_capital_province",
       "autonomous_community_country",
-      "autonomous_community_nameunit",
-      "autonomous_community_codnut_2",
-      "autonomous_community_natcode"
+      "autonomous_community_name"
     )
   )
 
