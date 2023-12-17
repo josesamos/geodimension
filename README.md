@@ -166,7 +166,8 @@ relationship can be established.
 
 With these operations we have defined a `geodimension`. From it we can
 obtain a data table to define a dimension in a star schema or the layer
-or layers associated with that table at the level we need.
+or layers associated with that table at the level we need. We can also
+get a table with latitude and longitude defined as fields.
 
 ``` r
 ld <- gd |>
@@ -192,6 +193,16 @@ names(ll)
 #> [3] "division_region_code"    "division_name"          
 #> [5] "division_fk_region_code" "region_country"         
 #> [7] "region_name"             "geom"
+
+lg <- gd |>
+  get_level_data_geo(level_name = "division",
+                     inherited = TRUE)
+names(lg)
+#> [1] "division_code"           "division_country"       
+#> [3] "division_region_code"    "division_name"          
+#> [5] "division_fk_region_code" "region_country"         
+#> [7] "region_name"             "intptlon"               
+#> [9] "intptlat"
 ```
 
 If we need the data at another level of detail, we can obtain it in a
