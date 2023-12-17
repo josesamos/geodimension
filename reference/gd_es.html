@@ -76,89 +76,55 @@ autonomous community and country.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Defined by:</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">file</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"es_layers.gpkg"</span>, package <span class="op">=</span> <span class="st">"geodimension"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_nucleus</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">file</span>, layer <span class="op">=</span> <span class="st">"nucleus"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"es_layers.gpkg"</span>, package <span class="op">=</span> <span class="st">"geodimension"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">layer_es_municipality</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">file</span>, layer <span class="op">=</span> <span class="st">"municipality"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_agricultural_region</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">file</span>, layer <span class="op">=</span> <span class="st">"agricultural_region"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">layer_es_province</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">file</span>, layer <span class="op">=</span> <span class="st">"province"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">layer_es_autonomous_community</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">file</span>, layer <span class="op">=</span> <span class="st">"autonomous_community"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">layer_es_nucleus</span><span class="op">$</span><span class="va">municipio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">layer_es_nucleus</span><span class="op">$</span><span class="va">codine</span>, <span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_nucleus</span><span class="op">$</span><span class="va">provincia</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">layer_es_nucleus</span><span class="op">$</span><span class="va">codine</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_nucleus</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="va">layer_es_nucleus</span><span class="op">[</span><span class="va">layer_es_nucleus</span><span class="op">$</span><span class="va">provincia</span> <span class="op">&lt;=</span> <span class="st">"52"</span>,<span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">nucleus</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="geolevel.html">geolevel</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    name <span class="op">=</span> <span class="st">"nucleus"</span>,</span></span>
-<span class="r-in"><span>    layer <span class="op">=</span> <span class="va">layer_es_nucleus</span>,</span></span>
-<span class="r-in"><span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"provincia"</span>, <span class="st">"municipio"</span>, <span class="st">"codine"</span>, <span class="st">"nombre"</span>, <span class="st">"tipo"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    key <span class="op">=</span> <span class="st">"idpob"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">layer_es_municipality</span><span class="op">$</span><span class="va">municipio</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">layer_es_municipality</span><span class="op">$</span><span class="va">NATCODE</span>, <span class="fl">7</span>, <span class="fl">11</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_municipality</span><span class="op">$</span><span class="va">provincia</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">layer_es_municipality</span><span class="op">$</span><span class="va">NATCODE</span>, <span class="fl">7</span>, <span class="fl">8</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_municipality</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="va">layer_es_municipality</span><span class="op">[</span><span class="va">layer_es_municipality</span><span class="op">$</span><span class="va">provincia</span> <span class="op">&lt;=</span> <span class="st">"52"</span>,<span class="op">]</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">municipality</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="geolevel.html">geolevel</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    name <span class="op">=</span> <span class="st">"municipality"</span>,</span></span>
 <span class="r-in"><span>    layer <span class="op">=</span> <span class="va">layer_es_municipality</span>,</span></span>
-<span class="r-in"><span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"provincia"</span>, <span class="st">"municipio"</span>, <span class="st">"NAMEUNIT"</span>, <span class="st">"CODNUT3"</span>, <span class="st">"NATCODE"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    key <span class="op">=</span> <span class="st">"municipio"</span></span></span>
+<span class="r-in"><span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COD_PROV"</span>, <span class="st">"NAME"</span>, <span class="st">"CAPITAL"</span>, <span class="st">"REGION"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    key <span class="op">=</span> <span class="st">"COD_INE"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="complete_point_geometry.html">complete_point_geometry</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">layer_es_agricultural_region</span><span class="op">$</span><span class="va">CO_PROVINC</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%02d"</span>, <span class="va">layer_es_agricultural_region</span><span class="op">$</span><span class="va">CO_PROVINC</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_agricultural_region</span><span class="op">$</span><span class="va">CO_COMARCA</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%05d"</span>, <span class="va">layer_es_agricultural_region</span><span class="op">$</span><span class="va">CO_COMARCA</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="add_geometry.html">add_geometry</a></span><span class="op">(</span>layer <span class="op">=</span> <span class="fu"><a href="coordinates_to_geometry.html">coordinates_to_geometry</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">layer_es_municipality</span>,</span></span>
+<span class="r-in"><span>    lon_lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LON_ETRS89"</span>, <span class="st">"LAT_ETRS89"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    crs <span class="op">=</span> <span class="fl">4258</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">agricultural_region</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="geolevel.html">geolevel</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    name <span class="op">=</span> <span class="st">"agricultural_region"</span>,</span></span>
-<span class="r-in"><span>    layer <span class="op">=</span> <span class="va">layer_es_agricultural_region</span>,</span></span>
-<span class="r-in"><span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CO_PROVINC"</span>, <span class="st">"CO_COMARCA"</span>, <span class="st">"DS_COMARCA"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CO_PROVINC"</span>, <span class="st">"CO_COMARCA"</span>, <span class="st">"DS_COMARCA"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    layer <span class="op">=</span> <span class="fu"><a href="get_level_layer.html">get_level_layer</a></span><span class="op">(</span><span class="va">municipality</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    attributes <span class="op">=</span> <span class="st">"REGION"</span>,</span></span>
+<span class="r-in"><span>    key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COD_PROV"</span>, <span class="st">"REGION"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="complete_point_geometry.html">complete_point_geometry</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">layer_es_province</span><span class="op">$</span><span class="va">provincia</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">layer_es_province</span><span class="op">$</span><span class="va">NATCODE</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_province</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="va">layer_es_province</span><span class="op">[</span><span class="va">layer_es_province</span><span class="op">$</span><span class="va">provincia</span> <span class="op">&lt;=</span> <span class="st">"52"</span>,<span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_province</span><span class="op">$</span><span class="va">ca</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">layer_es_province</span><span class="op">$</span><span class="va">NATCODE</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">province</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="geolevel.html">geolevel</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    name <span class="op">=</span> <span class="st">"province"</span>,</span></span>
 <span class="r-in"><span>    layer <span class="op">=</span> <span class="va">layer_es_province</span>,</span></span>
-<span class="r-in"><span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COUNTRY"</span>, <span class="st">"ca"</span>, <span class="st">"NAMEUNIT"</span>, <span class="st">"CODNUT2"</span>, <span class="st">"NATCODE"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    key <span class="op">=</span> <span class="st">"provincia"</span></span></span>
+<span class="r-in"><span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COUNTRY"</span>, <span class="st">"COD_CA"</span>, <span class="st">"NAME"</span>, <span class="st">"CAPITAL_PROVINCE"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    key <span class="op">=</span> <span class="st">"COD_PROV"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="complete_point_geometry.html">complete_point_geometry</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">layer_es_autonomous_community</span><span class="op">$</span><span class="va">ca</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">layer_es_autonomous_community</span><span class="op">$</span><span class="va">NATCODE</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">layer_es_autonomous_community</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="va">layer_es_autonomous_community</span><span class="op">[</span><span class="va">layer_es_autonomous_community</span><span class="op">$</span><span class="va">ca</span> <span class="op">&lt;=</span> <span class="st">"19"</span>,<span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">autonomous_community</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="geolevel.html">geolevel</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    name <span class="op">=</span> <span class="st">"autonomous_community"</span>,</span></span>
 <span class="r-in"><span>    layer <span class="op">=</span> <span class="va">layer_es_autonomous_community</span>,</span></span>
-<span class="r-in"><span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COUNTRY"</span>, <span class="st">"ca"</span>, <span class="st">"NAMEUNIT"</span>, <span class="st">"CODNUT2"</span>, <span class="st">"NATCODE"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    key <span class="op">=</span> <span class="st">"ca"</span></span></span>
+<span class="r-in"><span>    attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COUNTRY"</span>, <span class="st">"NAME"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    key <span class="op">=</span> <span class="st">"COD_CA"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="complete_point_geometry.html">complete_point_geometry</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">country</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="geolevel.html">geolevel</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    name <span class="op">=</span> <span class="st">"country"</span>,</span></span>
@@ -170,9 +136,8 @@ autonomous community and country.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">gd_es</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="geodimension.html">geodimension</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"gd_es"</span>,</span></span>
-<span class="r-in"><span>               level <span class="op">=</span> <span class="va">nucleus</span>,</span></span>
+<span class="r-in"><span>               level <span class="op">=</span> <span class="va">municipality</span>,</span></span>
 <span class="r-in"><span>               snake_case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="add_level.html">add_level</a></span><span class="op">(</span>level <span class="op">=</span> <span class="va">municipality</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="add_level.html">add_level</a></span><span class="op">(</span>level <span class="op">=</span> <span class="va">agricultural_region</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="add_level.html">add_level</a></span><span class="op">(</span>level <span class="op">=</span> <span class="va">province</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="add_level.html">add_level</a></span><span class="op">(</span>level <span class="op">=</span> <span class="va">autonomous_community</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
@@ -180,52 +145,31 @@ autonomous community and country.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">gd_es</span> <span class="op">&lt;-</span> <span class="va">gd_es</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="relate_levels.html">relate_levels</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    lower_level_name <span class="op">=</span> <span class="st">"nucleus"</span>,</span></span>
-<span class="r-in"><span>    lower_level_attributes <span class="op">=</span> <span class="st">"municipio"</span>,</span></span>
-<span class="r-in"><span>    upper_level_name <span class="op">=</span> <span class="st">"municipality"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">gd_es</span> <span class="op">&lt;-</span> <span class="va">gd_es</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="relate_levels.html">relate_levels</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    lower_level_name <span class="op">=</span> <span class="st">"municipality"</span>,</span></span>
-<span class="r-in"><span>    lower_level_attributes <span class="op">=</span> <span class="st">"provincia"</span>,</span></span>
+<span class="r-in"><span>    lower_level_attributes <span class="op">=</span> <span class="st">"COD_PROV"</span>,</span></span>
 <span class="r-in"><span>    upper_level_name <span class="op">=</span> <span class="st">"province"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">gd_es</span> <span class="op">&lt;-</span> <span class="va">gd_es</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="relate_levels.html">relate_levels</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    lower_level_name <span class="op">=</span> <span class="st">"municipality"</span>,</span></span>
-<span class="r-in"><span>    upper_level_name <span class="op">=</span> <span class="st">"agricultural_region"</span>,</span></span>
-<span class="r-in"><span>    by_geography <span class="op">=</span> <span class="cn">TRUE</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are rows left on the lower level not related to the upper level. Check them using `get_unrelated_instances()`.</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="va">gd_es</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="get_unrelated_instances.html">get_unrelated_instances</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    lower_level_name <span class="op">=</span> <span class="st">"municipality"</span>,</span></span>
+<span class="r-in"><span>    lower_level_attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COD_PROV"</span>, <span class="st">"REGION"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    upper_level_name <span class="op">=</span> <span class="st">"agricultural_region"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">gd_es</span> <span class="op">&lt;-</span> <span class="va">gd_es</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="relate_levels.html">relate_levels</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    lower_level_name <span class="op">=</span> <span class="st">"agricultural_region"</span>,</span></span>
-<span class="r-in"><span>    lower_level_attributes <span class="op">=</span> <span class="st">"CO_PROVINC"</span>,</span></span>
+<span class="r-in"><span>    lower_level_attributes <span class="op">=</span> <span class="st">"COD_PROV"</span>,</span></span>
 <span class="r-in"><span>    upper_level_name <span class="op">=</span> <span class="st">"province"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">gd_es</span> <span class="op">&lt;-</span> <span class="va">gd_es</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="relate_levels.html">relate_levels</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    lower_level_name <span class="op">=</span> <span class="st">"province"</span>,</span></span>
-<span class="r-in"><span>    lower_level_attributes <span class="op">=</span> <span class="st">"ca"</span>,</span></span>
+<span class="r-in"><span>    lower_level_attributes <span class="op">=</span> <span class="st">"COD_CA"</span>,</span></span>
 <span class="r-in"><span>    upper_level_name <span class="op">=</span> <span class="st">"autonomous_community"</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">gd_es</span> <span class="op">&lt;-</span> <span class="va">gd_es</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="relate_levels.html">relate_levels</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    lower_level_name <span class="op">=</span> <span class="st">"autonomous_community"</span>,</span></span>
 <span class="r-in"><span>    lower_level_attributes <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>    upper_level_name <span class="op">=</span> <span class="st">"country"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
