@@ -1,4 +1,4 @@
-# geodimension (development version)
+# geodimension 2.0.0
 * New datasets: level *place* instead of *city* in `gd_us` and  `gd_es`, *geodimension* for Spain.
 * Definition of geographic information layers as *GeoPackage* in external data.
 * New functions: `set_level_data()` and `get_level_data_geo()`.
