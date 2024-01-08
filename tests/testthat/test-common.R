@@ -43,9 +43,16 @@ test_that("validate_names()", {
 
 
 test_that("get_geometry() and check_key()", {
-  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-  layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
-  layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+  layer_us_place <- gd_us |>
+    get_level_layer("place")
+
+  layer_us_county <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "county"),
+      get_level_layer(gd_us, "county"),
+      by = c("geoid", "statefp", "name", "type")
+    ) |>
+    sf::st_as_sf()
 
   expect_equal(
     get_geometry(layer_us_place),
@@ -56,27 +63,39 @@ test_that("get_geometry() and check_key()", {
     "polygon")
 
   expect_equal(
-    check_key(layer_us_county, key = c("STATEFP", "NAME")),
+    check_key(layer_us_county, key = c("statefp", "name")),
     FALSE)
 
   expect_equal(
-    check_key(layer_us_county, key = c("GEOID")),
+    check_key(layer_us_county, key = c("geoid")),
     TRUE)
 
 })
 
 
 test_that("coordinates_to_geometry()", {
-  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-  layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
-  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+  layer_us_county <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "county"),
+      get_level_layer(gd_us, "county"),
+      by = c("geoid", "statefp", "name", "type")
+    ) |>
+    sf::st_as_sf()
+
+  layer_us_state <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "state"),
+      get_level_layer(gd_us, "state"),
+      by = c("statefp", "division", "region", "stusps", "name")
+    ) |>
+    sf::st_as_sf()
 
   us_state_point <-
     coordinates_to_geometry(layer_us_state)
 
   us_county_point <-
     coordinates_to_geometry(layer_us_county,
-                            lon_lat = c("INTPTLON", "INTPTLAT"))
+                            lon_lat = c("intptlon", "intptlat"))
 
 
   expect_equal(
@@ -90,26 +109,6 @@ test_that("coordinates_to_geometry()", {
   expect_equal(
     nrow(us_county_point),
     nrow(layer_us_county))
-
-  expect_equal(
-    names(us_county_point),
-    c(
-      "STATEFP",
-      "GEOID",
-      "COUNTYFP",
-      "COUNTYNS",
-      "CLASSFP",
-      "NAME",
-      "NAMELSAD",
-      "LSAD",
-      "type",
-      "Shape_Length",
-      "Shape_Area",
-      "ALAND",
-      "AWATER",
-      "geometry"
-    )
-  )
 
 })
 

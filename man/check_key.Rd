@@ -22,10 +22,9 @@ The table can be a data table or a vector layer.
 }
 \examples{
 
-file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+layer_us_county <- get_level_layer(gd_us, "county")
 
-is_key <- check_key(layer_us_county, key = c("STATEFP", "NAME"))
+is_key <- check_key(layer_us_county, key = c("statefp", "name"))
 
 }
 \seealso{

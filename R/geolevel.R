@@ -29,13 +29,12 @@
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+#' layer_us_state <- get_level_layer(gd_us, "state")
 #'
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = "geoid",
+#'            key = "statefp",
 #'            snake_case = TRUE)
 #'
 #' @export
@@ -140,8 +139,13 @@ geolevel <-
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+#' layer_us_state <-
+#'   dplyr::inner_join(
+#'     get_level_data_geo(gd_us, "state"),
+#'     get_level_layer(gd_us, "state"),
+#'     by = c("statefp", "division", "region", "stusps", "name")
+#'   ) |>
+#'   sf::st_as_sf()
 #'
 #' us_state_point <-
 #'   coordinates_to_geometry(layer_us_state,
@@ -150,7 +154,7 @@ geolevel <-
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = "geoid",
+#'            key = "statefp",
 #'            snake_case = TRUE) |>
 #'   add_geometry(layer = us_state_point)
 #'
@@ -272,8 +276,13 @@ snake_case_geolevel <- function(gl) {
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+#' layer_us_state <-
+#'   dplyr::inner_join(
+#'     get_level_data_geo(gd_us, "state"),
+#'     get_level_layer(gd_us, "state"),
+#'     by = c("statefp", "division", "region", "stusps", "name")
+#'   ) |>
+#'   sf::st_as_sf()
 #'
 #' us_state_point <-
 #'   coordinates_to_geometry(layer_us_state,
@@ -282,7 +291,7 @@ snake_case_geolevel <- function(gl) {
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = "geoid",
+#'            key = "statefp",
 #'            snake_case = TRUE) |>
 #'   add_geometry(layer = us_state_point)
 #'
@@ -331,13 +340,12 @@ get_empty_geometry_instances.geolevel <- function(gl, geometry = NULL) {
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+#' layer_us_state <- get_level_layer(gd_us, "state")
 #'
 #' state <-
 #'   geolevel(name = "state",
 #'            layer = layer_us_state,
-#'            key = "geoid",
+#'            key = "statefp",
 #'            snake_case = TRUE) |>
 #'   complete_point_geometry()
 #'

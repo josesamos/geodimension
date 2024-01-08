@@ -1,13 +1,27 @@
 test_that("geodimension()", {
-  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-  layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
-  layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
-  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+  layer_us_place <- gd_us |>
+    get_level_layer("place")
+
+  layer_us_county <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "county"),
+      get_level_layer(gd_us, "county"),
+      by = c("geoid", "statefp", "name", "type")
+    ) |>
+    sf::st_as_sf()
+
+  layer_us_state <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "state"),
+      get_level_layer(gd_us, "state"),
+      by = c("statefp", "division", "region", "stusps", "name")
+    ) |>
+    sf::st_as_sf()
 
   place <-
     geolevel(name = "place",
              layer = layer_us_place,
-             key = c("GEOID"))
+             key = c("geoid"))
   gd <-
     geodimension(name = "gd_us",
                  level = place)
@@ -31,36 +45,48 @@ test_that("geodimension()", {
                NULL)
 
   expect_equal(names(gd$geolevel$place$data),
-               c("GEOID", "STATEFP", "county_geoid", "PLACEFP", "PLACENS", "NAME",
-                 "NAMELSAD", "LSAD", "type"))
+               c("geoid", "statefp", "county_geoid", "name", "type"))
 
   expect_equal(names(gd_2$geolevel$place$data),
-               c("geoid", "statefp", "county_geoid", "placefp", "placens", "name",
-                 "namelsad", "lsad", "type"))
+               c("geoid", "statefp", "county_geoid", "name", "type"))
 })
 
 
 test_that("add_level() and transform_crs()", {
-  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-  layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
-  layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
-  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+  layer_us_place <- gd_us |>
+    get_level_layer("place")
+
+  layer_us_county <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "county"),
+      get_level_layer(gd_us, "county"),
+      by = c("geoid", "statefp", "name", "type")
+    ) |>
+    sf::st_as_sf()
+
+  layer_us_state <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "state"),
+      get_level_layer(gd_us, "state"),
+      by = c("statefp", "division", "region", "stusps", "name")
+    ) |>
+    sf::st_as_sf()
 
   place <-
     geolevel(name = "place",
              layer = layer_us_place,
-             attributes = c("STATEFP", "county_geoid", "NAME", "type"),
-             key = "GEOID")
+             attributes = c("statefp", "county_geoid", "name", "type"),
+             key = "geoid")
 
   county <-
     geolevel(
       name = "county",
       layer = layer_us_county,
-      attributes = c("STATEFP", "NAME", "type"),
-      key = "GEOID"
+      attributes = c("statefp", "name", "type"),
+      key = "geoid"
     ) |>
     add_geometry(coordinates_to_geometry(layer_us_county,
-                                         lon_lat = c("INTPTLON", "INTPTLAT")))
+                                         lon_lat = c("intptlon", "intptlat")))
 
   gd <-
     geodimension(name = "gd_us",
@@ -94,7 +120,7 @@ test_that("add_level() and transform_crs()", {
                NULL)
 
   expect_equal(names(gd$geolevel$county$data),
-               c("GEOID", "STATEFP", "NAME", "type"))
+               c("geoid", "statefp", "name", "type"))
 
   expect_equal(names(gd_2$geolevel$county$data),
                c("geoid", "statefp", "name", "type"))

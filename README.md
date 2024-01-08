@@ -72,14 +72,17 @@ available in the package in the `us_division` variable, shown below.
 |       0       |    Puerto Rico     |      9      | Puerto Rico |   USA   |
 
 In [United States Census Bureau](https://www.census.gov) we find layers
-at various levels of detail, including *state*. Weget a geographic layer
-for *state* level (`layer_us_state`).
+at various levels of detail, including *state*. We get a geographic
+layer for *state* level (`layer_us_state`). For this example we obtain
+it from the package itself (we could read it from a *GeoPackage* or in
+any other format using the [`sf`](https://cran.r-project.org/package=sf)
+package).
 
 ``` r
 library(geodimension)
 
-file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+layer_us_state <- gd_us |>
+  get_level_layer("state")
 
 plot(sf::st_shift_longitude(sf::st_geometry(layer_us_state)))
 ```
@@ -93,7 +96,7 @@ From it we can define all the levels. From each layer, we define a
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = "GEOID")
+           key = "statefp")
 
 division <-
   geolevel(
@@ -103,7 +106,7 @@ division <-
     key = "division_code"
   ) |>
   add_geometry(layer = layer_us_state,
-               layer_key = "DIVISION")
+               layer_key = "division")
 
 region <-
   geolevel(
@@ -113,7 +116,7 @@ region <-
     key = "region_code"
   ) |>
   add_geometry(layer = layer_us_state,
-               layer_key = "REGION")
+               layer_key = "region")
 
 country <-
   geolevel(
@@ -145,7 +148,7 @@ their instances.
 gd <- gd |>
   relate_levels(
     lower_level_name = "state",
-    lower_level_attributes = "DIVISION",
+    lower_level_attributes = "division",
     upper_level_name = "division"
   ) |>
   relate_levels(

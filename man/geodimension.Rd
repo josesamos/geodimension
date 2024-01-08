@@ -23,13 +23,12 @@ given.
 }
 \examples{
 
-file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+layer_us_place <- get_level_layer(gd_us, "place")
 
 place <-
   geolevel(name = "place",
            layer = layer_us_place,
-           key = "GEOID")
+           key = "geoid")
 gd <-
   geodimension(name = "gd_us",
                level = place)

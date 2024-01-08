@@ -16,13 +16,12 @@
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
+#' layer_us_place <- get_level_layer(gd_us, "place")
 #'
 #' place <-
 #'   geolevel(name = "place",
 #'            layer = layer_us_place,
-#'            key = "GEOID")
+#'            key = "geoid")
 #' gd <-
 #'   geodimension(name = "gd_us",
 #'                level = place)
@@ -69,25 +68,32 @@ geodimension <-
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
-#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#' layer_us_place <- gd_us |>
+#'   get_level_layer("place")
+#'
+#' layer_us_county <-
+#'   dplyr::inner_join(
+#'     get_level_data_geo(gd_us, "county"),
+#'     get_level_layer(gd_us, "county"),
+#'     by = c("geoid", "statefp", "name", "type")
+#'   ) |>
+#'   sf::st_as_sf()
 #'
 #' place <-
 #'   geolevel(name = "place",
 #'            layer = layer_us_place,
-#'            attributes = c("STATEFP", "county_geoid", "NAME", "type"),
-#'            key = "GEOID")
+#'            attributes = c("statefp", "county_geoid", "name", "type"),
+#'            key = "geoid")
 #'
 #' county <-
 #'   geolevel(
 #'     name = "county",
 #'     layer = layer_us_county,
-#'     attributes = c("STATEFP", "NAME", "type"),
-#'     key = "GEOID"
+#'     attributes = c("statefp", "name", "type"),
+#'     key = "geoid"
 #'   ) |>
 #'   add_geometry(coordinates_to_geometry(layer_us_county,
-#'                                        lon_lat = c("INTPTLON", "INTPTLAT")))
+#'                                        lon_lat = c("intptlon", "intptlat")))
 #'
 #' gd_us <-
 #'   geodimension(name = "gd_us",
@@ -211,25 +217,32 @@ set_level_data.geodimension <- function(gd,
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
-#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#' layer_us_place <- gd_us |>
+#'   get_level_layer("place")
+#'
+#' layer_us_county <-
+#'   dplyr::inner_join(
+#'     get_level_data_geo(gd_us, "county"),
+#'     get_level_layer(gd_us, "county"),
+#'     by = c("geoid", "statefp", "name", "type")
+#'   ) |>
+#'   sf::st_as_sf()
 #'
 #' place <-
 #'   geolevel(name = "place",
 #'            layer = layer_us_place,
-#'            attributes = c("STATEFP", "county_geoid", "NAME", "type"),
-#'            key = "GEOID")
+#'            attributes = c("statefp", "county_geoid", "name", "type"),
+#'            key = "geoid")
 #'
 #' county <-
 #'   geolevel(
 #'     name = "county",
 #'     layer = layer_us_county,
-#'     attributes = c("STATEFP", "NAME", "type"),
-#'     key = "GEOID"
+#'     attributes = c("statefp", "name", "type"),
+#'     key = "geoid"
 #'   ) |>
 #'   add_geometry(coordinates_to_geometry(layer_us_county,
-#'                                        lon_lat = c("INTPTLON", "INTPTLAT")))
+#'                                        lon_lat = c("intptlon", "intptlat")))
 #'
 #' gd_us <-
 #'   geodimension(name = "gd_us",

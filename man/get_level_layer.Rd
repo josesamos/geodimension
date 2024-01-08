@@ -51,13 +51,12 @@ can be added.
 }
 \examples{
 
-file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+layer_us_state <- get_level_layer(gd_us, "state")
 
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = "GEOID")
+           key = "statefp")
 
 state_ll <- state |>
   get_level_layer("polygon")

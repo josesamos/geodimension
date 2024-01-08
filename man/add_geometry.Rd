@@ -33,8 +33,13 @@ If none is indicated, by default the key defined in the level is considered.
 }
 \examples{
 
-file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+layer_us_state <-
+  dplyr::inner_join(
+    get_level_data_geo(gd_us, "state"),
+    get_level_layer(gd_us, "state"),
+    by = c("statefp", "division", "region", "stusps", "name")
+  ) |>
+  sf::st_as_sf()
 
 us_state_point <-
   coordinates_to_geometry(layer_us_state,
@@ -43,7 +48,7 @@ us_state_point <-
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = "geoid",
+           key = "statefp",
            snake_case = TRUE) |>
   add_geometry(layer = us_state_point)
 

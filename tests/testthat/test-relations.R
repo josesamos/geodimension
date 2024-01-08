@@ -1,24 +1,38 @@
 test_that("geodimension()", {
-  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-  layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
-  layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
-  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+  layer_us_place <- gd_us |>
+    get_level_layer("place")
+
+  layer_us_county <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "county"),
+      get_level_layer(gd_us, "county"),
+      by = c("geoid", "statefp", "name", "type")
+    ) |>
+    sf::st_as_sf()
+
+  layer_us_state <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "state"),
+      get_level_layer(gd_us, "state"),
+      by = c("statefp", "division", "region", "stusps", "name")
+    ) |>
+    sf::st_as_sf()
 
   place <-
     geolevel(name = "place",
              layer = layer_us_place,
-             attributes = c("STATEFP", "county_geoid", "NAME", "type"),
-             key = "GEOID")
+             attributes = c("statefp", "county_geoid", "name", "type"),
+             key = "geoid")
 
   county <-
     geolevel(
       name = "county",
       layer = layer_us_county,
-      attributes = c("STATEFP", "NAME", "type"),
-      key = "GEOID"
+      attributes = c("statefp", "name", "type"),
+      key = "geoid"
     ) |>
     add_geometry(coordinates_to_geometry(layer_us_county,
-                                         lon_lat = c("INTPTLON", "INTPTLAT")))
+                                         lon_lat = c("intptlon", "intptlat")))
 
   gd_us_0 <-
     geodimension(name = "gd_us",
@@ -52,7 +66,7 @@ test_that("geodimension()", {
       lower_level_name = "place",
       lower_level_attributes = "county_geoid",
       upper_level_name = "county",
-      upper_level_key = "GEOID"
+      upper_level_key = "geoid"
     )
 
   ui <- gd_us_0 |>
@@ -87,40 +101,40 @@ test_that("geodimension()", {
 
   expect_equal(gd_us_0$relation,
                list(place = list(
-                 county = list(lower_fk = "county_geoid", upper_pk = "GEOID")
+                 county = list(lower_fk = "county_geoid", upper_pk = "geoid")
                )))
 
   expect_equal(gd_us_2$relation,
                list(place = list(
-                 county = list(lower_fk = "fk_county_GEOID",
-                               upper_pk = "GEOID")
+                 county = list(lower_fk = "fk_county_geoid",
+                               upper_pk = "geoid")
                )))
 
   expect_equal(
     names(gd_us_2$geolevel$place$data),
     c(
-      "GEOID",
-      "STATEFP",
+      "geoid",
+      "statefp",
       "county_geoid",
-      "NAME",
+      "name",
       "type",
-      "fk_county_GEOID"
+      "fk_county_geoid"
     )
   )
 
   expect_equal(gd_us_3$relation,
                list(place = list(
                  county = list(lower_fk = "county_geoid_geo",
-                               upper_pk = "GEOID")
+                               upper_pk = "geoid")
                )))
 
   expect_equal(
     names(gd_us_3$geolevel$place$data),
     c(
-      "GEOID",
-      "STATEFP",
+      "geoid",
+      "statefp",
       "county_geoid",
-      "NAME",
+      "name",
       "type",
       "county_geoid_geo"
     )
@@ -128,16 +142,16 @@ test_that("geodimension()", {
 
   expect_equal(gd_us_4$relation,
                list(place = list(
-                 county = list(lower_fk = "county_geoid", upper_pk = "GEOID")
+                 county = list(lower_fk = "county_geoid", upper_pk = "geoid")
                )))
 
   expect_equal(ui,
                structure(
                  list(
-                   GEOID = character(0),
-                   STATEFP = character(0),
+                   geoid = character(0),
+                   statefp = character(0),
                    county_geoid = character(0),
-                   NAME = character(0),
+                   name = character(0),
                    type = character(0)
                  ),
                  class = c("tbl_df",
@@ -148,12 +162,12 @@ test_that("geodimension()", {
   expect_equal(ui_2,
                structure(
                  list(
-                   GEOID = character(0),
-                   STATEFP = character(0),
+                   geoid = character(0),
+                   statefp = character(0),
                    county_geoid = character(0),
-                   NAME = character(0),
+                   name = character(0),
                    type = character(0),
-                   fk_county_GEOID = character(0)
+                   fk_county_geoid = character(0)
                  ),
                  class = c("tbl_df", "tbl",
                            "data.frame"),
@@ -163,10 +177,10 @@ test_that("geodimension()", {
   expect_equal(ui_3,
                structure(
                  list(
-                   GEOID = "0100124",
-                   STATEFP = "01",
+                   geoid = "0100124",
+                   statefp = "01",
                    county_geoid = NA_character_,
-                   NAME = "Abbeville",
+                   name = "Abbeville",
                    type = "city"
                  ),
                  row.names = c(NA,-1L),
@@ -243,8 +257,13 @@ test_that("select_levels()", {
 })
 
 test_that("select_levels()", {
-  file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-  layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+  layer_us_state <-
+    dplyr::inner_join(
+      get_level_data_geo(gd_us, "state"),
+      get_level_layer(gd_us, "state"),
+      by = c("statefp", "division", "region", "stusps", "name")
+    ) |>
+    sf::st_as_sf()
 
   layer_us_state$country <- "USA"
 
@@ -252,11 +271,11 @@ test_that("select_levels()", {
     geolevel(
       name = "state",
       layer = layer_us_state,
-      attributes = c("DIVISION", "REGION", "STATEFP", "STUSPS", "NAME", "country"),
-      key = "STATEFP"
+      attributes = c("division", "region", "statefp", "stusps", "name", "country"),
+      key = "statefp"
     ) |>
     add_geometry(coordinates_to_geometry(layer_us_state,
-                                         lon_lat = c("INTPTLON", "INTPTLAT")))
+                                         lon_lat = c("intptlon", "intptlat")))
 
   division <-
     geolevel(
@@ -266,7 +285,7 @@ test_that("select_levels()", {
       key = c("division_code", "country")
     ) |>
     add_geometry(layer = layer_us_state,
-                 layer_key = c("DIVISION", "country")) |>
+                 layer_key = c("division", "country")) |>
     complete_point_geometry()
 
   region <-
@@ -277,7 +296,7 @@ test_that("select_levels()", {
       key = c("region_code", "country")
     ) |>
     add_geometry(layer = layer_us_state,
-                 layer_key = c("REGION", "country")) |>
+                 layer_key = c("region", "country")) |>
     complete_point_geometry()
 
   country <-
@@ -300,7 +319,7 @@ test_that("select_levels()", {
   gd <- gd |>
     relate_levels(
       lower_level_name = "state",
-      lower_level_attributes = c("DIVISION", "country"),
+      lower_level_attributes = c("division", "country"),
       upper_level_name = "division"
     )
   gd <- gd |>

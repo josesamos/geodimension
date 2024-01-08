@@ -33,17 +33,29 @@ The rest of this document is structured as follows: First, an illustrative examp
 
 Suppose we have a multidimensional design on US data and the geographic dimension is defined at the *place* level. For each place we have its name and the code of the state in which it is located. It would be interesting to have other levels of detail in this dimension to be able to perform *roll-up* operations.
 
-With this objective, we look for layers of geographic information. In [United States Census Bureau](https://www.census.gov) we find layers at various levels of detail, including *place*, *county* and *state*. Furthermore we find the relationships in table form between *division*, *region* and *country*. We have obtained and stored them in *GeoPackage* `us_layers.gpkg` layers[^2] and the variable `us_division`, respectively.
-
-[^2]: To take up less space in the package, its geometry has also been simplified.
+With this objective, we look for layers of geographic information. In [United States Census Bureau](https://www.census.gov) we find layers at various levels of detail, including *place*, *county* and *state*. Furthermore we find the relationships in table form between *division*, *region* and *country*. For this example we obtain them from the package itself (we could read them from a *GeoPackage* or in any other format using the [`sf`](https://cran.r-project.org/package=sf) package).
 
 ```{r}
 library(geodimension)
 
-file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-layer_us_place <- sf::st_read(file, layer = "place", quiet = TRUE)
-layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
-layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+layer_us_place <- gd_us |>
+  get_level_layer("place")
+
+layer_us_county <-
+  dplyr::inner_join(
+    get_level_data_geo(gd_us, "county"),
+    get_level_layer(gd_us, "county"),
+    by = c("geoid", "statefp", "name", "type")
+  ) |>
+  sf::st_as_sf()
+
+layer_us_state <-
+  dplyr::inner_join(
+    get_level_data_geo(gd_us, "state"),
+    get_level_layer(gd_us, "state"),
+    by = c("statefp", "division", "region", "stusps", "name")
+  ) |>
+  sf::st_as_sf()
 ```
 
 The content of variable `us_division` is shown below.
@@ -72,12 +84,12 @@ We can previously check if a set of attributes form a key of the layer using the
 ```{r}
 names(layer_us_place)
 
-check_key(layer_us_place, key = c("NAME", "STATEFP"))
+check_key(layer_us_place, key = c("name", "statefp"))
 
-check_key(layer_us_place, key = "GEOID")
+check_key(layer_us_place, key = "geoid")
 ```
 
-We might expect the place name (`NAME`) and state code (`STATEFP`) to be sufficient to identify a place, however, they are not. We check that the `GEOID` field is a valid key, therefore, it will be the one we use to define the `geolevel`.
+We might expect the place name (`name`) and state code (`statefp`) to be sufficient to identify a place, however, they are not. We check that the `geoid` field is a valid key, therefore, it will be the one we use to define the `geolevel`.
 
 We can check the geometry that is considered for the definition of the level by means of the `get_geometry()` function (it simplifies the types into *point*, *line* and *polygon*). In addition, we give each level a name to be able to refer to it, as shown below.
 
@@ -87,22 +99,22 @@ get_geometry(layer_us_place)
 place <-
   geolevel(name = "place",
            layer = layer_us_place,
-           key = "GEOID")
+           key = "geoid")
 ```
 
 For `county` it is the same as for `place`, the name and the code of the state do not compose a valid key. In this case, the geometry is polygon. Additionally, a layer with another geometry can be associated using the `add_geometry()` function. Since the layer includes longitude and latitude, we can generate a geographic layer of points using the `coordinates_to_geometry()` function.
 
 ```{r}
-check_key(layer_us_county, key = c("NAME", "STATEFP"))
+check_key(layer_us_county, key = c("name", "statefp"))
 
-check_key(layer_us_county, key = "GEOID")
+check_key(layer_us_county, key = "geoid")
 
 get_geometry(layer_us_county)
 
 county <-
   geolevel(name = "county",
            layer = layer_us_county,
-           key = c("GEOID")) |>
+           key = c("geoid")) |>
   add_geometry(coordinates_to_geometry(layer_us_county))
 ```
 
@@ -116,7 +128,7 @@ us_state_point <-
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = "STATEFP") |>
+           key = "statefp") |>
   add_geometry(layer = us_state_point)
 ```
 
@@ -133,7 +145,7 @@ division <-
     key = "division_code"
   ) |>
   add_geometry(layer = layer_us_state,
-               layer_key = "DIVISION") |>
+               layer_key = "division") |>
   complete_point_geometry()
 
 region <-
@@ -144,7 +156,7 @@ region <-
     key = "region_code"
   ) |>
   add_geometry(layer = layer_us_state,
-               layer_key = "REGION") |>
+               layer_key = "region") |>
   complete_point_geometry()
 ```
 
@@ -199,7 +211,7 @@ The relationships between *state*, *region*, *division* and *country* are define
 gd <- gd |>
   relate_levels(
     lower_level_name = "state",
-    lower_level_attributes = "DIVISION",
+    lower_level_attributes = "division",
     upper_level_name = "division"
   ) |>
   relate_levels(
@@ -214,7 +226,7 @@ gd <- gd |>
   )
 ```
 
-The relationship between *state* and *division* is defined by a *state* attribute (`DIVISION`) that matches the *division* key. In the same way, the relationships between *division* and *region*, and *region* and *country* are defined.
+The relationship between *state* and *division* is defined by a *state* attribute (`division`) that matches the *division* key. In the same way, the relationships between *division* and *region*, and *region* and *country* are defined.
 
 In addition to these relationships there is a relationship between *place* and *state* and also between *county* and *state*. In both cases it can be defined by attributes.
 
@@ -227,7 +239,7 @@ gd <- gd |>
   ) |>
   relate_levels(
     lower_level_name = "county",
-    lower_level_attributes = "STATEFP",
+    lower_level_attributes = "statefp",
     upper_level_name = "state"
   )
 ```

@@ -22,8 +22,7 @@ It will only be valid if one of the three geometries is interpreted: \emph{point
 }
 \examples{
 
-file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+layer_us_county <- get_level_layer(gd_us, "county")
 
 geometry <- get_geometry(layer_us_county)
 

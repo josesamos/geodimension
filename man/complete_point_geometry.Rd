@@ -25,13 +25,12 @@ geometry empty, it completes them.
 }
 \examples{
 
-file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-layer_us_state <- sf::st_read(file, layer = "state", quiet = TRUE)
+layer_us_state <- get_level_layer(gd_us, "state")
 
 state <-
   geolevel(name = "state",
            layer = layer_us_state,
-           key = "geoid",
+           key = "statefp",
            snake_case = TRUE) |>
   complete_point_geometry()
 

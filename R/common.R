@@ -16,8 +16,7 @@
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#' layer_us_county <- get_level_layer(gd_us, "county")
 #'
 #' geometry <- get_geometry(layer_us_county)
 #'
@@ -53,10 +52,9 @@ get_geometry <- function(layer) {
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#' layer_us_county <- get_level_layer(gd_us, "county")
 #'
-#' is_key <- check_key(layer_us_county, key = c("STATEFP", "NAME"))
+#' is_key <- check_key(layer_us_county, key = c("statefp", "name"))
 #'
 #' @export
 check_key <- function(table, key = NULL) {
@@ -97,12 +95,17 @@ check_key <- function(table, key = NULL) {
 #'
 #' @examples
 #'
-#' file <- system.file("extdata", "us_layers.gpkg", package = "geodimension")
-#' layer_us_county <- sf::st_read(file, layer = "county", quiet = TRUE)
+#' layer_us_county <-
+#'   dplyr::inner_join(
+#'     get_level_data_geo(gd_us, "county"),
+#'     get_level_layer(gd_us, "county"),
+#'     by = c("geoid", "statefp", "name", "type")
+#'   ) |>
+#'   sf::st_as_sf()
 #'
 #' us_county_point <-
 #'   coordinates_to_geometry(layer_us_county,
-#'                           lon_lat = c("INTPTLON", "INTPTLAT"))
+#'                           lon_lat = c("intptlon", "intptlat"))
 #'
 #' @export
 coordinates_to_geometry <- function(table, lon_lat = c("intptlon", "intptlat"), crs = 4326) {
